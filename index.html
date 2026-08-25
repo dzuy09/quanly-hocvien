@@ -44,11 +44,8 @@
 
   <style>
     @media screen and (max-width: 768px) {
-      input, select, textarea {
-        font-size: 14px !important;
-      }
+      input, select, textarea { font-size: 14px !important; }
     }
-
     body {
       background-color: #faf7f2;
       background-image: 
@@ -58,9 +55,8 @@
       background-attachment: fixed;
       min-height: 100vh;
       color: #1e293b;
-      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: "Plus Jakarta Sans", sans-serif;
     }
-
     .om-orb-gold {
       position: fixed; width: 350px; height: 350px; border-radius: 50%;
       background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0) 70%);
@@ -71,22 +67,19 @@
       background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, rgba(236, 72, 153, 0) 70%);
       bottom: -40px; right: -40px; filter: blur(70px); pointer-events: none; z-index: 0;
     }
-
     .om-card {
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(235, 224, 209, 0.85);
-      box-shadow: 0 4px 20px -2px rgba(210, 185, 150, 0.12), 0 2px 6px rgba(210, 185, 150, 0.05);
+      box-shadow: 0 4px 20px -2px rgba(210, 185, 150, 0.12);
       border-radius: 1.25rem;
     }
-
     .om-header {
       background: rgba(250, 247, 242, 0.94);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid rgba(228, 215, 198, 0.75);
     }
-
     .om-input {
       background: #ffffff;
       border: 1px solid #e2d7c6;
@@ -99,24 +92,18 @@
       box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
       outline: none;
     }
-
     .om-btn-gold {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 60%, #b45309 100%);
       color: #ffffff;
       font-weight: 700;
       box-shadow: 0 3px 12px rgba(217, 119, 6, 0.25);
-      transition: all 0.2s ease;
     }
     .om-btn-gold:active { transform: scale(0.97); }
-
     .om-btn-outline {
       background: #ffffff;
       border: 1px solid #e2d7c6;
       color: #475569;
-      transition: all 0.2s ease;
     }
-    .om-btn-outline:active { background: #fefce8; border-color: #d97706; }
-
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
@@ -126,9 +113,14 @@
   <div class="om-orb-gold"></div>
   <div class="om-orb-lotus"></div>
 
+  <!-- Toast Notification -->
+  <div id="toastNotification" class="fixed top-4 right-4 z-50 transform transition-all duration-300 translate-y-[-100px] opacity-0 pointer-events-none px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-bold bg-slate-900 text-white border border-slate-700">
+    <span id="toastIcon">ℹ️</span>
+    <span id="toastMessage">Thông báo</span>
+  </div>
+
   <div class="relative z-10 min-h-screen flex flex-col pb-24 md:pb-12">
-    
-    <!-- Top Header -->
+    <!-- Header -->
     <header class="om-header sticky top-0 z-30 px-3.5 sm:px-6 lg:px-8 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
         <div class="flex items-center space-x-2.5 min-w-0">
@@ -137,9 +129,7 @@
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate tracking-tight">
-                Quản Lý Học Viên
-              </h1>
+              <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate tracking-tight">Quản Lý Học Viên</h1>
               <span id="syncStatusBadge" onclick="app.openSheetModal()" class="cursor-pointer text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full border shrink-0 flex items-center gap-1 bg-stone-100 text-stone-600 border-stone-300">
                 <span class="w-1.5 h-1.5 rounded-full bg-stone-400" id="syncStatusDot"></span>
                 <span id="syncStatusText">Chưa kết nối</span>
@@ -150,22 +140,25 @@
         </div>
 
         <div class="flex items-center gap-1.5 shrink-0">
-          <button onclick="app.syncFromSheet(true)" title="Đồng bộ Google Sheet" class="om-btn-outline w-8 h-8 sm:w-auto sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-1.5 text-xs font-bold text-amber-700">
-            <i class="fa-solid fa-rotate" id="syncSpinIcon"></i>
-            <span class="hidden md:inline">Đồng bộ</span>
+          <!-- Two-Way Sync Button -->
+          <button onclick="app.openSyncMenuModal()" title="Tùy chọn Đồng bộ Google Sheet" class="om-btn-outline px-2.5 sm:px-3 py-1.5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-1.5 text-xs font-bold text-amber-800">
+            <i class="fa-solid fa-cloud-arrow-up text-amber-600" id="syncSpinIcon"></i>
+            <span>Đồng bộ Sheet</span>
           </button>
 
+          <!-- Add Student -->
           <button onclick="app.openModal()" class="om-btn-gold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5">
             <i class="fa-solid fa-plus text-[10px]"></i>
-            <span>Thêm Mới</span>
+            <span class="hidden sm:inline">Thêm Học Viên</span>
+            <span class="sm:hidden">Thêm</span>
           </button>
 
-          <button onclick="app.openSheetModal()" title="Kết nối Google Sheet" class="om-btn-outline w-8 h-8 rounded-xl flex sm:hidden items-center justify-center text-emerald-700">
+          <button onclick="app.openSheetModal()" title="Cài đặt Sheet" class="om-btn-outline w-8 h-8 rounded-xl flex sm:hidden items-center justify-center text-emerald-700">
             <i class="fa-solid fa-table text-xs"></i>
           </button>
 
           <div class="hidden sm:flex items-center gap-1.5">
-            <button onclick="app.openSheetModal()" title="Kết nối Google Sheet" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-table text-sm"></i></button>
+            <button onclick="app.openSheetModal()" title="Cài đặt Sheet" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-table text-sm"></i></button>
             <button onclick="app.exportToExcel()" title="Xuất file Excel" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-file-excel text-sm"></i></button>
             <button onclick="app.openConfigModal()" title="Cài đặt hoa hồng" class="om-btn-outline p-2 rounded-2xl text-amber-600"><i class="fa-solid fa-sliders text-sm"></i></button>
             <button onclick="app.openBackupModal()" title="Sao lưu" class="om-btn-outline p-2 rounded-2xl text-slate-600"><i class="fa-solid fa-database text-sm"></i></button>
@@ -176,19 +169,15 @@
 
     <!-- Main Body Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
-
       <!-- Month Selector Bar -->
       <div class="flex items-center justify-between gap-2 p-2.5 bg-white/90 rounded-2xl border border-stone-200 shadow-2xs">
         <div class="flex items-center gap-2 min-w-0 flex-1">
-          <div class="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 text-xs">
-            <i class="fa-regular fa-calendar"></i>
-          </div>
+          <div class="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 text-xs"><i class="fa-regular fa-calendar"></i></div>
           <span class="text-xs font-bold text-slate-600 shrink-0">Lọc Tháng:</span>
           <select id="filterMonth" onchange="app.filterData()" class="bg-transparent text-xs font-bold text-amber-900 focus:outline-none cursor-pointer truncate flex-1">
             <option value="all">Tất cả các tháng</option>
           </select>
         </div>
-
         <div class="flex items-center gap-1 sm:hidden">
           <button onclick="app.exportToExcel()" title="Xuất Excel" class="w-7 h-7 rounded-lg bg-stone-100 text-emerald-700 flex items-center justify-center text-xs"><i class="fa-solid fa-file-excel"></i></button>
           <button onclick="app.openConfigModal()" title="Cài đặt" class="w-7 h-7 rounded-lg bg-stone-100 text-amber-700 flex items-center justify-center text-xs"><i class="fa-solid fa-sliders"></i></button>
@@ -237,7 +226,7 @@
         </div>
       </div>
 
-      <!-- Categories & Commissions Breakdown (Mobile: Horizontal Swipe) -->
+      <!-- Categories & Commissions Breakdown -->
       <div class="om-card p-3.5 sm:p-5">
         <div class="flex items-center justify-between mb-2.5">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -246,7 +235,6 @@
           </h2>
           <span class="text-[10px] text-slate-500 italic">Nhấp để lọc</span>
         </div>
-
         <div class="flex sm:grid sm:grid-cols-7 overflow-x-auto no-scrollbar gap-2 pb-1">
           <div onclick="app.filterByLicense('A1')" class="min-w-[85px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng A1</div>
@@ -273,7 +261,7 @@
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-C1">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">2.000k</div>
           </div>
-          <div onclick="app.filterByLicense('Bổ túc')" class="min-w-[95px] sm:min-w-0 flex-1 cursor-pointer bg-gradient-to-br from-amber-100 via-amber-50 to-orange-100 hover:border-amber-500 border border-amber-300 rounded-xl p-2 sm:p-3 text-center transition">
+          <div onclick="app.filterByLicense('Bổ túc')" class="min-w-[95px] sm:min-w-0 flex-1 cursor-pointer bg-gradient-to-br from-amber-100 via-amber-50 to-orange-100 hover:border-amber-500 border border-amber-300 rounded-xl p-2 sm:p-3 text-center transition shadow-xs">
             <div class="text-[11px] font-bold text-amber-900 flex items-center justify-center gap-1"><i class="fa-solid fa-steering-wheel text-[9px]"></i><span>Bổ Túc</span></div>
             <div class="text-base sm:text-lg font-extrabold text-amber-950 mt-0.5" id="count-Botuc">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-800 font-bold">Tùy biến</div>
@@ -292,7 +280,6 @@
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
           <input type="text" id="searchInput" oninput="app.filterData()" placeholder="Tìm tên, SĐT, Quận..." class="om-input w-full pl-9 pr-4 py-2 rounded-xl text-xs placeholder:text-slate-400">
         </div>
-
         <div class="grid grid-cols-2 sm:flex sm:items-center gap-2">
           <select id="filterLicense" onchange="app.filterData()" class="om-input px-2.5 py-2 rounded-xl text-xs font-medium cursor-pointer">
             <option value="all">Tất cả Hạng</option>
@@ -304,7 +291,6 @@
             <option value="Bổ túc">Bổ túc lái</option>
             <option value="Khác">Khác</option>
           </select>
-
           <select id="filterPayment" onchange="app.filterData()" class="om-input px-2.5 py-2 rounded-xl text-xs font-medium cursor-pointer">
             <option value="all">Tất cả Đợt 2</option>
             <option value="pending">Cần nhắc Đ2</option>
@@ -327,10 +313,8 @@
           </button>
         </div>
 
-        <!-- Mobile Card View -->
         <div id="studentMobileCards" class="block md:hidden p-3 space-y-3"></div>
 
-        <!-- Desktop Table View -->
         <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
@@ -350,14 +334,12 @@
           </table>
         </div>
 
-        <!-- Empty State -->
         <div id="emptyState" class="hidden py-12 px-4 text-center">
           <div class="w-12 h-12 rounded-2xl bg-amber-100/70 border border-amber-300 flex items-center justify-center mx-auto mb-2.5 text-amber-700"><i class="fa-solid fa-scroll text-lg"></i></div>
           <h4 class="text-slate-900 font-bold text-sm">Chưa có hồ sơ học viên nào</h4>
-          <p class="text-xs text-slate-500 max-w-xs mx-auto mt-0.5">Bấm nút "Thêm Mới" ở phía trên để bắt đầu lưu hồ sơ.</p>
+          <p class="text-xs text-slate-500 max-w-xs mx-auto mt-0.5">Bấm nút "Thêm Học Viên" để bắt đầu lưu hồ sơ.</p>
         </div>
       </div>
-
     </main>
 
     <!-- Modal Form -->
@@ -530,6 +512,45 @@
       </div>
     </div>
 
+    <!-- Modal 2-Way Sync Options -->
+    <div id="syncMenuModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto">
+      <div class="om-card w-full max-w-md p-5 relative border border-white bg-white shadow-2xl space-y-4">
+        <button onclick="app.closeSyncMenuModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+        
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up text-amber-600"></i>
+          <span>Tùy Chọn Đồng Bộ Google Sheet</span>
+        </h3>
+        <p class="text-xs text-slate-600">Chọn hành động đồng bộ phù hợp:</p>
+
+        <div class="space-y-2.5">
+          <button onclick="app.pushLocalToSheet()" class="w-full p-3 rounded-2xl bg-amber-50 hover:bg-amber-100/80 border border-amber-300 text-left transition flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-arrow-up-from-bracket text-base"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-amber-950">1. ĐẨY DỮ LIỆU LÊN SHEET (Khi vừa sửa xong)</div>
+              <div class="text-[11px] text-amber-800">Lấy dữ liệu trên màn hình này ghi đè lên Google Sheet.</div>
+            </div>
+          </button>
+
+          <button onclick="app.pullSheetToLocal()" class="w-full p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-300 text-left transition flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-arrow-down-to-bracket text-base"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-emerald-950">2. TẢI DỮ LIỆU TỪ SHEET VỀ MÁY</div>
+              <div class="text-[11px] text-emerald-800">Lấy dữ liệu trên Google Sheet cập nhật vào máy này.</div>
+            </div>
+          </button>
+        </div>
+
+        <div class="pt-2 border-t border-stone-200 flex justify-end">
+          <button onclick="app.closeSyncMenuModal()" class="om-btn-outline px-4 py-1.5 rounded-xl text-xs font-bold">Đóng</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal View -->
     <div id="viewModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
       <div class="om-card w-full max-w-lg p-4 sm:p-6 relative border border-white bg-white shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -603,9 +624,23 @@
         this.updateStats();
         this.initDefaultDate();
 
-        if (this.sheetScriptUrl) {
-          this.syncFromSheet(false);
+        if (this.sheetScriptUrl && this.students.length === 0) {
+          this.pullSheetToLocal(false);
         }
+      },
+
+      showToast(msg, isSuccess = true) {
+        const toast = document.getElementById('toastNotification');
+        const icon = document.getElementById('toastIcon');
+        const message = document.getElementById('toastMessage');
+        icon.textContent = isSuccess ? '✅' : '⚠️';
+        message.textContent = msg;
+        toast.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+        toast.classList.add('translate-y-0', 'opacity-100');
+        setTimeout(() => {
+          toast.classList.add('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
+          toast.classList.remove('translate-y-0', 'opacity-100');
+        }, 3000);
       },
 
       initDefaultDate() {
@@ -632,7 +667,7 @@
         this.updateStats();
 
         if (this.sheetScriptUrl) {
-          this.saveToGoogleSheet();
+          this.pushLocalToSheet(false);
         }
       },
 
@@ -652,11 +687,19 @@
         }
       },
 
+      openSyncMenuModal() {
+        if (!this.sheetScriptUrl) {
+          this.openSheetModal();
+          return;
+        }
+        document.getElementById('syncMenuModal').classList.remove('hidden');
+      },
+      closeSyncMenuModal() { document.getElementById('syncMenuModal').classList.add('hidden'); },
+
       openSheetModal() {
         document.getElementById('sheetApiUrl').value = this.sheetScriptUrl || '';
         document.getElementById('sheetModal').classList.remove('hidden');
       },
-
       closeSheetModal() { document.getElementById('sheetModal').classList.add('hidden'); },
 
       saveSheetUrl() {
@@ -665,7 +708,7 @@
         localStorage.setItem('thanhcong_sheet_api_url', url);
         this.updateSyncBadge();
         this.closeSheetModal();
-        if (url) { this.syncFromSheet(true); }
+        this.showToast('Đã lưu link kết nối Google Sheet!');
       },
 
       disconnectSheet() {
@@ -673,21 +716,58 @@
         localStorage.removeItem('thanhcong_sheet_api_url');
         this.updateSyncBadge();
         this.closeSheetModal();
-        alert('Đã ngắt kết nối với Google Sheet.');
+        this.showToast('Đã ngắt kết nối với Google Sheet.');
       },
 
-      async syncFromSheet(showNotify = false) {
+      // ACTION 1: PUSH LOCAL TO SHEET
+      async pushLocalToSheet(showNotice = true) {
         if (!this.sheetScriptUrl) {
-          if (showNotify) this.openSheetModal();
+          this.openSheetModal();
           return;
         }
 
         const icon = document.getElementById('syncSpinIcon');
-        if (icon) icon.classList.add('fa-spin');
+        if (icon) icon.className = 'fa-solid fa-spinner fa-spin text-amber-600';
 
         try {
-          const response = await fetch(this.sheetScriptUrl);
+          await fetch(this.sheetScriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'saveAll', data: this.students })
+          });
+
+          this.closeSyncMenuModal();
+          if (showNotice) this.showToast(`Đã đẩy ${this.students.length} hồ sơ lên Google Sheet!`);
+        } catch(err) {
+          console.error(err);
+          if (showNotice) this.showToast('Lỗi đẩy dữ liệu lên Sheet: ' + err.message, false);
+        } finally {
+          if (icon) icon.className = 'fa-solid fa-cloud-arrow-up text-amber-600';
+        }
+      },
+
+      // ACTION 2: PULL FROM SHEET
+      async pullSheetToLocal(showNotice = true) {
+        if (!this.sheetScriptUrl) {
+          this.openSheetModal();
+          return;
+        }
+
+        const icon = document.getElementById('syncSpinIcon');
+        if (icon) icon.className = 'fa-solid fa-spinner fa-spin text-amber-600';
+
+        try {
+          const timestamp = new Date().getTime();
+          const cleanUrl = this.sheetScriptUrl.split('?')[0];
+          const fetchUrl = `${cleanUrl}?t=${timestamp}`;
+
+          const response = await fetch(fetchUrl, {
+            cache: 'no-store',
+            headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
+          });
           const result = await response.json();
+          
           if (result.status === 'success' && Array.isArray(result.data)) {
             const cleanData = result.data.map(item => ({
               ...item,
@@ -706,32 +786,16 @@
             this.renderAllViews();
             this.updateStats();
 
-            if (showNotify) alert(`Đã đồng bộ ${this.students.length} hồ sơ từ Google Sheet!`);
+            this.closeSyncMenuModal();
+            if (showNotice) this.showToast(`Đã tải về ${this.students.length} hồ sơ từ Google Sheet!`);
+          } else {
+            if (showNotice) this.showToast('Không có dữ liệu mới trên Google Sheet.', false);
           }
         } catch(err) {
           console.error(err);
-          if (showNotify) alert('Lỗi kết nối Sheet: ' + err.message);
+          if (showNotice) this.showToast('Lỗi tải từ Google Sheet: ' + err.message, false);
         } finally {
-          if (icon) icon.classList.remove('fa-spin');
-        }
-      },
-
-      async saveToGoogleSheet() {
-        if (!this.sheetScriptUrl) return;
-        const icon = document.getElementById('syncSpinIcon');
-        if (icon) icon.classList.add('fa-spin');
-
-        try {
-          await fetch(this.sheetScriptUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'saveAll', data: this.students })
-          });
-        } catch(err) {
-          console.error('Save to sheet error:', err);
-        } finally {
-          if (icon) icon.classList.remove('fa-spin');
+          if (icon) icon.className = 'fa-solid fa-cloud-arrow-up text-amber-600';
         }
       },
 
@@ -811,7 +875,7 @@
         }
         emptyState.classList.add('hidden');
 
-        // 1. RENDER DESKTOP TABLE VIEW
+        // Desktop Table
         tbody.innerHTML = filtered.map(s => {
           const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
           const inst2Alert = this.getInstallment2Alert(s);
@@ -849,14 +913,13 @@
           `;
         }).join('');
 
-        // 2. RENDER MOBILE CARD VIEW
+        // Mobile Cards
         mobileContainer.innerHTML = filtered.map(s => {
           const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
           const inst2Alert = this.getInstallment2Alert(s);
 
           return `
             <div class="p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-2xs space-y-2.5 active:bg-amber-50/40 transition cursor-pointer" onclick="app.viewStudent('${s.id}')">
-              
               <div class="flex items-start justify-between gap-2 border-b border-stone-100 pb-2">
                 <div class="min-w-0 flex-1">
                   <h4 class="font-bold text-slate-900 text-sm truncate uppercase tracking-tight">${s.fullName}</h4>
@@ -903,7 +966,6 @@
                   <i class="fa-solid fa-trash text-[10px]"></i> Xóa
                 </button>
               </div>
-
             </div>
           `;
         }).join('');
@@ -1027,6 +1089,7 @@
         if (idx >= 0) this.students[idx] = student; else this.students.unshift(student);
         this.saveToStorage();
         this.closeModal();
+        this.showToast(`Đã lưu hồ sơ: ${student.fullName}`);
       },
 
       editStudent(id) {
@@ -1061,6 +1124,7 @@
         if (confirm('Bạn có chắc chắn muốn xóa hồ sơ học viên này?')) {
           this.students = this.students.filter(s => s.id !== id);
           this.saveToStorage();
+          this.showToast('Đã xóa hồ sơ thành công.');
         }
       },
 
@@ -1114,7 +1178,7 @@
         });
         localStorage.setItem('thanhcong_commissions_cfg', JSON.stringify(this.defaultCommissions));
         this.closeConfigModal();
-        alert('Đã lưu mức hoa hồng mặc định!');
+        this.showToast('Đã lưu mức hoa hồng mặc định!');
       },
 
       openBackupModal() { document.getElementById('backupModal').classList.remove('hidden'); },
@@ -1137,7 +1201,7 @@
               this.students = imported;
               this.saveToStorage();
               this.closeBackupModal();
-              alert(`Khôi phục thành công ${imported.length} hồ sơ!`);
+              this.showToast(`Khôi phục thành công ${imported.length} hồ sơ!`);
             }
           } catch(err) { alert('Lỗi đọc file: ' + err.message); }
         };
