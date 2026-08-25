@@ -146,7 +146,7 @@
             <span>Đồng bộ Sheet</span>
           </button>
 
-          <!-- Add Student -->
+          <!-- Add Student Button -->
           <button onclick="app.openModal()" class="om-btn-gold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5">
             <i class="fa-solid fa-plus text-[10px]"></i>
             <span class="hidden sm:inline">Thêm Học Viên</span>
@@ -719,7 +719,6 @@
         this.showToast('Đã ngắt kết nối với Google Sheet.');
       },
 
-      // ACTION 1: PUSH LOCAL TO SHEET
       async pushLocalToSheet(showNotice = true) {
         if (!this.sheetScriptUrl) {
           this.openSheetModal();
@@ -741,13 +740,12 @@
           if (showNotice) this.showToast(`Đã đẩy ${this.students.length} hồ sơ lên Google Sheet!`);
         } catch(err) {
           console.error(err);
-          if (showNotice) this.showToast('Lỗi đẩy dữ liệu lên Sheet: ' + err.message, false);
+          if (showNotice) this.showToast('Lỗi đẩy dữ liệu: ' + err.message, false);
         } finally {
           if (icon) icon.className = 'fa-solid fa-cloud-arrow-up text-amber-600';
         }
       },
 
-      // ACTION 2: PULL FROM SHEET
       async pullSheetToLocal(showNotice = true) {
         if (!this.sheetScriptUrl) {
           this.openSheetModal();
@@ -763,8 +761,8 @@
           const fetchUrl = `${cleanUrl}?t=${timestamp}`;
 
           const response = await fetch(fetchUrl, {
-            cache: 'no-store',
-            headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
+            method: 'GET',
+            redirect: 'follow'
           });
           const result = await response.json();
           
@@ -789,11 +787,13 @@
             this.closeSyncMenuModal();
             if (showNotice) this.showToast(`Đã tải về ${this.students.length} hồ sơ từ Google Sheet!`);
           } else {
-            if (showNotice) this.showToast('Không có dữ liệu mới trên Google Sheet.', false);
+            if (showNotice) this.showToast('Không có dữ liệu trên Google Sheet.', false);
           }
         } catch(err) {
           console.error(err);
-          if (showNotice) this.showToast('Lỗi tải từ Google Sheet: ' + err.message, false);
+          if (showNotice) {
+            alert('Lỗi tải dữ liệu (Load failed): Hãy đảm bảo khi Deploy Google Apps Script bạn đã chọn "Ai có quyền truy cập: Bất kỳ ai (Anyone)". Chi tiết: ' + err.message);
+          }
         } finally {
           if (icon) icon.className = 'fa-solid fa-cloud-arrow-up text-amber-600';
         }
@@ -875,7 +875,6 @@
         }
         emptyState.classList.add('hidden');
 
-        // Desktop Table
         tbody.innerHTML = filtered.map(s => {
           const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
           const inst2Alert = this.getInstallment2Alert(s);
@@ -913,7 +912,6 @@
           `;
         }).join('');
 
-        // Mobile Cards
         mobileContainer.innerHTML = filtered.map(s => {
           const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
           const inst2Alert = this.getInstallment2Alert(s);
