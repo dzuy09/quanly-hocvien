@@ -68,7 +68,7 @@
       border: 1px solid rgba(235, 224, 209, 0.85);
       box-shadow: 0 10px 30px -5px rgba(210, 185, 150, 0.15), 0 2px 6px rgba(210, 185, 150, 0.08);
       border-radius: 1.25rem;
-      transition: all 0.25s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .om-light-card:hover {
       border-color: rgba(217, 119, 6, 0.45);
@@ -126,6 +126,7 @@
   <div class="om-orb-lotus"></div>
 
   <div class="relative z-10 min-h-screen flex flex-col pb-16">
+    <!-- Header -->
     <header class="om-light-header sticky top-0 z-30 px-4 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center space-x-3.5">
         <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/20 text-white">
@@ -136,14 +137,19 @@
             <h1 class="text-lg md:text-xl font-bold text-slate-900 tracking-tight">
               Quản Lý Hồ Sơ & Hoa Hồng
             </h1>
-            <span class="badge-amber text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Om Mani</span>
+            <span id="syncStatusBadge" onclick="app.openSheetModal()" class="cursor-pointer text-[10px] font-bold px-2 py-0.5 rounded-full border transition flex items-center gap-1 bg-stone-100 text-stone-600 border-stone-300 hover:border-amber-500">
+              <span class="w-1.5 h-1.5 rounded-full bg-stone-400" id="syncStatusDot"></span>
+              <span id="syncStatusText">Chưa kết nối Sheet</span>
+            </span>
           </div>
           <p class="text-xs text-slate-500 font-medium">Trung Tâm Đào Tạo & Sát Hạch Lái Xe</p>
         </div>
       </div>
 
-      <div class="flex items-center flex-wrap gap-2.5">
-        <div class="flex items-center bg-white rounded-2xl px-3.5 py-1.5 border border-stone-300 shadow-xs">
+      <!-- Action Toolbar -->
+      <div class="flex items-center flex-wrap gap-2">
+        <!-- Month Filter -->
+        <div class="flex items-center bg-white rounded-2xl px-3 py-1.5 border border-stone-300 shadow-xs">
           <i class="fa-regular fa-calendar text-amber-600 text-xs mr-2"></i>
           <span class="text-xs text-slate-500 mr-2 font-medium">Tháng:</span>
           <select id="filterMonth" onchange="app.filterData()" class="bg-transparent text-xs font-bold text-slate-900 focus:outline-none cursor-pointer">
@@ -151,25 +157,41 @@
           </select>
         </div>
 
-        <button onclick="app.openModal()" class="om-btn-gold px-4 py-2 rounded-2xl text-xs font-bold flex items-center gap-2">
+        <!-- Sync Now Button -->
+        <button onclick="app.syncFromSheet(true)" title="Đồng bộ lại từ Google Sheet" class="om-btn-outline p-2.5 rounded-2xl flex items-center gap-1.5 text-xs font-bold">
+          <i class="fa-solid fa-rotate text-amber-600" id="syncSpinIcon"></i>
+          <span class="hidden sm:inline">Đồng bộ</span>
+        </button>
+
+        <!-- Add Student Button -->
+        <button onclick="app.openModal()" class="om-btn-gold px-4 py-2 rounded-2xl text-xs font-bold flex items-center gap-1.5">
           <i class="fa-solid fa-plus text-[10px]"></i>
           <span>Thêm Học Viên</span>
         </button>
 
+        <!-- Google Sheet Connect Button -->
+        <button onclick="app.openSheetModal()" title="Kết nối Google Sheets" class="om-btn-outline p-2.5 rounded-2xl text-emerald-700 hover:text-emerald-800">
+          <i class="fa-solid fa-table text-emerald-600 text-sm"></i>
+        </button>
+
+        <!-- Export Excel -->
         <button onclick="app.exportToExcel()" title="Xuất file Excel" class="om-btn-outline p-2.5 rounded-2xl">
           <i class="fa-solid fa-file-excel text-emerald-600 text-sm"></i>
         </button>
 
+        <!-- Settings -->
         <button onclick="app.openConfigModal()" title="Cài đặt mức hoa hồng" class="om-btn-outline p-2.5 rounded-2xl">
           <i class="fa-solid fa-sliders text-amber-600 text-sm"></i>
         </button>
 
+        <!-- Backup -->
         <button onclick="app.openBackupModal()" title="Sao lưu / Khôi phục" class="om-btn-outline p-2.5 rounded-2xl">
           <i class="fa-solid fa-database text-slate-600 text-sm"></i>
         </button>
       </div>
     </header>
 
+    <!-- Main Content -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
       
       <!-- 4 Stats Cards -->
@@ -490,6 +512,37 @@
       <div class="om-light-card w-full max-w-2xl p-6 md:p-8 relative border border-white bg-white/95 shadow-2xl max-h-[90vh] overflow-y-auto">
         <button onclick="app.closeViewModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-sm"></i></button>
         <div id="studentDetailContent"></div>
+        <div class="mt-6 pt-4 border-t border-stone-200 flex items-center justify-end gap-3 print:hidden">
+          <button onclick="window.print()" class="om-btn-outline px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-print"></i> In Phiếu</button>
+          <button onclick="app.closeViewModal()" class="om-btn-gold px-5 py-2 rounded-xl text-xs font-bold">Đóng</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Google Sheet Connect -->
+    <div id="sheetModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
+      <div class="om-light-card w-full max-w-lg p-6 relative border border-white bg-white/95 shadow-2xl space-y-4">
+        <button onclick="app.closeSheetModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-table text-emerald-600"></i>
+          <span>Kết Nối Google Sheets Tự Động</span>
+        </h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Dán URL Web App từ Google Apps Script của bạn vào đây để dữ liệu tự động đồng bộ giữa Điện thoại và Máy tính qua Google Sheets.
+        </p>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">URL Google Apps Script (Web App URL)</label>
+          <input type="url" id="sheetApiUrl" placeholder="https://script.google.com/macros/s/.../exec" class="om-light-input w-full px-3.5 py-2.5 rounded-xl text-xs font-mono">
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <button onclick="app.disconnectSheet()" class="text-xs text-rose-600 hover:underline font-bold">Ngắt kết nối</button>
+          <div class="flex gap-2">
+            <button onclick="app.closeSheetModal()" class="om-btn-outline px-4 py-2 rounded-xl text-xs font-bold">Đóng</button>
+            <button onclick="app.saveSheetUrl()" class="om-btn-gold px-5 py-2 rounded-xl text-xs font-bold">Lưu & Kết Nối</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -498,6 +551,7 @@
       <div class="om-light-card w-full max-w-lg p-6 relative border border-white bg-white/95 shadow-2xl">
         <button onclick="app.closeConfigModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
         <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-sliders text-amber-600"></i><span>Cài Đặt Mức Hoa Hồng Mặc Định</span></h3>
+        <p class="text-xs text-slate-500 mb-4">Các mức gợi ý tự động khi bạn chọn từng hạng bằng.</p>
         <div class="space-y-3" id="configList"></div>
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-stone-200">
           <button onclick="app.closeConfigModal()" class="om-btn-outline px-4 py-2 rounded-xl text-xs font-bold">Đóng</button>
@@ -511,6 +565,7 @@
       <div class="om-light-card w-full max-w-md p-6 relative border border-white bg-white/95 shadow-2xl space-y-4">
         <button onclick="app.closeBackupModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-database text-amber-600"></i><span>Sao Lưu & Khôi Phục Dữ Liệu</span></h3>
+        <p class="text-xs text-slate-500">Dữ liệu được lưu trữ an toàn trong trình duyệt của bạn.</p>
         <button onclick="app.exportBackupJSON()" class="w-full py-2.5 rounded-2xl om-btn-gold text-xs font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i><span>Tải File Sao Lưu (.JSON)</span></button>
         <input type="file" id="backupFileInput" accept=".json" class="hidden" onchange="app.importBackupJSON(event)">
         <button onclick="document.getElementById('backupFileInput').click()" class="w-full py-2.5 rounded-2xl om-btn-outline text-xs font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-upload"></i><span>Chọn File Khôi Phục</span></button>
@@ -519,18 +574,41 @@
 
   </div>
 
+  <!-- JavaScript Logic with Google Sheets Cloud Sync -->
   <script>
     const app = {
       students: [],
-      defaultCommissions: { 'A1': 200000, 'A': 700000, 'B01': 2000000, 'B2': 2000000, 'C1': 2000000, 'Bổ túc': 500000, 'Khác': 1000000 },
-      defaultTuitions: { 'A1': 1500000, 'A': 2500000, 'B01': 18000000, 'B2': 18000000, 'C1': 20000000, 'Bổ túc': 3500000, 'Khác': 10000000 },
+      sheetScriptUrl: '',
+      defaultCommissions: {
+        'A1': 200000,
+        'A': 700000,
+        'B01': 2000000,
+        'B2': 2000000,
+        'C1': 2000000,
+        'Bổ túc': 500000,
+        'Khác': 1000000
+      },
+      defaultTuitions: {
+        'A1': 1500000,
+        'A': 2500000,
+        'B01': 18000000,
+        'B2': 18000000,
+        'C1': 20000000,
+        'Bổ túc': 3500000,
+        'Khác': 10000000
+      },
 
       init() {
         this.loadFromStorage();
+        this.updateSyncBadge();
         this.populateMonthFilter();
         this.renderTable();
         this.updateStats();
         this.initDefaultDate();
+
+        if (this.sheetScriptUrl) {
+          this.syncFromSheet(false);
+        }
       },
 
       initDefaultDate() {
@@ -546,6 +624,8 @@
         if (stored) { try { this.students = JSON.parse(stored); } catch(e) { this.students = []; } }
         const storedCommissions = localStorage.getItem('thanhcong_commissions_cfg');
         if (storedCommissions) { try { this.defaultCommissions = { ...this.defaultCommissions, ...JSON.parse(storedCommissions) }; } catch(e) {} }
+        const storedUrl = localStorage.getItem('thanhcong_sheet_api_url');
+        if (storedUrl) { this.sheetScriptUrl = storedUrl; }
       },
 
       saveToStorage() {
@@ -553,6 +633,117 @@
         this.populateMonthFilter();
         this.renderTable();
         this.updateStats();
+
+        if (this.sheetScriptUrl) {
+          this.saveToGoogleSheet();
+        }
+      },
+
+      updateSyncBadge() {
+        const dot = document.getElementById('syncStatusDot');
+        const text = document.getElementById('syncStatusText');
+        const badge = document.getElementById('syncStatusBadge');
+
+        if (this.sheetScriptUrl) {
+          dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
+          text.textContent = 'Đã kết nối Sheet';
+          badge.className = 'cursor-pointer text-[10px] font-bold px-2 py-0.5 rounded-full border transition flex items-center gap-1 bg-emerald-50 text-emerald-800 border-emerald-300';
+        } else {
+          dot.className = 'w-1.5 h-1.5 rounded-full bg-stone-400';
+          text.textContent = 'Chưa kết nối Sheet';
+          badge.className = 'cursor-pointer text-[10px] font-bold px-2 py-0.5 rounded-full border transition flex items-center gap-1 bg-stone-100 text-stone-600 border-stone-300 hover:border-amber-500';
+        }
+      },
+
+      openSheetModal() {
+        document.getElementById('sheetApiUrl').value = this.sheetScriptUrl || '';
+        document.getElementById('sheetModal').classList.remove('hidden');
+      },
+
+      closeSheetModal() {
+        document.getElementById('sheetModal').classList.add('hidden');
+      },
+
+      saveSheetUrl() {
+        const url = document.getElementById('sheetApiUrl').value.trim();
+        this.sheetScriptUrl = url;
+        localStorage.setItem('thanhcong_sheet_api_url', url);
+        this.updateSyncBadge();
+        this.closeSheetModal();
+        if (url) {
+          this.syncFromSheet(true);
+        }
+      },
+
+      disconnectSheet() {
+        this.sheetScriptUrl = '';
+        localStorage.removeItem('thanhcong_sheet_api_url');
+        this.updateSyncBadge();
+        this.closeSheetModal();
+        alert('Đã ngắt kết nối với Google Sheet.');
+      },
+
+      async syncFromSheet(showNotify = false) {
+        if (!this.sheetScriptUrl) {
+          if (showNotify) this.openSheetModal();
+          return;
+        }
+
+        const icon = document.getElementById('syncSpinIcon');
+        if (icon) icon.classList.add('fa-spin');
+
+        try {
+          const response = await fetch(this.sheetScriptUrl);
+          const result = await response.json();
+          if (result.status === 'success' && Array.isArray(result.data)) {
+            const cleanData = result.data.map(item => ({
+              ...item,
+              tuitionFee: Number(item.tuitionFee) || 0,
+              discountAmount: Number(item.discountAmount) || 0,
+              commission: Number(item.commission) || 0,
+              inst1Amount: Number(item.inst1Amount) || 0,
+              inst2Amount: Number(item.inst2Amount) || 0,
+              payFullOnce: item.payFullOnce === true || item.payFullOnce === 'true',
+              inst2Paid: item.inst2Paid === true || item.inst2Paid === 'true',
+            }));
+
+            this.students = cleanData;
+            localStorage.setItem('thanhcong_students_db', JSON.stringify(this.students));
+            this.populateMonthFilter();
+            this.renderTable();
+            this.updateStats();
+
+            if (showNotify) alert(`Đồng bộ thành công ${this.students.length} hồ sơ từ Google Sheet!`);
+          }
+        } catch(err) {
+          console.error(err);
+          if (showNotify) alert('Lỗi kết nối Google Sheet: ' + err.message);
+        } finally {
+          if (icon) icon.classList.remove('fa-spin');
+        }
+      },
+
+      async saveToGoogleSheet() {
+        if (!this.sheetScriptUrl) return;
+
+        const icon = document.getElementById('syncSpinIcon');
+        if (icon) icon.classList.add('fa-spin');
+
+        try {
+          await fetch(this.sheetScriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'saveAll',
+              data: this.students
+            })
+          });
+        } catch(err) {
+          console.error('Save to sheet error:', err);
+        } finally {
+          if (icon) icon.classList.remove('fa-spin');
+        }
       },
 
       formatVND(amount) {
