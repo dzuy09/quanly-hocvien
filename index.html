@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Quản Lý Hồ Sơ Học Viên & Tính Hoa Hồng</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,9 +43,15 @@
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
   <style>
-    @media screen and (max-width: 768px) {
-      input, select, textarea { font-size: 14px !important; }
+    /* Chống tràn ngang và cố định khung nhìn trên Mobile */
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      width: 100% !important;
+      touch-action: pan-y;
+      -webkit-text-size-adjust: 100%;
     }
+
     body {
       background-color: #faf7f2;
       background-image: 
@@ -57,6 +63,36 @@
       color: #1e293b;
       font-family: "Plus Jakarta Sans", sans-serif;
     }
+
+    /* Tối ưu hóa ô nhập liệu & chống tràn ô ngày tháng */
+    input, select, textarea {
+      font-size: 14px !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    input[type="date"], input[type="month"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      display: block !important;
+      box-sizing: border-box !important;
+      height: 38px !important;
+      line-height: 1.25 !important;
+      padding: 6px 10px !important;
+    }
+
+    input[type="date"]::-webkit-date-and-time-value,
+    input[type="month"]::-webkit-date-and-time-value {
+      text-align: left !important;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+    }
+
     .om-orb-gold {
       position: fixed; width: 350px; height: 350px; border-radius: 50%;
       background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0) 70%);
@@ -106,6 +142,11 @@
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .modal-backdrop {
+      touch-action: pan-y !important;
+      overscroll-behavior: contain !important;
+    }
   </style>
 </head>
 <body class="antialiased">
@@ -119,7 +160,7 @@
     <span id="toastMessage">Thông báo</span>
   </div>
 
-  <div class="relative z-10 min-h-screen flex flex-col pb-24 md:pb-12">
+  <div class="relative z-10 min-h-screen flex flex-col pb-24 md:pb-12 max-w-full overflow-x-hidden">
     <!-- Header -->
     <header class="om-header sticky top-0 z-30 px-3.5 sm:px-6 lg:px-8 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
@@ -340,26 +381,30 @@
       </div>
     </main>
 
-    <!-- Modal Form (Add / Edit) -->
-    <div id="studentModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto">
-      <div class="om-card w-full max-w-2xl p-4 sm:p-6 my-auto relative border border-white bg-white/98 shadow-2xl max-h-[92vh] overflow-y-auto">
+    <!-- Modal Form (Add / Edit Student) - FULLY OPTIMIZED FOR MOBILE NO-WOBBLE -->
+    <div id="studentModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
+      <div class="om-card w-full max-w-2xl p-4 sm:p-6 my-auto relative border border-white bg-white/98 shadow-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <button onclick="app.closeModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+        
         <div class="flex items-center gap-2.5 mb-4">
           <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-300 text-sm shrink-0"><i class="fa-solid fa-user-pen" id="modalIcon"></i></div>
           <div><h3 class="text-base sm:text-lg font-bold text-slate-900" id="modalTitle">Thêm Hồ Sơ Học Viên</h3><p class="text-[11px] text-slate-500">Nhập dữ liệu & tính hoa hồng nhận được</p></div>
         </div>
-        <form id="studentForm" onsubmit="app.saveStudent(event)" class="space-y-3.5">
+
+        <form id="studentForm" onsubmit="app.saveStudent(event)" class="space-y-3.5 max-w-full">
           <input type="hidden" id="studentId">
+          
+          <!-- Basic Info Group -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
+            <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Họ Tên Học Viên <span class="text-rose-600">*</span></label>
               <input type="text" id="fullName" required placeholder="NGUYỄN VĂN A" oninput="this.value = this.value.toUpperCase()" class="om-input w-full px-3 py-2 rounded-xl text-xs font-bold uppercase">
             </div>
-            <div>
+            <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Ngày Sinh</label>
-              <input type="date" id="dob" class="om-input w-full px-3 py-2 rounded-xl text-xs">
+              <input type="date" id="dob" class="om-input w-full rounded-xl text-xs">
             </div>
-            <div>
+            <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Học Ở Quận Mấy?</label>
               <select id="district" class="om-input w-full px-3 py-2 rounded-xl text-xs font-medium">
                 <option value="Tân Bình">Quận Tân Bình</option>
@@ -388,8 +433,9 @@
             </div>
           </div>
 
+          <!-- License & Schedule Group -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
+            <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Hạng Bằng <span class="text-rose-600">*</span></label>
               <select id="licenseType" onchange="app.onLicenseChange()" class="om-input w-full px-3 py-2 rounded-xl text-xs font-bold text-amber-900 bg-amber-50/50">
                 <option value="A1">Hạng A1 (Mô tô - Hoa hồng 200k)</option>
@@ -401,7 +447,7 @@
                 <option value="Khác">Khác / Nâng dấu</option>
               </select>
             </div>
-            <div>
+            <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Lịch Học</label>
               <select id="studySchedule" class="om-input w-full px-3 py-2 rounded-xl text-xs">
                 <option value="Trong tuần (T2 - T6)">Trong tuần (Thứ 2 - Thứ 6)</option>
@@ -409,7 +455,7 @@
                 <option value="Linh hoạt">Linh hoạt theo học viên</option>
               </select>
             </div>
-            <div>
+            <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">GPLX Đang Có Khác?</label>
               <select id="existingLicense" class="om-input w-full px-3 py-2 rounded-xl text-xs">
                 <option value="Chưa có">Chưa có bằng nào</option>
@@ -420,14 +466,15 @@
             </div>
           </div>
 
+          <!-- Tuition & Commission Group -->
           <div class="p-3 sm:p-4 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-2.5">
             <h4 class="text-[11px] font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5"><i class="fa-solid fa-coins text-amber-600"></i><span>Học Phí, Giảm Giá & Hoa Hồng</span></h4>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <div>
+              <div class="min-w-0">
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Học Phí Sau Giảm <span class="text-rose-600">*</span></label>
                 <input type="text" id="tuitionFee" required placeholder="18,000,000" oninput="app.formatCurrencyInput(this)" class="om-input w-full px-3 py-2 rounded-xl text-xs font-bold text-emerald-700">
               </div>
-              <div>
+              <div class="min-w-0">
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Mức Giảm & Lý Do</label>
                 <div class="space-y-1.5">
                   <input type="text" id="discountAmount" placeholder="Số tiền giảm (vd: 500,000)" oninput="app.formatCurrencyInput(this)" class="om-input w-full px-3 py-1.5 rounded-xl text-xs">
@@ -442,13 +489,14 @@
                   </select>
                 </div>
               </div>
-              <div>
+              <div class="min-w-0">
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Hoa Hồng Nhận <span class="text-rose-600">*</span></label>
                 <input type="text" id="commission" required placeholder="2,000,000" oninput="app.formatCurrencyInput(this)" class="om-input w-full px-3 py-2 rounded-xl text-xs font-bold text-pink-600 bg-pink-50/50 border-pink-200">
               </div>
             </div>
           </div>
 
+          <!-- Installment Schedule Group -->
           <div class="p-3 sm:p-4 rounded-xl bg-white border border-stone-200 space-y-2.5">
             <div class="flex items-center justify-between">
               <h4 class="text-[11px] font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5"><i class="fa-solid fa-calendar-check text-amber-600"></i><span>Các Đợt Đóng Phí & Hạn Đợt 2</span></h4>
@@ -458,21 +506,21 @@
               </label>
             </div>
             <div id="installmentContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1.5">
+              <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1.5 min-w-0">
                 <span class="text-[11px] font-bold text-slate-800 block">Đợt 1 (Khi Đăng Ký)</span>
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <input type="text" id="inst1Amount" placeholder="5,000,000" oninput="app.formatCurrencyInput(this)" class="om-input w-full px-2.5 py-1.5 rounded-lg text-xs font-bold">
-                  <input type="date" id="inst1Date" class="om-input w-full px-2 py-1.5 rounded-lg text-xs">
+                  <input type="date" id="inst1Date" class="om-input w-full rounded-lg text-xs">
                 </div>
               </div>
-              <div class="p-2.5 rounded-xl bg-amber-50/60 border border-amber-200 space-y-1.5">
+              <div class="p-2.5 rounded-xl bg-amber-50/60 border border-amber-200 space-y-1.5 min-w-0">
                 <div class="flex items-center justify-between">
                   <span class="text-[11px] font-bold text-amber-900">Đợt 2 (Cần nhắc hẹn)</span>
                   <span id="inst2StatusBadge" class="text-[9px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 font-bold border border-amber-300">Chờ nhắc</span>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <input type="text" id="inst2Amount" placeholder="13,000,000" oninput="app.formatCurrencyInput(this)" class="om-input w-full px-2.5 py-1.5 rounded-lg text-xs font-bold">
-                  <input type="date" id="inst2DueDate" class="om-input w-full px-2 py-1.5 rounded-lg text-xs border-amber-300">
+                  <input type="date" id="inst2DueDate" class="om-input w-full rounded-lg text-xs border-amber-300">
                 </div>
                 <label class="flex items-center gap-1.5 text-xs text-emerald-800 pt-0.5 cursor-pointer font-bold">
                   <input type="checkbox" id="inst2Paid" class="rounded border-stone-300 text-emerald-600 focus:ring-0">
@@ -482,26 +530,29 @@
             </div>
           </div>
 
+          <!-- Exam & Study Dates Group -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <div>
+            <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Ngày Đăng Ký</label>
-              <input type="date" id="registerDate" class="om-input w-full px-3 py-2 rounded-xl text-xs">
+              <input type="date" id="registerDate" class="om-input w-full rounded-xl text-xs">
             </div>
-            <div>
+            <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Khóa Thi <span class="text-rose-600">*</span></label>
-              <input type="month" id="examMonth" onchange="app.autoCalculateStudyDate()" required class="om-input w-full px-3 py-2 rounded-xl text-xs font-bold text-amber-900">
+              <input type="month" id="examMonth" onchange="app.autoCalculateStudyDate()" required class="om-input w-full rounded-xl text-xs font-bold text-amber-900">
             </div>
-            <div>
+            <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Ngày Dự Kiến Học</label>
-              <input type="date" id="studyDate" class="om-input w-full px-3 py-2 rounded-xl text-xs">
+              <input type="date" id="studyDate" class="om-input w-full rounded-xl text-xs">
             </div>
           </div>
 
-          <div>
+          <!-- Note -->
+          <div class="min-w-0">
             <label class="block text-xs font-bold text-slate-700 mb-1">Ghi Chú Thêm</label>
             <input type="text" id="note" placeholder="SĐT học viên, ghi chú giáo viên..." class="om-input w-full px-3 py-2 rounded-xl text-xs">
           </div>
 
+          <!-- Action Buttons -->
           <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-stone-200">
             <button type="button" onclick="app.closeModal()" class="om-btn-outline px-4 py-2 rounded-xl text-xs font-bold">Hủy bỏ</button>
             <button type="submit" class="om-btn-gold px-5 py-2 rounded-xl text-xs font-bold">Lưu Hồ Sơ</button>
@@ -511,8 +562,8 @@
     </div>
 
     <!-- Modal 1: JSONBIN CLOUD SETTINGS MODAL -->
-    <div id="cloudModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
-      <div class="om-card w-full max-w-lg p-5 relative border border-white bg-white shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+    <div id="cloudModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
+      <div class="om-card w-full max-w-lg p-5 relative border border-white bg-white shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <button onclick="app.closeCloudModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         
         <div class="flex items-center gap-2.5 border-b border-stone-200 pb-3">
@@ -555,8 +606,8 @@
     </div>
 
     <!-- Modal 2: View Student Detail -->
-    <div id="viewModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
-      <div class="om-card w-full max-w-lg p-4 sm:p-6 relative border border-white bg-white shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div id="viewModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
+      <div class="om-card w-full max-w-lg p-4 sm:p-6 relative border border-white bg-white shadow-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <button onclick="app.closeViewModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         <div id="studentDetailContent"></div>
         <div class="mt-4 pt-3 border-t border-stone-200 flex items-center justify-end gap-2.5 print:hidden">
@@ -567,7 +618,7 @@
     </div>
 
     <!-- Modal 3: Config -->
-    <div id="configModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
+    <div id="configModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-lg p-4 sm:p-6 relative border border-white bg-white shadow-2xl">
         <button onclick="app.closeConfigModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-sliders text-amber-600"></i><span>Cài Đặt Mức Hoa Hồng Mặc Định</span></h3>
@@ -580,7 +631,7 @@
     </div>
 
     <!-- Modal 4: Backup / Restore JSON -->
-    <div id="backupModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
+    <div id="backupModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-md p-4 sm:p-6 relative border border-white bg-white shadow-2xl space-y-3">
         <button onclick="app.closeBackupModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-database text-amber-600"></i><span>Sao Lưu & Khôi Phục Dữ Liệu</span></h3>
@@ -609,7 +660,6 @@
         this.updateStats();
         this.initDefaultDate();
 
-        // Auto pull if configured and local is empty
         if (this.binId && this.masterKey && this.students.length === 0) {
           this.pullFromJsonBin(false);
         }
@@ -653,7 +703,6 @@
         this.renderAllViews();
         this.updateStats();
 
-        // Auto push to JSONBin
         if (this.binId && this.masterKey) {
           this.pushToJsonBin(false);
         }
@@ -676,7 +725,6 @@
         }
       },
 
-      // Open / Close Cloud Modal (Safe null check)
       openCloudModal() {
         const elBin = document.getElementById('cfgBinId');
         const elKey = document.getElementById('cfgMasterKey');
@@ -707,7 +755,6 @@
         this.updateSyncBadge();
         this.closeCloudModal();
 
-        // Immediate sync test
         this.pushToJsonBin(true);
       },
 
@@ -729,7 +776,6 @@
         }
       },
 
-      // Push to JSONBin.io
       async pushToJsonBin(showNotice = true) {
         if (!this.binId || !this.masterKey) return;
         const icon = document.getElementById('syncSpinIcon');
@@ -757,7 +803,6 @@
         }
       },
 
-      // Pull from JSONBin.io
       async pullFromJsonBin(showNotice = true) {
         if (!this.binId || !this.masterKey) return;
         const icon = document.getElementById('syncSpinIcon');
