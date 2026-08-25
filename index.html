@@ -44,8 +44,11 @@
 
   <style>
     @media screen and (max-width: 768px) {
-      input, select, textarea { font-size: 14px !important; }
+      input, select, textarea {
+        font-size: 14px !important;
+      }
     }
+
     body {
       background-color: #faf7f2;
       background-image: 
@@ -55,8 +58,9 @@
       background-attachment: fixed;
       min-height: 100vh;
       color: #1e293b;
-      font-family: "Plus Jakarta Sans", sans-serif;
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
     }
+
     .om-orb-gold {
       position: fixed; width: 350px; height: 350px; border-radius: 50%;
       background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0) 70%);
@@ -67,19 +71,22 @@
       background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, rgba(236, 72, 153, 0) 70%);
       bottom: -40px; right: -40px; filter: blur(70px); pointer-events: none; z-index: 0;
     }
+
     .om-card {
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(235, 224, 209, 0.85);
-      box-shadow: 0 4px 20px -2px rgba(210, 185, 150, 0.12);
+      box-shadow: 0 4px 20px -2px rgba(210, 185, 150, 0.12), 0 2px 6px rgba(210, 185, 150, 0.05);
       border-radius: 1.25rem;
     }
+
     .om-header {
       background: rgba(250, 247, 242, 0.94);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid rgba(228, 215, 198, 0.75);
     }
+
     .om-input {
       background: #ffffff;
       border: 1px solid #e2d7c6;
@@ -92,18 +99,24 @@
       box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
       outline: none;
     }
+
     .om-btn-gold {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 60%, #b45309 100%);
       color: #ffffff;
       font-weight: 700;
       box-shadow: 0 3px 12px rgba(217, 119, 6, 0.25);
+      transition: all 0.2s ease;
     }
     .om-btn-gold:active { transform: scale(0.97); }
+
     .om-btn-outline {
       background: #ffffff;
       border: 1px solid #e2d7c6;
       color: #475569;
+      transition: all 0.2s ease;
     }
+    .om-btn-outline:active { background: #fefce8; border-color: #d97706; }
+
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
@@ -114,7 +127,8 @@
   <div class="om-orb-lotus"></div>
 
   <div class="relative z-10 min-h-screen flex flex-col pb-24 md:pb-12">
-    <!-- Header -->
+    
+    <!-- Top Header -->
     <header class="om-header sticky top-0 z-30 px-3.5 sm:px-6 lg:px-8 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
         <div class="flex items-center space-x-2.5 min-w-0">
@@ -123,7 +137,9 @@
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate tracking-tight">Quản Lý Học Viên</h1>
+              <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate tracking-tight">
+                Quản Lý Học Viên
+              </h1>
               <span id="syncStatusBadge" onclick="app.openSheetModal()" class="cursor-pointer text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full border shrink-0 flex items-center gap-1 bg-stone-100 text-stone-600 border-stone-300">
                 <span class="w-1.5 h-1.5 rounded-full bg-stone-400" id="syncStatusDot"></span>
                 <span id="syncStatusText">Chưa kết nối</span>
@@ -134,20 +150,22 @@
         </div>
 
         <div class="flex items-center gap-1.5 shrink-0">
-          <button onclick="app.syncFromSheet(true)" title="Tải mới từ Google Sheet" class="om-btn-outline px-2.5 sm:px-3 py-1.5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-1.5 text-xs font-bold text-amber-800">
-            <i class="fa-solid fa-rotate text-amber-600" id="syncSpinIcon"></i>
-            <span>Đồng bộ</span>
+          <button onclick="app.syncFromSheet(true)" title="Đồng bộ Google Sheet" class="om-btn-outline w-8 h-8 sm:w-auto sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-1.5 text-xs font-bold text-amber-700">
+            <i class="fa-solid fa-rotate" id="syncSpinIcon"></i>
+            <span class="hidden md:inline">Đồng bộ</span>
           </button>
+
           <button onclick="app.openModal()" class="om-btn-gold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5">
             <i class="fa-solid fa-plus text-[10px]"></i>
-            <span class="hidden sm:inline">Thêm Học Viên</span>
-            <span class="sm:hidden">Thêm</span>
+            <span>Thêm Mới</span>
           </button>
-          <button onclick="app.openSheetModal()" title="Cài đặt Sheet" class="om-btn-outline w-8 h-8 rounded-xl flex sm:hidden items-center justify-center text-emerald-700">
+
+          <button onclick="app.openSheetModal()" title="Kết nối Google Sheet" class="om-btn-outline w-8 h-8 rounded-xl flex sm:hidden items-center justify-center text-emerald-700">
             <i class="fa-solid fa-table text-xs"></i>
           </button>
+
           <div class="hidden sm:flex items-center gap-1.5">
-            <button onclick="app.openSheetModal()" title="Cài đặt Sheet" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-table text-sm"></i></button>
+            <button onclick="app.openSheetModal()" title="Kết nối Google Sheet" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-table text-sm"></i></button>
             <button onclick="app.exportToExcel()" title="Xuất file Excel" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-file-excel text-sm"></i></button>
             <button onclick="app.openConfigModal()" title="Cài đặt hoa hồng" class="om-btn-outline p-2 rounded-2xl text-amber-600"><i class="fa-solid fa-sliders text-sm"></i></button>
             <button onclick="app.openBackupModal()" title="Sao lưu" class="om-btn-outline p-2 rounded-2xl text-slate-600"><i class="fa-solid fa-database text-sm"></i></button>
@@ -158,15 +176,19 @@
 
     <!-- Main Body Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
+
       <!-- Month Selector Bar -->
       <div class="flex items-center justify-between gap-2 p-2.5 bg-white/90 rounded-2xl border border-stone-200 shadow-2xs">
         <div class="flex items-center gap-2 min-w-0 flex-1">
-          <div class="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 text-xs"><i class="fa-regular fa-calendar"></i></div>
+          <div class="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 text-xs">
+            <i class="fa-regular fa-calendar"></i>
+          </div>
           <span class="text-xs font-bold text-slate-600 shrink-0">Lọc Tháng:</span>
           <select id="filterMonth" onchange="app.filterData()" class="bg-transparent text-xs font-bold text-amber-900 focus:outline-none cursor-pointer truncate flex-1">
             <option value="all">Tất cả các tháng</option>
           </select>
         </div>
+
         <div class="flex items-center gap-1 sm:hidden">
           <button onclick="app.exportToExcel()" title="Xuất Excel" class="w-7 h-7 rounded-lg bg-stone-100 text-emerald-700 flex items-center justify-center text-xs"><i class="fa-solid fa-file-excel"></i></button>
           <button onclick="app.openConfigModal()" title="Cài đặt" class="w-7 h-7 rounded-lg bg-stone-100 text-amber-700 flex items-center justify-center text-xs"><i class="fa-solid fa-sliders"></i></button>
@@ -215,7 +237,7 @@
         </div>
       </div>
 
-      <!-- Categories & Commissions Breakdown -->
+      <!-- Categories & Commissions Breakdown (Mobile: Horizontal Swipe) -->
       <div class="om-card p-3.5 sm:p-5">
         <div class="flex items-center justify-between mb-2.5">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
@@ -224,6 +246,7 @@
           </h2>
           <span class="text-[10px] text-slate-500 italic">Nhấp để lọc</span>
         </div>
+
         <div class="flex sm:grid sm:grid-cols-7 overflow-x-auto no-scrollbar gap-2 pb-1">
           <div onclick="app.filterByLicense('A1')" class="min-w-[85px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng A1</div>
@@ -250,7 +273,7 @@
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-C1">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">2.000k</div>
           </div>
-          <div onclick="app.filterByLicense('Bổ túc')" class="min-w-[95px] sm:min-w-0 flex-1 cursor-pointer bg-gradient-to-br from-amber-100 via-amber-50 to-orange-100 hover:border-amber-500 border border-amber-300 rounded-xl p-2 sm:p-3 text-center transition shadow-xs">
+          <div onclick="app.filterByLicense('Bổ túc')" class="min-w-[95px] sm:min-w-0 flex-1 cursor-pointer bg-gradient-to-br from-amber-100 via-amber-50 to-orange-100 hover:border-amber-500 border border-amber-300 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-amber-900 flex items-center justify-center gap-1"><i class="fa-solid fa-steering-wheel text-[9px]"></i><span>Bổ Túc</span></div>
             <div class="text-base sm:text-lg font-extrabold text-amber-950 mt-0.5" id="count-Botuc">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-800 font-bold">Tùy biến</div>
@@ -269,6 +292,7 @@
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
           <input type="text" id="searchInput" oninput="app.filterData()" placeholder="Tìm tên, SĐT, Quận..." class="om-input w-full pl-9 pr-4 py-2 rounded-xl text-xs placeholder:text-slate-400">
         </div>
+
         <div class="grid grid-cols-2 sm:flex sm:items-center gap-2">
           <select id="filterLicense" onchange="app.filterData()" class="om-input px-2.5 py-2 rounded-xl text-xs font-medium cursor-pointer">
             <option value="all">Tất cả Hạng</option>
@@ -280,6 +304,7 @@
             <option value="Bổ túc">Bổ túc lái</option>
             <option value="Khác">Khác</option>
           </select>
+
           <select id="filterPayment" onchange="app.filterData()" class="om-input px-2.5 py-2 rounded-xl text-xs font-medium cursor-pointer">
             <option value="all">Tất cả Đợt 2</option>
             <option value="pending">Cần nhắc Đ2</option>
@@ -302,8 +327,10 @@
           </button>
         </div>
 
+        <!-- Mobile Card View -->
         <div id="studentMobileCards" class="block md:hidden p-3 space-y-3"></div>
 
+        <!-- Desktop Table View -->
         <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
@@ -323,12 +350,14 @@
           </table>
         </div>
 
+        <!-- Empty State -->
         <div id="emptyState" class="hidden py-12 px-4 text-center">
           <div class="w-12 h-12 rounded-2xl bg-amber-100/70 border border-amber-300 flex items-center justify-center mx-auto mb-2.5 text-amber-700"><i class="fa-solid fa-scroll text-lg"></i></div>
           <h4 class="text-slate-900 font-bold text-sm">Chưa có hồ sơ học viên nào</h4>
-          <p class="text-xs text-slate-500 max-w-xs mx-auto mt-0.5">Bấm nút "Thêm Học Viên" để bắt đầu lưu hồ sơ.</p>
+          <p class="text-xs text-slate-500 max-w-xs mx-auto mt-0.5">Bấm nút "Thêm Mới" ở phía trên để bắt đầu lưu hồ sơ.</p>
         </div>
       </div>
+
     </main>
 
     <!-- Modal Form -->
@@ -577,12 +606,6 @@
         if (this.sheetScriptUrl) {
           this.syncFromSheet(false);
         }
-
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'visible' && this.sheetScriptUrl) {
-            this.syncFromSheet(false);
-          }
-        });
       },
 
       initDefaultDate() {
@@ -663,17 +686,8 @@
         if (icon) icon.classList.add('fa-spin');
 
         try {
-          // Anti-cache URL
-          const timestamp = new Date().getTime();
-          const cleanUrl = this.sheetScriptUrl.split('?')[0];
-          const fetchUrl = `${cleanUrl}?t=${timestamp}`;
-
-          const response = await fetch(fetchUrl, {
-            cache: 'no-store',
-            headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
-          });
+          const response = await fetch(this.sheetScriptUrl);
           const result = await response.json();
-          
           if (result.status === 'success' && Array.isArray(result.data)) {
             const cleanData = result.data.map(item => ({
               ...item,
@@ -692,7 +706,7 @@
             this.renderAllViews();
             this.updateStats();
 
-            if (showNotify) alert(`Đã đồng bộ mới nhất: ${this.students.length} hồ sơ!`);
+            if (showNotify) alert(`Đã đồng bộ ${this.students.length} hồ sơ từ Google Sheet!`);
           }
         } catch(err) {
           console.error(err);
@@ -711,7 +725,7 @@
           await fetch(this.sheetScriptUrl, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'saveAll', data: this.students })
           });
         } catch(err) {
@@ -797,6 +811,7 @@
         }
         emptyState.classList.add('hidden');
 
+        // 1. RENDER DESKTOP TABLE VIEW
         tbody.innerHTML = filtered.map(s => {
           const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
           const inst2Alert = this.getInstallment2Alert(s);
@@ -834,12 +849,14 @@
           `;
         }).join('');
 
+        // 2. RENDER MOBILE CARD VIEW
         mobileContainer.innerHTML = filtered.map(s => {
           const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
           const inst2Alert = this.getInstallment2Alert(s);
 
           return `
             <div class="p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-2xs space-y-2.5 active:bg-amber-50/40 transition cursor-pointer" onclick="app.viewStudent('${s.id}')">
+              
               <div class="flex items-start justify-between gap-2 border-b border-stone-100 pb-2">
                 <div class="min-w-0 flex-1">
                   <h4 class="font-bold text-slate-900 text-sm truncate uppercase tracking-tight">${s.fullName}</h4>
@@ -886,6 +903,7 @@
                   <i class="fa-solid fa-trash text-[10px]"></i> Xóa
                 </button>
               </div>
+
             </div>
           `;
         }).join('');
@@ -1155,7 +1173,6 @@
         const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "DanhSachHocVien");
-        XLSX.writeFile(wb, `DanhSach__sheet(wb, ws, "DanhSachHocVien");
         XLSX.writeFile(wb, `DanhSach_HocVien_${new Date().toISOString().split('T')[0]}.xlsx`);
       },
 
