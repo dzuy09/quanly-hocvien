@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Quản Lý Hồ Sơ Học Viên & Tính Hoa Hồng</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            om: {
+              bg: '#faf7f2',
+              card: 'rgba(255, 255, 255, 0.88)',
+              border: 'rgba(230, 218, 202, 0.8)',
+              gold: '#d97706',
+              lotus: '#db2777',
+              jade: '#059669',
+              ink: '#1e293b',
+              muted: '#64748b'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      background-color: #faf7f2;
+      background-image: 
+        radial-gradient(at 15% 15%, rgba(245, 158, 11, 0.12) 0px, transparent 50%),
+        radial-gradient(at 85% 20%, rgba(236, 72, 153, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 85%, rgba(16, 185, 129, 0.07) 0px, transparent 60%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #1e293b;
+      font-family: "Plus Jakarta Sans", sans-serif;
+    }
+
+    .om-orb-gold {
+      position: fixed; width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.14) 0%, rgba(245, 158, 11, 0) 70%);
+      top: -80px; left: -80px; filter: blur(80px); pointer-events: none; z-index: 0;
+    }
+    .om-orb-lotus {
+      position: fixed; width: 480px; height: 480px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, rgba(236, 72, 153, 0) 70%);
+      bottom: -60px; right: -60px; filter: blur(85px); pointer-events: none; z-index: 0;
+    }
+
+    .om-light-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(235, 224, 209, 0.85);
+      box-shadow: 0 10px 30px -5px rgba(210, 185, 150, 0.15), 0 2px 6px rgba(210, 185, 150, 0.08);
+      border-radius: 1.25rem;
+      transition: all 0.25s ease;
+    }
+    .om-light-card:hover {
+      border-color: rgba(217, 119, 6, 0.45);
+      box-shadow: 0 14px 36px -4px rgba(217, 119, 6, 0.14), 0 4px 10px rgba(210, 185, 150, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .om-light-header {
+      background: rgba(250, 247, 242, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(228, 215, 198, 0.7);
+    }
+    .om-light-input {
+      background: #ffffff;
+      border: 1px solid #e2d7c6;
+      color: #1e293b;
+      transition: all 0.2s ease;
+    }
+    .om-light-input:focus {
+      background: #ffffff;
+      border-color: #d97706;
+      box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+      outline: none;
+    }
+    .om-btn-gold {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 60%, #b45309 100%);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(217, 119, 6, 0.28);
+      transition: all 0.2s ease;
+    }
+    .om-btn-gold:hover {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 60%, #d97706 100%);
+      box-shadow: 0 6px 20px rgba(217, 119, 6, 0.38);
+      transform: translateY(-1px);
+    }
+    .om-btn-outline {
+      background: #ffffff;
+      border: 1px solid #e2d7c6;
+      color: #475569;
+      transition: all 0.2s ease;
+    }
+    .om-btn-outline:hover {
+      border-color: #d97706;
+      color: #d97706;
+      background: #fefce8;
+      transform: translateY(-1px);
+    }
+    .badge-amber { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <div class="om-orb-gold"></div>
+  <div class="om-orb-lotus"></div>
+
+  <div class="relative z-10 min-h-screen flex flex-col pb-16">
+    <header class="om-light-header sticky top-0 z-30 px-4 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3.5">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/20 text-white">
+          <i class="fa-solid fa-dharmachakra text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg md:text-xl font-bold text-slate-900 tracking-tight">
+              Quản Lý Hồ Sơ & Hoa Hồng
+            </h1>
+            <span class="badge-amber text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Om Mani</span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium">Trung Tâm Đào Tạo & Sát Hạch Lái Xe</p>
+        </div>
+      </div>
+
+      <div class="flex items-center flex-wrap gap-2.5">
+        <div class="flex items-center bg-white rounded-2xl px-3.5 py-1.5 border border-stone-300 shadow-xs">
+          <i class="fa-regular fa-calendar text-amber-600 text-xs mr-2"></i>
+          <span class="text-xs text-slate-500 mr-2 font-medium">Tháng:</span>
+          <select id="filterMonth" onchange="app.filterData()" class="bg-transparent text-xs font-bold text-slate-900 focus:outline-none cursor-pointer">
+            <option value="all">Tất cả các tháng</option>
+          </select>
+        </div>
+
+        <button onclick="app.openModal()" class="om-btn-gold px-4 py-2 rounded-2xl text-xs font-bold flex items-center gap-2">
+          <i class="fa-solid fa-plus text-[10px]"></i>
+          <span>Thêm Học Viên</span>
+        </button>
+
+        <button onclick="app.exportToExcel()" title="Xuất file Excel" class="om-btn-outline p-2.5 rounded-2xl">
+          <i class="fa-solid fa-file-excel text-emerald-600 text-sm"></i>
+        </button>
+
+        <button onclick="app.openConfigModal()" title="Cài đặt mức hoa hồng" class="om-btn-outline p-2.5 rounded-2xl">
+          <i class="fa-solid fa-sliders text-amber-600 text-sm"></i>
+        </button>
+
+        <button onclick="app.openBackupModal()" title="Sao lưu / Khôi phục" class="om-btn-outline p-2.5 rounded-2xl">
+          <i class="fa-solid fa-database text-slate-600 text-sm"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+      
+      <!-- 4 Stats Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="om-light-card p-5">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Tổng Học Viên</span>
+            <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200"><i class="fa-solid fa-users text-xs"></i></div>
+          </div>
+          <div class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight" id="statTotalStudents">0</div>
+          <p class="text-xs text-slate-500 mt-1">Theo tháng đang chọn</p>
+        </div>
+
+        <div class="om-light-card p-5 border-pink-200 bg-gradient-to-b from-pink-50/50 to-white">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-pink-700">Tổng Hoa Hồng</span>
+            <div class="w-8 h-8 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center border border-pink-200"><i class="fa-solid fa-hand-holding-dollar text-xs"></i></div>
+          </div>
+          <div class="text-2xl md:text-3xl font-bold text-pink-600 tracking-tight" id="statTotalCommission">0 ₫</div>
+          <p class="text-xs text-pink-700/70 mt-1">Hoa hồng nhận được</p>
+        </div>
+
+        <div class="om-light-card p-5">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Tổng Học Phí</span>
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200"><i class="fa-solid fa-receipt text-xs"></i></div>
+          </div>
+          <div class="text-2xl md:text-3xl font-bold text-emerald-700 tracking-tight" id="statTotalTuition">0 ₫</div>
+          <p class="text-xs text-emerald-600 mt-1" id="statTuitionBreakdown">Đợt 1: 0 ₫</p>
+        </div>
+
+        <div onclick="app.filterByInstallment2Pending()" class="om-light-card p-5 cursor-pointer border-amber-300 bg-gradient-to-b from-amber-50/60 to-white hover:border-amber-500">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-900">Nhắc Đóng Đợt 2</span>
+            <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-300"><i class="fa-solid fa-bell text-xs"></i></div>
+          </div>
+          <div class="text-2xl md:text-3xl font-bold text-amber-800 tracking-tight" id="statPendingInstallment2">0</div>
+          <p class="text-xs text-amber-800 font-semibold mt-1 flex items-center gap-1"><span>Xem danh sách cần nhắc</span> <i class="fa-solid fa-arrow-right text-[9px]"></i></p>
+        </div>
+      </div>
+
+      <!-- Categories breakdown -->
+      <div class="om-light-card p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2"><i class="fa-solid fa-feather-pointed text-amber-600"></i><span>Số Lượng & Mức Hoa Hồng Theo Hạng Bằng</span></h2>
+          <span class="text-[11px] text-slate-500 italic">Nhấp vào từng ô để lọc nhanh</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2.5">
+          <div onclick="app.filterByLicense('A1')" class="cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-2xl p-3 text-center transition shadow-2xs">
+            <div class="text-xs font-bold text-slate-800">Hạng A1</div>
+            <div class="text-lg font-bold text-slate-900 mt-0.5" id="count-A1">0</div>
+            <div class="text-[10px] text-amber-700 font-bold">200k / hs</div>
+          </div>
+          <div onclick="app.filterByLicense('A')" class="cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-2xl p-3 text-center transition shadow-2xs">
+            <div class="text-xs font-bold text-slate-800">Hạng A (A2)</div>
+            <div class="text-lg font-bold text-slate-900 mt-0.5" id="count-A">0</div>
+            <div class="text-[10px] text-amber-700 font-bold">700k / hs</div>
+          </div>
+          <div onclick="app.filterByLicense('B01')" class="cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-2xl p-3 text-center transition shadow-2xs">
+            <div class="text-xs font-bold text-slate-800">Hạng B01 (B1)</div>
+            <div class="text-lg font-bold text-slate-900 mt-0.5" id="count-B01">0</div>
+            <div class="text-[10px] text-amber-700 font-bold">2.000k / hs</div>
+          </div>
+          <div onclick="app.filterByLicense('B2')" class="cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-2xl p-3 text-center transition shadow-2xs">
+            <div class="text-xs font-bold text-slate-800">Hạng B2</div>
+            <div class="text-lg font-bold text-slate-900 mt-0.5" id="count-B2">0</div>
+            <div class="text-[10px] text-amber-700 font-bold">2.000k / hs</div>
+          </div>
+          <div onclick="app.filterByLicense('C1')" class="cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-2xl p-3 text-center transition shadow-2xs">
+            <div class="text-xs font-bold text-slate-800">Hạng C1 (Tải)</div>
+            <div class="text-lg font-bold text-slate-900 mt-0.5" id="count-C1">0</div>
+            <div class="text-[10px] text-amber-700 font-bold">2.000k / hs</div>
+          </div>
+          <div onclick="app.filterByLicense('Bổ túc')" class="cursor-pointer bg-gradient-to-br from-amber-100 via-amber-50 to-orange-100 hover:border-amber-500 border border-amber-300 rounded-2xl p-3 text-center transition shadow-xs">
+            <div class="text-xs font-bold text-amber-900 flex items-center justify-center gap-1"><i class="fa-solid fa-steering-wheel text-[10px]"></i><span>Bổ Túc Lái</span></div>
+            <div class="text-lg font-bold text-amber-950 mt-0.5" id="count-Botuc">0</div>
+            <div class="text-[10px] text-amber-800 font-bold">Tùy biến</div>
+          </div>
+          <div onclick="app.filterByLicense('Khác')" class="cursor-pointer bg-white hover:bg-slate-50 border border-stone-200 hover:border-slate-400 rounded-2xl p-3 text-center transition shadow-2xs">
+            <div class="text-xs font-bold text-slate-600">Khác / Nâng dấu</div>
+            <div class="text-lg font-bold text-slate-900 mt-0.5" id="count-Khac">0</div>
+            <div class="text-[10px] text-slate-500 font-medium">Tùy biến</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search & Filters Toolbar -->
+      <div class="om-light-card p-4 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div class="relative w-full md:w-80">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" id="searchInput" oninput="app.filterData()" placeholder="Tìm theo tên, SĐT, Quận..." class="om-light-input w-full pl-9 pr-4 py-2 rounded-2xl text-xs placeholder:text-slate-400">
+        </div>
+        <div class="flex items-center flex-wrap gap-2.5 w-full md:w-auto">
+          <select id="filterLicense" onchange="app.filterData()" class="om-light-input px-3 py-2 rounded-2xl text-xs font-medium cursor-pointer">
+            <option value="all">Tất cả Hạng Bằng</option>
+            <option value="A1">Hạng A1</option>
+            <option value="A">Hạng A</option>
+            <option value="B01">Hạng B01</option>
+            <option value="B2">Hạng B2</option>
+            <option value="C1">Hạng C1</option>
+            <option value="Bổ túc">Bổ túc tay lái</option>
+            <option value="Khác">Khác</option>
+          </select>
+          <select id="filterPayment" onchange="app.filterData()" class="om-light-input px-3 py-2 rounded-2xl text-xs font-medium cursor-pointer">
+            <option value="all">Tất cả trạng thái Đợt 2</option>
+            <option value="pending">Cần nhắc đóng Đợt 2</option>
+            <option value="overdue">Đã quá hạn Đợt 2</option>
+            <option value="paid_full">Đã đóng đủ / Full 1 lần</option>
+          </select>
+          <button onclick="app.resetFilters()" class="om-btn-outline px-3 py-2 rounded-2xl text-xs font-medium flex items-center gap-1.5"><i class="fa-solid fa-rotate-left text-[10px]"></i><span>Đặt lại</span></button>
+        </div>
+      </div>
+
+      <!-- Table View -->
+      <div class="om-light-card overflow-hidden">
+        <div class="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50/50">
+          <div class="flex items-center gap-2.5">
+            <h3 class="font-bold text-slate-900 text-base">Danh Sách Hồ Sơ Học Viên</h3>
+            <span id="recordCountBadge" class="text-xs px-2.5 py-0.5 rounded-full badge-amber font-bold">0 hồ sơ</span>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-stone-200 text-[11px] uppercase tracking-wider text-slate-500 bg-stone-100/60">
+                <th class="py-3 px-4 font-bold">Ngày Nhập</th>
+                <th class="py-3 px-4 font-bold">Học Viên & Ngày Sinh</th>
+                <th class="py-3 px-4 font-bold">Quận & Lịch Học</th>
+                <th class="py-3 px-4 font-bold text-center">Hạng Bằng</th>
+                <th class="py-3 px-4 font-bold text-right">Học Phí</th>
+                <th class="py-3 px-4 font-bold text-right">Hoa Hồng</th>
+                <th class="py-3 px-4 font-bold">Đợt 1 / Đợt 2 (Nhắc đóng)</th>
+                <th class="py-3 px-4 font-bold text-center">Khóa Thi / Dự Kiến Học</th>
+                <th class="py-3 px-4 font-bold text-center">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody" class="divide-y divide-stone-200/80 text-xs"></tbody>
+          </table>
+        </div>
+        <div id="emptyState" class="hidden py-16 px-4 text-center">
+          <div class="w-14 h-14 rounded-3xl bg-amber-100/70 border border-amber-300 flex items-center justify-center mx-auto mb-3 text-amber-700"><i class="fa-solid fa-scroll text-xl"></i></div>
+          <h4 class="text-slate-900 font-bold text-base">Chưa có hồ sơ học viên nào</h4>
+          <button onclick="app.openModal()" class="mt-4 px-4 py-2 rounded-2xl om-btn-gold text-xs font-bold">+ Thêm học viên đầu tiên</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal Form -->
+    <div id="studentModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
+      <div class="om-light-card w-full max-w-3xl p-6 md:p-8 my-8 relative border border-white bg-white/95 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <button onclick="app.closeModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-sm"></i></button>
+        <div class="flex items-center gap-3.5 mb-6">
+          <div class="w-11 h-11 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-300 shadow-xs text-lg"><i class="fa-solid fa-user-pen" id="modalIcon"></i></div>
+          <div><h3 class="text-xl font-bold text-slate-900" id="modalTitle">Thêm Hồ Sơ Học Viên</h3><p class="text-xs text-slate-500">Nhập dữ liệu học viên & tính hoa hồng nhận được</p></div>
+        </div>
+        <form id="studentForm" onsubmit="app.saveStudent(event)" class="space-y-5">
+          <input type="hidden" id="studentId">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Họ và Tên Học Viên <span class="text-rose-600">*</span></label>
+              <input type="text" id="fullName" required placeholder="NGUYỄN VĂN A" oninput="this.value = this.value.toUpperCase()" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs font-bold uppercase">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Ngày Tháng Năm Sinh</label>
+              <input type="date" id="dob" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Học Ở Quận Mấy?</label>
+              <select id="district" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs font-medium">
+                <option value="Tân Bình">Quận Tân Bình</option>
+                <option value="Quận 1">Quận 1</option>
+                <option value="Quận 3">Quận 3</option>
+                <option value="Quận 4">Quận 4</option>
+                <option value="Quận 5">Quận 5</option>
+                <option value="Quận 6">Quận 6</option>
+                <option value="Quận 7">Quận 7</option>
+                <option value="Quận 8">Quận 8</option>
+                <option value="Quận 10">Quận 10</option>
+                <option value="Quận 11">Quận 11</option>
+                <option value="Quận 12">Quận 12</option>
+                <option value="Bình Thạnh">Quận Bình Thạnh</option>
+                <option value="Gò Vấp">Quận Gò Vấp</option>
+                <option value="Phú Nhuận">Quận Phú Nhuận</option>
+                <option value="Tân Phú">Quận Tân Phú</option>
+                <option value="Bình Tân">Quận Bình Tân</option>
+                <option value="TP. Thủ Đức">TP. Thủ Đức</option>
+                <option value="Hóc Môn">Huyện Hóc Môn</option>
+                <option value="Bình Chánh">Huyện Bình Chánh</option>
+                <option value="Củ Chi">Huyện Củ Chi</option>
+                <option value="Nhà Bè">Huyện Nhà Bè</option>
+                <option value="Khác">Khu vực khác</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Hạng Bằng Đăng Ký <span class="text-rose-600">*</span></label>
+              <select id="licenseType" onchange="app.onLicenseChange()" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs font-bold text-amber-900 bg-amber-50/50">
+                <option value="A1">Hạng A1 (Mô tô 2 bánh - Hoa hồng 200k)</option>
+                <option value="A">Hạng A (A2 PKL - Hoa hồng 700k)</option>
+                <option value="B01" selected>Hạng B01 (B1 Tự động - Hoa hồng 2.000k)</option>
+                <option value="B2">Hạng B2 (Số sàn & TĐ - Hoa hồng 2.000k)</option>
+                <option value="C1">Hạng C1 (Tải - Hoa hồng 2.000k)</option>
+                <option value="Bổ túc">Bổ túc tay lái</option>
+                <option value="Khác">Khác / Nâng dấu</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Lịch Học Trong Tuần / Cuối Tuần</label>
+              <select id="studySchedule" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs">
+                <option value="Trong tuần (T2 - T6)">Trong tuần (Thứ 2 - Thứ 6)</option>
+                <option value="Cuối tuần (T2 - CN)">Cuối tuần (Thứ 2 - Chủ Nhật)</option>
+                <option value="Linh hoạt">Linh hoạt theo học viên</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">GPLX Đang Có Khác?</label>
+              <select id="existingLicense" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs">
+                <option value="Chưa có">Chưa có bằng nào</option>
+                <option value="Đã có GPLX PET">Đã có bằng PET (thẻ cứng)</option>
+                <option value="Đã có GPLX Giấy cũ">Đã có bằng giấy cũ</option>
+                <option value="Đang học GPLX khác">Đang theo học hạng khác</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5"><i class="fa-solid fa-coins text-amber-600"></i><span>Học Phí, Giảm Giá & Hoa Hồng</span></h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Học Phí Sau Giảm (VNĐ) <span class="text-rose-600">*</span></label>
+                <input type="text" id="tuitionFee" required placeholder="18,000,000" oninput="app.formatCurrencyInput(this)" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs font-bold text-emerald-700">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Mức Giảm Giá & Lý Do</label>
+                <input type="text" id="discountAmount" placeholder="Mức giảm (vd: 500,000)" oninput="app.formatCurrencyInput(this)" class="om-light-input w-full px-3.5 py-2 rounded-2xl text-xs mb-2">
+                <select id="discountReason" class="om-light-input w-full px-3 py-1.5 rounded-xl text-xs">
+                  <option value="Không giảm">Không áp dụng giảm giá</option>
+                  <option value="Nhóm 2 người">Đăng ký nhóm 2 người</option>
+                  <option value="Nhóm 3-4 người">Đăng ký nhóm 3 - 4 người</option>
+                  <option value="Học viên cũ giới thiệu">Học viên cũ giới thiệu</option>
+                  <option value="Sinh nhật trong tháng">Ưu đãi sinh nhật trong tháng</option>
+                  <option value="Khuyến mãi Lễ / Tết">Khuyến mãi dịp Lễ / Tết</option>
+                  <option value="Ưu đãi khác">Chính sách ưu đãi khác</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Hoa Hồng Nhận Được (VNĐ) <span class="text-rose-600">*</span></label>
+                <input type="text" id="commission" required placeholder="2,000,000" oninput="app.formatCurrencyInput(this)" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs font-bold text-pink-600 bg-pink-50/50 border-pink-200">
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-white border border-stone-200 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5"><i class="fa-solid fa-calendar-check text-amber-600"></i><span>Các Đợt Đóng Phí & Nhắc Hạn Đợt 2</span></h4>
+              <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer font-semibold">
+                <input type="checkbox" id="payFullOnce" onchange="app.togglePayFull()" class="rounded border-stone-300 text-amber-600 focus:ring-0">
+                <span>Học viên đóng Full 1 lần</span>
+              </label>
+            </div>
+            <div id="installmentContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-3.5 rounded-2xl bg-stone-50 border border-stone-200 space-y-2">
+                <span class="text-xs font-bold text-slate-800 block">Đợt 1 (Khi Đăng Ký)</span>
+                <div class="grid grid-cols-2 gap-2">
+                  <input type="text" id="inst1Amount" placeholder="5,000,000" oninput="app.formatCurrencyInput(this)" class="om-light-input w-full px-3 py-1.5 rounded-xl text-xs font-bold">
+                  <input type="date" id="inst1Date" class="om-light-input w-full px-3 py-1.5 rounded-xl text-xs">
+                </div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-2">
+                <span class="text-xs font-bold text-amber-900 flex items-center justify-between">
+                  <span>Đợt 2 (Cần theo dõi nhắc hẹn)</span>
+                  <span id="inst2StatusBadge" class="text-[10px] px-2 py-0.5 rounded-md badge-amber font-bold">Chờ nhắc</span>
+                </span>
+                <div class="grid grid-cols-2 gap-2">
+                  <input type="text" id="inst2Amount" placeholder="13,000,000" oninput="app.formatCurrencyInput(this)" class="om-light-input w-full px-3 py-1.5 rounded-xl text-xs font-bold">
+                  <input type="date" id="inst2DueDate" class="om-light-input w-full px-3 py-1.5 rounded-xl text-xs border-amber-300">
+                </div>
+                <label class="flex items-center gap-1.5 text-xs text-emerald-800 pt-1 cursor-pointer font-bold">
+                  <input type="checkbox" id="inst2Paid" class="rounded border-stone-300 text-emerald-600 focus:ring-0">
+                  <span>Học viên đã hoàn tất đóng Đợt 2</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Ngày Đăng Ký</label>
+              <input type="date" id="registerDate" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Khóa Thi (Tháng/Năm) <span class="text-rose-600">*</span></label>
+              <input type="month" id="examMonth" onchange="app.autoCalculateStudyDate()" required class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs font-bold text-amber-900">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Ngày Dự Kiến Học</label>
+              <input type="date" id="studyDate" class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Ghi Chú Thêm</label>
+            <input type="text" id="note" placeholder="SĐT học viên, ghi chú giáo viên..." class="om-light-input w-full px-3.5 py-2.5 rounded-2xl text-xs">
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-4 border-t border-stone-200">
+            <button type="button" onclick="app.closeModal()" class="om-btn-outline px-5 py-2.5 rounded-2xl text-xs font-bold">Hủy bỏ</button>
+            <button type="submit" class="om-btn-gold px-6 py-2.5 rounded-2xl text-xs font-bold">Lưu Hồ Sơ</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal View -->
+    <div id="viewModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
+      <div class="om-light-card w-full max-w-2xl p-6 md:p-8 relative border border-white bg-white/95 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <button onclick="app.closeViewModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-sm"></i></button>
+        <div id="studentDetailContent"></div>
+      </div>
+    </div>
+
+    <!-- Modal Config -->
+    <div id="configModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
+      <div class="om-light-card w-full max-w-lg p-6 relative border border-white bg-white/95 shadow-2xl">
+        <button onclick="app.closeConfigModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-sliders text-amber-600"></i><span>Cài Đặt Mức Hoa Hồng Mặc Định</span></h3>
+        <div class="space-y-3" id="configList"></div>
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-stone-200">
+          <button onclick="app.closeConfigModal()" class="om-btn-outline px-4 py-2 rounded-xl text-xs font-bold">Đóng</button>
+          <button onclick="app.saveConfig()" class="om-btn-gold px-5 py-2 rounded-xl text-xs font-bold">Lưu Cài Đặt</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Backup -->
+    <div id="backupModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
+      <div class="om-light-card w-full max-w-md p-6 relative border border-white bg-white/95 shadow-2xl space-y-4">
+        <button onclick="app.closeBackupModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-database text-amber-600"></i><span>Sao Lưu & Khôi Phục Dữ Liệu</span></h3>
+        <button onclick="app.exportBackupJSON()" class="w-full py-2.5 rounded-2xl om-btn-gold text-xs font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i><span>Tải File Sao Lưu (.JSON)</span></button>
+        <input type="file" id="backupFileInput" accept=".json" class="hidden" onchange="app.importBackupJSON(event)">
+        <button onclick="document.getElementById('backupFileInput').click()" class="w-full py-2.5 rounded-2xl om-btn-outline text-xs font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-upload"></i><span>Chọn File Khôi Phục</span></button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const app = {
+      students: [],
+      defaultCommissions: { 'A1': 200000, 'A': 700000, 'B01': 2000000, 'B2': 2000000, 'C1': 2000000, 'Bổ túc': 500000, 'Khác': 1000000 },
+      defaultTuitions: { 'A1': 1500000, 'A': 2500000, 'B01': 18000000, 'B2': 18000000, 'C1': 20000000, 'Bổ túc': 3500000, 'Khác': 10000000 },
+
+      init() {
+        this.loadFromStorage();
+        this.populateMonthFilter();
+        this.renderTable();
+        this.updateStats();
+        this.initDefaultDate();
+      },
+
+      initDefaultDate() {
+        const today = new Date().toISOString().split('T')[0];
+        const regInput = document.getElementById('registerDate');
+        const inst1Input = document.getElementById('inst1Date');
+        if (regInput) regInput.value = today;
+        if (inst1Input) inst1Input.value = today;
+      },
+
+      loadFromStorage() {
+        const stored = localStorage.getItem('thanhcong_students_db');
+        if (stored) { try { this.students = JSON.parse(stored); } catch(e) { this.students = []; } }
+        const storedCommissions = localStorage.getItem('thanhcong_commissions_cfg');
+        if (storedCommissions) { try { this.defaultCommissions = { ...this.defaultCommissions, ...JSON.parse(storedCommissions) }; } catch(e) {} }
+      },
+
+      saveToStorage() {
+        localStorage.setItem('thanhcong_students_db', JSON.stringify(this.students));
+        this.populateMonthFilter();
+        this.renderTable();
+        this.updateStats();
+      },
+
+      formatVND(amount) {
+        if (!amount || isNaN(amount)) return '0 ₫';
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+      },
+
+      formatNumberString(val) {
+        if (!val && val !== 0) return '';
+        const num = String(val).replace(/\D/g, '');
+        return num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      },
+
+      parseCurrency(val) {
+        if (!val) return 0;
+        return parseInt(String(val).replace(/\D/g, '')) || 0;
+      },
+
+      formatCurrencyInput(input) { input.value = this.formatNumberString(input.value); },
+
+      populateMonthFilter() {
+        const filterMonth = document.getElementById('filterMonth');
+        const currentVal = filterMonth.value;
+        const months = new Set();
+        this.students.forEach(s => { if (s.registerDate) months.add(s.registerDate.substring(0, 7)); });
+        months.add(new Date().toISOString().substring(0, 7));
+        const sortedMonths = Array.from(months).sort().reverse();
+        filterMonth.innerHTML = '<option value="all">Tất cả các tháng</option>';
+        sortedMonths.forEach(m => {
+          const [yyyy, mm] = m.split('-');
+          const opt = document.createElement('option');
+          opt.value = m;
+          opt.textContent = `Tháng ${mm}/${yyyy}`;
+          filterMonth.appendChild(opt);
+        });
+        if (currentVal && Array.from(filterMonth.options).some(o => o.value === currentVal)) filterMonth.value = currentVal;
+      },
+
+      getFilteredStudents() {
+        const monthFilter = document.getElementById('filterMonth').value;
+        const licenseFilter = document.getElementById('filterLicense').value;
+        const paymentFilter = document.getElementById('filterPayment').value;
+        const search = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+
+        return this.students.filter(s => {
+          if (monthFilter !== 'all' && (!s.registerDate || !s.registerDate.startsWith(monthFilter))) return false;
+          if (licenseFilter !== 'all' && s.licenseType !== licenseFilter) return false;
+          if (paymentFilter === 'pending' && (s.payFullOnce || s.inst2Paid)) return false;
+          if (paymentFilter === 'overdue') {
+            if (s.payFullOnce || s.inst2Paid || !s.inst2DueDate) return false;
+            if (s.inst2DueDate >= new Date().toISOString().split('T')[0]) return false;
+          }
+          if (paymentFilter === 'paid_full' && (!s.payFullOnce && !s.inst2Paid)) return false;
+          if (search) {
+            const matchName = (s.fullName || '').toLowerCase().includes(search);
+            const matchDistrict = (s.district || '').toLowerCase().includes(search);
+            const matchNote = (s.note || '').toLowerCase().includes(search);
+            if (!matchName && !matchDistrict && !matchNote) return false;
+          }
+          return true;
+        });
+      },
+
+      renderTable() {
+        const filtered = this.getFilteredStudents();
+        const tbody = document.getElementById('studentTableBody');
+        const emptyState = document.getElementById('emptyState');
+        document.getElementById('recordCountBadge').textContent = `${filtered.length} hồ sơ`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '';
+          emptyState.classList.remove('hidden');
+          return;
+        }
+        emptyState.classList.add('hidden');
+        tbody.innerHTML = filtered.map(s => {
+          const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
+          const inst2Alert = this.getInstallment2Alert(s);
+          return `
+            <tr class="hover:bg-amber-50/60 transition duration-150 group cursor-pointer" onclick="app.viewStudent('${s.id}')">
+              <td class="py-3.5 px-4 text-xs text-slate-500 font-medium">${s.registerDate ? this.formatDate(s.registerDate) : '-'}</td>
+              <td class="py-3.5 px-4">
+                <div class="font-bold text-slate-900 group-hover:text-amber-700 transition">${s.fullName}</div>
+                <div class="text-[11px] text-slate-500">${s.dob ? `Sinh: ${this.formatDate(s.dob)}` : 'Chưa có ngày sinh'}</div>
+              </td>
+              <td class="py-3.5 px-4 text-xs">
+                <div class="text-slate-800 font-semibold">${s.district || '-'}</div>
+                <div class="text-[11px] text-slate-500">${s.studySchedule || '-'}</div>
+              </td>
+              <td class="py-3.5 px-4 text-center">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${badgeClass}">
+                  ${s.licenseType === 'Bổ túc' ? '<i class="fa-solid fa-steering-wheel mr-1 text-[10px]"></i>' : ''}
+                  ${s.licenseType}
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right font-bold text-emerald-700 text-sm">${this.formatVND(s.tuitionFee)}</td>
+              <td class="py-3.5 px-4 text-right font-bold text-pink-600 text-sm">${this.formatVND(s.commission)}</td>
+              <td class="py-3.5 px-4 text-xs">
+                ${s.payFullOnce ? '<span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200 font-bold">Đóng Full 1 lần</span>' : `<div>Đ1: <b>${this.formatVND(s.inst1Amount)}</b></div><div>${inst2Alert}</div>`}
+              </td>
+              <td class="py-3.5 px-4 text-center text-xs">
+                <div class="font-bold text-amber-800">${s.examMonth ? `Thi: T${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : '-'}</div>
+                <div class="text-[11px] text-slate-500">${s.studyDate ? `Học: ${this.formatDate(s.studyDate)}` : '-'}</div>
+              </td>
+              <td class="py-3.5 px-4 text-center" onclick="event.stopPropagation()">
+                <button onclick="app.editStudent('${s.id}')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-600 hover:text-amber-800 mr-1 transition"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                <button onclick="app.deleteStudent('${s.id}')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-rose-100 text-stone-600 hover:text-rose-700 transition"><i class="fa-solid fa-trash text-xs"></i></button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      },
+
+      getLicenseBadgeStyle(type) {
+        switch(type) {
+          case 'A1': return 'bg-amber-50 text-amber-800 border-amber-200';
+          case 'A': return 'bg-orange-50 text-orange-800 border-orange-200';
+          case 'B01': return 'bg-emerald-50 text-emerald-800 border-emerald-200';
+          case 'B2': return 'bg-yellow-50 text-yellow-800 border-yellow-200';
+          case 'C1': return 'bg-pink-50 text-pink-800 border-pink-200';
+          case 'Bổ túc': return 'bg-amber-100 text-amber-950 border-amber-300 font-bold shadow-2xs';
+          default: return 'bg-slate-100 text-slate-700 border-slate-200';
+        }
+      },
+
+      getInstallment2Alert(s) {
+        if (s.inst2Paid) return `<span class="text-emerald-700 font-bold text-[11px]">✓ Đã đóng Đ2</span>`;
+        if (!s.inst2DueDate) return `<span class="text-[11px] text-slate-500">Đ2: ${this.formatVND(s.inst2Amount)}</span>`;
+        const diffDays = Math.round((new Date(s.inst2DueDate) - new Date(new Date().toISOString().split('T')[0])) / (1000 * 60 * 60 * 24));
+        if (diffDays < 0) return `<span class="text-rose-700 font-bold text-[11px] bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">Quá hạn ${Math.abs(diffDays)} ngày (${this.formatDate(s.inst2DueDate)})</span>`;
+        if (diffDays <= 7) return `<span class="text-amber-900 font-bold text-[11px] bg-amber-100 px-1.5 py-0.5 rounded border border-amber-300">Nhắc đóng còn ${diffDays} ngày (${this.formatDate(s.inst2DueDate)})</span>`;
+        return `<span class="text-slate-600 text-[11px]">Hạn Đ2: ${this.formatDate(s.inst2DueDate)}</span>`;
+      },
+
+      updateStats() {
+        const filtered = this.getFilteredStudents();
+        document.getElementById('statTotalStudents').textContent = filtered.length;
+        document.getElementById('statTotalCommission').textContent = this.formatVND(filtered.reduce((sum, s) => sum + (s.commission || 0), 0));
+        document.getElementById('statTotalTuition').textContent = this.formatVND(filtered.reduce((sum, s) => sum + (s.tuitionFee || 0), 0));
+        const totalInst1 = filtered.reduce((sum, s) => sum + (s.payFullOnce ? (s.tuitionFee || 0) : (s.inst1Amount || 0)), 0);
+        document.getElementById('statTuitionBreakdown').textContent = `Đã thu Đợt 1 / Full: ${this.formatVND(totalInst1)}`;
+        document.getElementById('statPendingInstallment2').textContent = filtered.filter(s => !s.payFullOnce && !s.inst2Paid).length;
+
+        const counts = { 'A1': 0, 'A': 0, 'B01': 0, 'B2': 0, 'C1': 0, 'Bổ túc': 0, 'Khác': 0 };
+        filtered.forEach(s => { if (counts[s.licenseType] !== undefined) counts[s.licenseType]++; else counts['Khác']++; });
+        document.getElementById('count-A1').textContent = counts['A1'];
+        document.getElementById('count-A').textContent = counts['A'];
+        document.getElementById('count-B01').textContent = counts['B01'];
+        document.getElementById('count-B2').textContent = counts['B2'];
+        document.getElementById('count-C1').textContent = counts['C1'];
+        document.getElementById('count-Botuc').textContent = counts['Bổ túc'];
+        document.getElementById('count-Khac').textContent = counts['Khác'];
+      },
+
+      filterData() { this.renderTable(); this.updateStats(); },
+      filterByLicense(type) { document.getElementById('filterLicense').value = type; this.filterData(); },
+      filterByInstallment2Pending() { document.getElementById('filterPayment').value = 'pending'; this.filterData(); },
+      resetFilters() { document.getElementById('filterMonth').value = 'all'; document.getElementById('filterLicense').value = 'all'; document.getElementById('filterPayment').value = 'all'; document.getElementById('searchInput').value = ''; this.filterData(); },
+
+      openModal(isEdit = false) {
+        document.getElementById('studentModal').classList.remove('hidden');
+        if (!isEdit) {
+          document.getElementById('studentForm').reset();
+          document.getElementById('studentId').value = '';
+          this.initDefaultDate();
+          this.onLicenseChange();
+        }
+      },
+      closeModal() { document.getElementById('studentModal').classList.add('hidden'); },
+
+      onLicenseChange() {
+        const type = document.getElementById('licenseType').value;
+        const commInput = document.getElementById('commission');
+        const tuitionInput = document.getElementById('tuitionFee');
+        const inst1Input = document.getElementById('inst1Amount');
+        const inst2Input = document.getElementById('inst2Amount');
+
+        if (this.defaultCommissions[type] !== undefined) commInput.value = this.formatNumberString(this.defaultCommissions[type]);
+        if (this.defaultTuitions[type]) tuitionInput.value = this.formatNumberString(this.defaultTuitions[type]);
+
+        if (type === 'B01' || type === 'B2') { inst1Input.value = '5,000,000'; inst2Input.value = '13,000,000'; }
+        else if (type === 'C1') { inst1Input.value = '5,000,000'; inst2Input.value = '15,000,000'; }
+        else { inst1Input.value = tuitionInput.value; inst2Input.value = '0'; }
+      },
+
+      togglePayFull() {
+        const isFull = document.getElementById('payFullOnce').checked;
+        const container = document.getElementById('installmentContainer');
+        if (isFull) container.classList.add('opacity-40', 'pointer-events-none');
+        else container.classList.remove('opacity-40', 'pointer-events-none');
+      },
+
+      autoCalculateStudyDate() {
+        const val = document.getElementById('examMonth').value;
+        if (!val) return;
+        let [year, month] = val.split('-').map(Number);
+        month -= 2;
+        if (month <= 0) { month += 12; year -= 1; }
+        document.getElementById('studyDate').value = `${year}-${String(month).padStart(2, '0')}-01`;
+      },
+
+      saveStudent(e) {
+        e.preventDefault();
+        const id = document.getElementById('studentId').value || 'STU_' + Date.now();
+        const student = {
+          id: id,
+          fullName: document.getElementById('fullName').value.trim().toUpperCase(),
+          dob: document.getElementById('dob').value,
+          district: document.getElementById('district').value,
+          licenseType: document.getElementById('licenseType').value,
+          studySchedule: document.getElementById('studySchedule').value,
+          existingLicense: document.getElementById('existingLicense').value,
+          tuitionFee: this.parseCurrency(document.getElementById('tuitionFee').value),
+          discountAmount: this.parseCurrency(document.getElementById('discountAmount').value),
+          discountReason: document.getElementById('discountReason').value,
+          commission: this.parseCurrency(document.getElementById('commission').value),
+          payFullOnce: document.getElementById('payFullOnce').checked,
+          inst1Amount: this.parseCurrency(document.getElementById('inst1Amount').value),
+          inst1Date: document.getElementById('inst1Date').value,
+          inst2Amount: this.parseCurrency(document.getElementById('inst2Amount').value),
+          inst2DueDate: document.getElementById('inst2DueDate').value,
+          inst2Paid: document.getElementById('inst2Paid').checked,
+          registerDate: document.getElementById('registerDate').value || new Date().toISOString().split('T')[0],
+          examMonth: document.getElementById('examMonth').value,
+          studyDate: document.getElementById('studyDate').value,
+          note: document.getElementById('note').value.trim()
+        };
+        const idx = this.students.findIndex(s => s.id === id);
+        if (idx >= 0) this.students[idx] = student; else this.students.unshift(student);
+        this.saveToStorage();
+        this.closeModal();
+      },
+
+      editStudent(id) {
+        const student = this.students.find(s => s.id === id);
+        if (!student) return;
+        this.openModal(true);
+        document.getElementById('studentId').value = student.id;
+        document.getElementById('fullName').value = student.fullName || '';
+        document.getElementById('dob').value = student.dob || '';
+        document.getElementById('district').value = student.district || 'Tân Bình';
+        document.getElementById('licenseType').value = student.licenseType || 'B01';
+        document.getElementById('studySchedule').value = student.studySchedule || 'Trong tuần (T2 - T6)';
+        document.getElementById('existingLicense').value = student.existingLicense || 'Chưa có';
+        document.getElementById('tuitionFee').value = this.formatNumberString(student.tuitionFee);
+        document.getElementById('discountAmount').value = this.formatNumberString(student.discountAmount);
+        document.getElementById('discountReason').value = student.discountReason || 'Không giảm';
+        document.getElementById('commission').value = this.formatNumberString(student.commission);
+        document.getElementById('payFullOnce').checked = !!student.payFullOnce;
+        document.getElementById('inst1Amount').value = this.formatNumberString(student.inst1Amount);
+        document.getElementById('inst1Date').value = student.inst1Date || '';
+        document.getElementById('inst2Amount').value = this.formatNumberString(student.inst2Amount);
+        document.getElementById('inst2DueDate').value = student.inst2DueDate || '';
+        document.getElementById('inst2Paid').checked = !!student.inst2Paid;
+        document.getElementById('registerDate').value = student.registerDate || '';
+        document.getElementById('examMonth').value = student.examMonth || '';
+        document.getElementById('studyDate').value = student.studyDate || '';
+        document.getElementById('note').value = student.note || '';
+        this.togglePayFull();
+      },
+
+      deleteStudent(id) {
+        if (confirm('Bạn có chắc chắn muốn xóa hồ sơ học viên này?')) {
+          this.students = this.students.filter(s => s.id !== id);
+          this.saveToStorage();
+        }
+      },
+
+      viewStudent(id) {
+        const s = this.students.find(item => item.id === id);
+        if (!s) return;
+        const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
+        document.getElementById('studentDetailContent').innerHTML = `
+          <div class="space-y-4">
+            <div class="flex items-center justify-between border-b border-stone-200 pb-3">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">${s.fullName}</h2>
+                <p class="text-xs text-slate-500">#${s.id} | Ngày nhập: ${this.formatDate(s.registerDate)}</p>
+              </div>
+              <span class="px-3 py-1 rounded-full text-xs font-bold border ${badgeClass}">Hạng ${s.licenseType}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-stone-50 border border-stone-200">Ngày sinh: <b class="text-slate-900">${s.dob ? this.formatDate(s.dob) : '-'}</b></div>
+              <div class="p-3 rounded-xl bg-stone-50 border border-stone-200">Khu vực: <b class="text-slate-900">${s.district || '-'}</b></div>
+              <div class="p-3 rounded-xl bg-stone-50 border border-stone-200">Lịch học: <b class="text-slate-900">${s.studySchedule || '-'}</b></div>
+              <div class="p-3 rounded-xl bg-stone-50 border border-stone-200">GPLX khác: <b class="text-slate-900">${s.existingLicense || 'Chưa có'}</b></div>
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">Khóa thi: <b class="text-amber-900">${s.examMonth ? `Tháng ${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : '-'}</b></div>
+              <div class="p-3 rounded-xl bg-stone-50 border border-stone-200">Dự kiến học: <b class="text-slate-900">${s.studyDate ? this.formatDate(s.studyDate) : '-'}</b></div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex justify-between">
+              <div><span class="text-xs text-slate-600">Học phí sau giảm:</span><div class="text-lg font-bold text-emerald-700">${this.formatVND(s.tuitionFee)}</div></div>
+              <div><span class="text-xs text-slate-600">Hoa hồng nhận:</span><div class="text-lg font-bold text-pink-600">${this.formatVND(s.commission)}</div></div>
+            </div>
+            ${s.note ? `<div class="p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-slate-700"><b>Ghi chú:</b> ${s.note}</div>` : ''}
+          </div>
+        `;
+        document.getElementById('viewModal').classList.remove('hidden');
+      },
+      closeViewModal() { document.getElementById('viewModal').classList.add('hidden'); },
+
+      openConfigModal() {
+        document.getElementById('configList').innerHTML = Object.entries(this.defaultCommissions).map(([key, val]) => `
+          <div class="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-stone-50 border border-stone-200">
+            <span class="text-xs font-bold text-slate-800 w-24">Hạng ${key}:</span>
+            <input type="text" id="cfg_${key}" value="${this.formatNumberString(val)}" oninput="app.formatCurrencyInput(this)" class="om-light-input px-3 py-1.5 rounded-xl text-xs font-bold text-right flex-1">
+            <span class="text-xs text-slate-500">₫</span>
+          </div>
+        `).join('');
+        document.getElementById('configModal').classList.remove('hidden');
+      },
+      closeConfigModal() { document.getElementById('configModal').classList.add('hidden'); },
+      saveConfig() {
+        Object.keys(this.defaultCommissions).forEach(key => {
+          const input = document.getElementById(`cfg_${key}`);
+          if (input) this.defaultCommissions[key] = this.parseCurrency(input.value);
+        });
+        localStorage.setItem('thanhcong_commissions_cfg', JSON.stringify(this.defaultCommissions));
+        this.closeConfigModal();
+        alert('Đã lưu cấu hình mức hoa hồng mặc định!');
+      },
+
+      openBackupModal() { document.getElementById('backupModal').classList.remove('hidden'); },
+      closeBackupModal() { document.getElementById('backupModal').classList.add('hidden'); },
+      exportBackupJSON() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.students, null, 2));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = `SaoLuu_HocVien_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+      },
+      importBackupJSON(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const imported = JSON.parse(event.target.result);
+            if (Array.isArray(imported)) {
+              this.students = imported;
+              this.saveToStorage();
+              this.closeBackupModal();
+              alert(`Khôi phục thành công ${imported.length} hồ sơ!`);
+            }
+          } catch(err) { alert('Lỗi đọc file: ' + err.message); }
+        };
+        reader.readAsText(file);
+      },
+
+      exportToExcel() {
+        const filtered = this.getFilteredStudents();
+        if (filtered.length === 0) { alert('Không có dữ liệu để xuất!'); return; }
+        const data = filtered.map((s, idx) => ({
+          "STT": idx + 1,
+          "Ngày Nhập": s.registerDate || '',
+          "Họ Và Tên": s.fullName || '',
+          "Ngày Sinh": s.dob || '',
+          "Quận": s.district || '',
+          "Hạng Bằng": s.licenseType || '',
+          "Lịch Học": s.studySchedule || '',
+          "GPLX Khác": s.existingLicense || '',
+          "Học Phí (VNĐ)": s.tuitionFee || 0,
+          "Giảm Giá (VNĐ)": s.discountAmount || 0,
+          "Lý Do Giảm": s.discountReason || '',
+          "Hoa Hồng (VNĐ)": s.commission || 0,
+          "Đóng Full": s.payFullOnce ? 'Có' : 'Không',
+          "Số Tiền Đợt 1": s.inst1Amount || 0,
+          "Ngày Đóng Đợt 1": s.inst1Date || '',
+          "Số Tiền Đợt 2": s.inst2Amount || 0,
+          "Hạn Đóng Đợt 2": s.inst2DueDate || '',
+          "Đã Đóng Đợt 2": s.inst2Paid ? 'Đã đóng' : 'Chưa',
+          "Khóa Thi": s.examMonth || '',
+          "Ngày Dự Kiến Học": s.studyDate || '',
+          "Ghi Chú": s.note || ''
+        }));
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "DanhSachHocVien");
+        XLSX.writeFile(wb, `DanhSach_HocVien_${new Date().toISOString().split('T')[0]}.xlsx`);
+      },
+
+      formatDate(isoStr) {
+        if (!isoStr) return '';
+        const parts = isoStr.split('-');
+        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        return isoStr;
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => app.init());
+  </script>
+</body>
+</html>
