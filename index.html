@@ -144,19 +144,22 @@
             <i class="fa-solid fa-arrows-rotate text-amber-600" id="syncSpinIcon"></i>
             <span>Đồng bộ</span>
           </button>
+
           <button onclick="app.openModal()" class="om-btn-gold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5">
             <i class="fa-solid fa-plus text-[10px]"></i>
             <span class="hidden sm:inline">Thêm Học Viên</span>
             <span class="sm:hidden">Thêm</span>
           </button>
-          <button onclick="app.openCloudModal()" title="Cài đặt Cloud Sync" class="om-btn-outline w-8 h-8 rounded-xl flex sm:hidden items-center justify-center text-indigo-700">
+
+          <button onclick="app.openCloudModal()" title="Cài đặt JSONBin Cloud" class="om-btn-outline w-8 h-8 rounded-xl flex sm:hidden items-center justify-center text-indigo-700 bg-indigo-50 border-indigo-200">
             <i class="fa-solid fa-cloud text-xs"></i>
           </button>
+
           <div class="hidden sm:flex items-center gap-1.5">
-            <button onclick="app.openCloudModal()" title="Cài đặt Cloud Sync" class="om-btn-outline p-2 rounded-2xl text-indigo-700"><i class="fa-solid fa-cloud text-sm"></i></button>
+            <button onclick="app.openCloudModal()" title="Cài đặt JSONBin Cloud" class="om-btn-outline p-2 rounded-2xl text-indigo-700 bg-indigo-50 border-indigo-200"><i class="fa-solid fa-cloud text-sm"></i></button>
             <button onclick="app.exportToExcel()" title="Xuất file Excel" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-file-excel text-sm"></i></button>
             <button onclick="app.openConfigModal()" title="Cài đặt hoa hồng" class="om-btn-outline p-2 rounded-2xl text-amber-600"><i class="fa-solid fa-sliders text-sm"></i></button>
-            <button onclick="app.openBackupModal()" title="Sao lưu" class="om-btn-outline p-2 rounded-2xl text-slate-600"><i class="fa-solid fa-database text-sm"></i></button>
+            <button onclick="app.openBackupModal()" title="Sao lưu / Khôi phục file" class="om-btn-outline p-2 rounded-2xl text-slate-600"><i class="fa-solid fa-database text-sm"></i></button>
           </div>
         </div>
       </div>
@@ -337,7 +340,7 @@
       </div>
     </main>
 
-    <!-- Modal Form -->
+    <!-- Modal Form (Add / Edit) -->
     <div id="studentModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto">
       <div class="om-card w-full max-w-2xl p-4 sm:p-6 my-auto relative border border-white bg-white/98 shadow-2xl max-h-[92vh] overflow-y-auto">
         <button onclick="app.closeModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -507,46 +510,51 @@
       </div>
     </div>
 
-    <!-- Modal 2-Way Sync Options -->
-    <div id="syncMenuModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto">
-      <div class="om-card w-full max-w-md p-5 relative border border-white bg-white shadow-2xl space-y-4">
-        <button onclick="app.closeSyncMenuModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+    <!-- Modal 1: JSONBIN CLOUD SETTINGS MODAL -->
+    <div id="cloudModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
+      <div class="om-card w-full max-w-lg p-5 relative border border-white bg-white shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <button onclick="app.closeCloudModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-cloud-arrow-up text-amber-600"></i>
-          <span>Tùy Chọn Đồng Bộ Đám Mây</span>
-        </h3>
-        <p class="text-xs text-slate-600">Chọn hành động đồng bộ phù hợp:</p>
+        <div class="flex items-center gap-2.5 border-b border-stone-200 pb-3">
+          <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-cloud"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Cài Đặt JSONBin Cloud</h3>
+            <p class="text-[11px] text-slate-500">Đồng bộ tức thì giữa Máy tính & Điện thoại</p>
+          </div>
+        </div>
 
-        <div class="space-y-2.5">
-          <button onclick="app.pushLocalToActiveCloud()" class="w-full p-3 rounded-2xl bg-amber-50 hover:bg-amber-100/80 border border-amber-300 text-left transition flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-arrow-up-from-bracket text-base"></i>
+        <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-3">
+          <p class="text-[11px] text-indigo-900 leading-relaxed">
+            Dán thông tin từ tài khoản <b>JSONBin.io</b> của bạn vào đây:
+          </p>
+
+          <div class="space-y-2">
+            <div>
+              <label class="block text-[10px] font-bold text-indigo-900 mb-1">Bin ID (Chuỗi mã Bin)</label>
+              <input type="text" id="cfgBinId" placeholder="VD: 66cc1234..." class="om-input w-full px-3.5 py-2 rounded-xl text-xs font-mono">
             </div>
             <div>
-              <div class="text-xs font-bold text-amber-950">1. ĐẨY DỮ LIỆU LÊN CLOUD (Khi vừa sửa xong)</div>
-              <div class="text-[11px] text-amber-800">Lấy dữ liệu trên màn hình này lưu lên đám mây.</div>
+              <label class="block text-[10px] font-bold text-indigo-900 mb-1">Master Key (Bắt đầu bằng $2a$10$...)</label>
+              <input type="text" id="cfgMasterKey" placeholder="VD: $2a$10$..." class="om-input w-full px-3.5 py-2 rounded-xl text-xs font-mono">
             </div>
-          </button>
+          </div>
 
-          <button onclick="app.pullActiveCloudToLocal()" class="w-full p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-300 text-left transition flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-arrow-down-to-bracket text-base"></i>
-            </div>
-            <div>
-              <div class="text-xs font-bold text-emerald-950">2. TẢI DỮ LIỆU TỪ CLOUD VỀ MÁY</div>
-              <div class="text-[11px] text-emerald-800">Lấy dữ liệu mới nhất trên đám mây cập nhật vào máy này.</div>
-            </div>
+          <button onclick="app.saveJsonBinConfig()" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-check"></i>
+            <span>Lưu Cấu Hình & Đồng Bộ Ngay</span>
           </button>
         </div>
 
-        <div class="pt-2 border-t border-stone-200 flex justify-end">
-          <button onclick="app.closeSyncMenuModal()" class="om-btn-outline px-4 py-1.5 rounded-xl text-xs font-bold">Đóng</button>
+        <div class="flex items-center justify-between pt-2 border-t border-stone-200">
+          <button onclick="app.disconnectAllCloud()" class="text-xs text-rose-600 hover:underline font-bold">Xóa thông tin Cloud</button>
+          <button onclick="app.closeCloudModal()" class="om-btn-outline px-4 py-1.5 rounded-xl text-xs font-bold">Đóng</button>
         </div>
       </div>
     </div>
 
-    <!-- Modal View -->
+    <!-- Modal 2: View Student Detail -->
     <div id="viewModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
       <div class="om-card w-full max-w-lg p-4 sm:p-6 relative border border-white bg-white shadow-2xl max-h-[90vh] overflow-y-auto">
         <button onclick="app.closeViewModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -558,7 +566,7 @@
       </div>
     </div>
 
-    <!-- Modal Config -->
+    <!-- Modal 3: Config -->
     <div id="configModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
       <div class="om-card w-full max-w-lg p-4 sm:p-6 relative border border-white bg-white shadow-2xl">
         <button onclick="app.closeConfigModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -571,11 +579,12 @@
       </div>
     </div>
 
-    <!-- Modal Backup -->
+    <!-- Modal 4: Backup / Restore JSON -->
     <div id="backupModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto">
       <div class="om-card w-full max-w-md p-4 sm:p-6 relative border border-white bg-white shadow-2xl space-y-3">
         <button onclick="app.closeBackupModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-database text-amber-600"></i><span>Sao Lưu & Khôi Phục Dữ Liệu</span></h3>
+        <p class="text-xs text-slate-500">Xuất file để gửi qua Zalo / Cloud hoặc chuyển máy.</p>
         <button onclick="app.exportBackupJSON()" class="w-full py-2.5 rounded-xl om-btn-gold text-xs font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i><span>Tải File Sao Lưu (.JSON)</span></button>
         <input type="file" id="backupFileInput" accept=".json" class="hidden" onchange="app.importBackupJSON(event)">
         <button onclick="document.getElementById('backupFileInput').click()" class="w-full py-2.5 rounded-xl om-btn-outline text-xs font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-upload"></i><span>Chọn File Khôi Phục</span></button>
@@ -589,7 +598,6 @@
       students: [],
       binId: '',
       masterKey: '',
-      sheetScriptUrl: '',
       defaultCommissions: { 'A1': 200000, 'A': 700000, 'B01': 2000000, 'B2': 2000000, 'C1': 2000000, 'Bổ túc': 500000, 'Khác': 1000000 },
       defaultTuitions: { 'A1': 1500000, 'A': 2500000, 'B01': 18000000, 'B2': 18000000, 'C1': 20000000, 'Bổ túc': 3500000, 'Khác': 10000000 },
 
@@ -601,10 +609,9 @@
         this.updateStats();
         this.initDefaultDate();
 
+        // Auto pull if configured and local is empty
         if (this.binId && this.masterKey && this.students.length === 0) {
           this.pullFromJsonBin(false);
-        } else if (this.sheetScriptUrl && this.students.length === 0) {
-          this.pullFromSheet(false);
         }
       },
 
@@ -612,6 +619,7 @@
         const toast = document.getElementById('toastNotification');
         const icon = document.getElementById('toastIcon');
         const message = document.getElementById('toastMessage');
+        if (!toast || !icon || !message) return;
         icon.textContent = isSuccess ? '✅' : '⚠️';
         message.textContent = msg;
         toast.classList.remove('translate-y-[-100px]', 'opacity-0', 'pointer-events-none');
@@ -637,7 +645,6 @@
         if (storedCommissions) { try { this.defaultCommissions = { ...this.defaultCommissions, ...JSON.parse(storedCommissions) }; } catch(e) {} }
         this.binId = localStorage.getItem('thanhcong_bin_id') || '';
         this.masterKey = localStorage.getItem('thanhcong_master_key') || '';
-        this.sheetScriptUrl = localStorage.getItem('thanhcong_sheet_api_url') || '';
       },
 
       saveToStorage() {
@@ -646,10 +653,9 @@
         this.renderAllViews();
         this.updateStats();
 
+        // Auto push to JSONBin
         if (this.binId && this.masterKey) {
           this.pushToJsonBin(false);
-        } else if (this.sheetScriptUrl) {
-          this.pushToSheet(false);
         }
       },
 
@@ -657,14 +663,11 @@
         const dot = document.getElementById('syncStatusDot');
         const text = document.getElementById('syncStatusText');
         const badge = document.getElementById('syncStatusBadge');
+        if (!dot || !text || !badge) return;
 
         if (this.binId && this.masterKey) {
-          dot.className = 'w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse';
-          text.textContent = 'JSONBin Cloud';
-          badge.className = 'cursor-pointer text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full border transition flex items-center gap-1 bg-indigo-50 text-indigo-800 border-indigo-300';
-        } else if (this.sheetScriptUrl) {
           dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
-          text.textContent = 'Google Sheet';
+          text.textContent = 'JSONBin Đã Kết Nối';
           badge.className = 'cursor-pointer text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full border transition flex items-center gap-1 bg-emerald-50 text-emerald-800 border-emerald-300';
         } else {
           dot.className = 'w-1.5 h-1.5 rounded-full bg-stone-400';
@@ -673,88 +676,60 @@
         }
       },
 
-      openSyncMenuModal() {
-        if (!this.binId && !this.sheetScriptUrl) {
-          this.openCloudModal();
-          return;
-        }
-        document.getElementById('syncMenuModal').classList.remove('hidden');
-      },
-      closeSyncMenuModal() { document.getElementById('syncMenuModal').classList.add('hidden'); },
-
+      // Open / Close Cloud Modal (Safe null check)
       openCloudModal() {
-        document.getElementById('cfgBinId').value = this.binId || '';
-        document.getElementById('cfgMasterKey').value = this.masterKey || '';
-        document.getElementById('sheetApiUrl').value = this.sheetScriptUrl || '';
-        document.getElementById('cloudModal').classList.remove('hidden');
+        const elBin = document.getElementById('cfgBinId');
+        const elKey = document.getElementById('cfgMasterKey');
+        const modal = document.getElementById('cloudModal');
+        if (elBin) elBin.value = this.binId || '';
+        if (elKey) elKey.value = this.masterKey || '';
+        if (modal) modal.classList.remove('hidden');
       },
-      closeCloudModal() { document.getElementById('cloudModal').classList.add('hidden'); },
+
+      closeCloudModal() {
+        const modal = document.getElementById('cloudModal');
+        if (modal) modal.classList.add('hidden');
+      },
 
       saveJsonBinConfig() {
-        this.binId = document.getElementById('cfgBinId').value.trim();
-        this.masterKey = document.getElementById('cfgMasterKey').value.trim();
+        const elBin = document.getElementById('cfgBinId');
+        const elKey = document.getElementById('cfgMasterKey');
+        this.binId = elBin ? elBin.value.trim() : '';
+        this.masterKey = elKey ? elKey.value.trim() : '';
+
+        if (!this.binId || !this.masterKey) {
+          alert('Vui lòng nhập đầy đủ Bin ID và Master Key!');
+          return;
+        }
+
         localStorage.setItem('thanhcong_bin_id', this.binId);
         localStorage.setItem('thanhcong_master_key', this.masterKey);
         this.updateSyncBadge();
         this.closeCloudModal();
-        if (this.binId && this.masterKey) {
-          this.pullFromJsonBin(true);
-        }
-      },
 
-      saveSheetUrl() {
-        this.sheetScriptUrl = document.getElementById('sheetApiUrl').value.trim();
-        localStorage.setItem('thanhcong_sheet_api_url', this.sheetScriptUrl);
-        this.updateSyncBadge();
-        this.closeCloudModal();
-        this.showToast('Đã lưu link Google Sheet!');
+        // Immediate sync test
+        this.pushToJsonBin(true);
       },
 
       disconnectAllCloud() {
         this.binId = '';
         this.masterKey = '';
-        this.sheetScriptUrl = '';
         localStorage.removeItem('thanhcong_bin_id');
         localStorage.removeItem('thanhcong_master_key');
-        localStorage.removeItem('thanhcong_sheet_api_url');
         this.updateSyncBadge();
         this.closeCloudModal();
-        this.showToast('Đã ngắt toàn bộ kết nối Cloud.');
+        this.showToast('Đã xóa thông tin kết nối Cloud.');
       },
 
       async syncNow() {
         if (this.binId && this.masterKey) {
           await this.pullFromJsonBin(true);
-        } else if (this.sheetScriptUrl) {
-          await this.pullFromSheet(true);
         } else {
           this.openCloudModal();
         }
       },
 
-      async pushLocalToActiveCloud() {
-        if (this.binId && this.masterKey) {
-          await this.pushToJsonBin(true);
-        } else if (this.sheetScriptUrl) {
-          await this.pushToSheet(true);
-        } else {
-          this.openCloudModal();
-        }
-        this.closeSyncMenuModal();
-      },
-
-      async pullActiveCloudToLocal() {
-        if (this.binId && this.masterKey) {
-          await this.pullFromJsonBin(true);
-        } else if (this.sheetScriptUrl) {
-          await this.pullFromSheet(true);
-        } else {
-          this.openCloudModal();
-        }
-        this.closeSyncMenuModal();
-      },
-
-      // JSONBin API Implementation
+      // Push to JSONBin.io
       async pushToJsonBin(showNotice = true) {
         if (!this.binId || !this.masterKey) return;
         const icon = document.getElementById('syncSpinIcon');
@@ -773,7 +748,7 @@
           if (res.ok) {
             if (showNotice) this.showToast(`Đã lưu ${this.students.length} hồ sơ lên Cloud!`);
           } else {
-            if (showNotice) this.showToast('Lỗi JSONBin: ' + (data.message || 'Sai Key/ID'), false);
+            if (showNotice) this.showToast('Lỗi JSONBin: ' + (data.message || 'Kiểm tra lại Key/Bin ID'), false);
           }
         } catch(err) {
           if (showNotice) this.showToast('Lỗi kết nối: ' + err.message, false);
@@ -782,6 +757,7 @@
         }
       },
 
+      // Pull from JSONBin.io
       async pullFromJsonBin(showNotice = true) {
         if (!this.binId || !this.masterKey) return;
         const icon = document.getElementById('syncSpinIcon');
@@ -803,64 +779,10 @@
             this.updateStats();
             if (showNotice) this.showToast(`Đã tải về ${this.students.length} hồ sơ từ Cloud!`);
           } else {
-            if (showNotice) this.showToast('Lỗi tải dữ liệu JSONBin.', false);
+            if (showNotice) this.showToast('Không có dữ liệu trên JSONBin.', false);
           }
         } catch(err) {
-          if (showNotice) this.showToast('Lỗi mạng: ' + err.message, false);
-        } finally {
-          if (icon) icon.className = 'fa-solid fa-arrows-rotate text-amber-600';
-        }
-      },
-
-      // Google Sheet API
-      async pushToSheet(showNotice = true) {
-        if (!this.sheetScriptUrl) return;
-        const icon = document.getElementById('syncSpinIcon');
-        if (icon) icon.className = 'fa-solid fa-spinner fa-spin text-amber-600';
-
-        try {
-          await fetch(this.sheetScriptUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'saveAll', data: this.students })
-          });
-          if (showNotice) this.showToast(`Đã lưu ${this.students.length} hồ sơ lên Sheet!`);
-        } catch(err) {
-          if (showNotice) this.showToast('Lỗi đẩy dữ liệu: ' + err.message, false);
-        } finally {
-          if (icon) icon.className = 'fa-solid fa-arrows-rotate text-amber-600';
-        }
-      },
-
-      async pullFromSheet(showNotice = true) {
-        if (!this.sheetScriptUrl) return;
-        const icon = document.getElementById('syncSpinIcon');
-        if (icon) icon.className = 'fa-solid fa-spinner fa-spin text-amber-600';
-
-        try {
-          const cleanUrl = this.sheetScriptUrl.split('?')[0];
-          const response = await fetch(`${cleanUrl}?t=${new Date().getTime()}`, { method: 'GET', redirect: 'follow' });
-          const result = await response.json();
-          if (result.status === 'success' && Array.isArray(result.data)) {
-            this.students = result.data.map(item => ({
-              ...item,
-              tuitionFee: Number(item.tuitionFee) || 0,
-              discountAmount: Number(item.discountAmount) || 0,
-              commission: Number(item.commission) || 0,
-              inst1Amount: Number(item.inst1Amount) || 0,
-              inst2Amount: Number(item.inst2Amount) || 0,
-              payFullOnce: item.payFullOnce === true || item.payFullOnce === 'true',
-              inst2Paid: item.inst2Paid === true || item.inst2Paid === 'true',
-            }));
-            localStorage.setItem('thanhcong_students_db', JSON.stringify(this.students));
-            this.populateMonthFilter();
-            this.renderAllViews();
-            this.updateStats();
-            if (showNotice) this.showToast(`Đã tải về ${this.students.length} hồ sơ từ Sheet!`);
-          }
-        } catch(err) {
-          if (showNotice) alert('Lỗi tải từ Sheet: ' + err.message);
+          if (showNotice) this.showToast('Lỗi tải từ Cloud: ' + err.message, false);
         } finally {
           if (icon) icon.className = 'fa-solid fa-arrows-rotate text-amber-600';
         }
@@ -886,6 +808,7 @@
 
       populateMonthFilter() {
         const filterMonth = document.getElementById('filterMonth');
+        if (!filterMonth) return;
         const currentVal = filterMonth.value;
         const months = new Set();
         this.students.forEach(s => { if (s.registerDate) months.add(s.registerDate.substring(0, 7)); });
@@ -903,10 +826,15 @@
       },
 
       getFilteredStudents() {
-        const monthFilter = document.getElementById('filterMonth').value;
-        const licenseFilter = document.getElementById('filterLicense').value;
-        const paymentFilter = document.getElementById('filterPayment').value;
-        const search = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+        const monthEl = document.getElementById('filterMonth');
+        const licenseEl = document.getElementById('filterLicense');
+        const paymentEl = document.getElementById('filterPayment');
+        const searchEl = document.getElementById('searchInput');
+
+        const monthFilter = monthEl ? monthEl.value : 'all';
+        const licenseFilter = licenseEl ? licenseEl.value : 'all';
+        const paymentFilter = paymentEl ? paymentEl.value : 'all';
+        const search = searchEl ? (searchEl.value || '').trim().toLowerCase() : '';
 
         return this.students.filter(s => {
           if (monthFilter !== 'all' && (!s.registerDate || !s.registerDate.startsWith(monthFilter))) return false;
@@ -932,110 +860,115 @@
         const tbody = document.getElementById('studentTableBody');
         const mobileContainer = document.getElementById('studentMobileCards');
         const emptyState = document.getElementById('emptyState');
-        document.getElementById('recordCountBadge').textContent = `${filtered.length} hồ sơ`;
+        const countBadge = document.getElementById('recordCountBadge');
+        if (countBadge) countBadge.textContent = `${filtered.length} hồ sơ`;
 
         if (filtered.length === 0) {
-          tbody.innerHTML = '';
-          mobileContainer.innerHTML = '';
-          emptyState.classList.remove('hidden');
+          if (tbody) tbody.innerHTML = '';
+          if (mobileContainer) mobileContainer.innerHTML = '';
+          if (emptyState) emptyState.classList.remove('hidden');
           return;
         }
-        emptyState.classList.add('hidden');
+        if (emptyState) emptyState.classList.add('hidden');
 
         // 1. Desktop Table
-        tbody.innerHTML = filtered.map(s => {
-          const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
-          const inst2Alert = this.getInstallment2Alert(s);
-          return `
-            <tr class="hover:bg-amber-50/60 transition duration-150 group cursor-pointer" onclick="app.viewStudent('${s.id}')">
-              <td class="py-3 px-4 text-xs text-slate-500 font-medium">${s.registerDate ? this.formatDate(s.registerDate) : '-'}</td>
-              <td class="py-3 px-4">
-                <div class="font-bold text-slate-900 group-hover:text-amber-700 transition">${s.fullName}</div>
-                <div class="text-[11px] text-slate-500">${s.dob ? `Sinh: ${this.formatDate(s.dob)}` : 'Chưa có ngày sinh'}</div>
-              </td>
-              <td class="py-3 px-4 text-xs">
-                <div class="text-slate-800 font-semibold">${s.district || '-'}</div>
-                <div class="text-[11px] text-slate-500">${s.studySchedule || '-'}</div>
-              </td>
-              <td class="py-3 px-4 text-center">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold border ${badgeClass}">
-                  ${s.licenseType === 'Bổ túc' ? '<i class="fa-solid fa-steering-wheel mr-1 text-[9px]"></i>' : ''}
-                  ${s.licenseType}
-                </span>
-              </td>
-              <td class="py-3 px-4 text-right font-bold text-emerald-700 text-xs">${this.formatVND(s.tuitionFee)}</td>
-              <td class="py-3 px-4 text-right font-bold text-pink-600 text-xs">${this.formatVND(s.commission)}</td>
-              <td class="py-3 px-4 text-xs">
-                ${s.payFullOnce ? '<span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold text-[11px]">Đóng Full 1 lần</span>' : `<div>Đ1: <b>${this.formatVND(s.inst1Amount)}</b></div><div>${inst2Alert}</div>`}
-              </td>
-              <td class="py-3 px-4 text-center text-xs">
-                <div class="font-bold text-amber-800">${s.examMonth ? `Thi: T${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : '-'}</div>
-                <div class="text-[11px] text-slate-500">${s.studyDate ? `Học: ${this.formatDate(s.studyDate)}` : '-'}</div>
-              </td>
-              <td class="py-3 px-4 text-center" onclick="event.stopPropagation()">
-                <button onclick="app.editStudent('${s.id}')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-600 hover:text-amber-800 mr-1 transition"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
-                <button onclick="app.deleteStudent('${s.id}')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-rose-100 text-stone-600 hover:text-rose-700 transition"><i class="fa-solid fa-trash text-xs"></i></button>
-              </td>
-            </tr>
-          `;
-        }).join('');
+        if (tbody) {
+          tbody.innerHTML = filtered.map(s => {
+            const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
+            const inst2Alert = this.getInstallment2Alert(s);
+            return `
+              <tr class="hover:bg-amber-50/60 transition duration-150 group cursor-pointer" onclick="app.viewStudent('${s.id}')">
+                <td class="py-3 px-4 text-xs text-slate-500 font-medium">${s.registerDate ? this.formatDate(s.registerDate) : '-'}</td>
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-900 group-hover:text-amber-700 transition">${s.fullName}</div>
+                  <div class="text-[11px] text-slate-500">${s.dob ? `Sinh: ${this.formatDate(s.dob)}` : 'Chưa có ngày sinh'}</div>
+                </td>
+                <td class="py-3 px-4 text-xs">
+                  <div class="text-slate-800 font-semibold">${s.district || '-'}</div>
+                  <div class="text-[11px] text-slate-500">${s.studySchedule || '-'}</div>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold border ${badgeClass}">
+                    ${s.licenseType === 'Bổ túc' ? '<i class="fa-solid fa-steering-wheel mr-1 text-[9px]"></i>' : ''}
+                    ${s.licenseType}
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-right font-bold text-emerald-700 text-xs">${this.formatVND(s.tuitionFee)}</td>
+                <td class="py-3 px-4 text-right font-bold text-pink-600 text-xs">${this.formatVND(s.commission)}</td>
+                <td class="py-3 px-4 text-xs">
+                  ${s.payFullOnce ? '<span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold text-[11px]">Đóng Full 1 lần</span>' : `<div>Đ1: <b>${this.formatVND(s.inst1Amount)}</b></div><div>${inst2Alert}</div>`}
+                </td>
+                <td class="py-3 px-4 text-center text-xs">
+                  <div class="font-bold text-amber-800">${s.examMonth ? `Thi: T${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : '-'}</div>
+                  <div class="text-[11px] text-slate-500">${s.studyDate ? `Học: ${this.formatDate(s.studyDate)}` : '-'}</div>
+                </td>
+                <td class="py-3 px-4 text-center" onclick="event.stopPropagation()">
+                  <button onclick="app.editStudent('${s.id}')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-600 hover:text-amber-800 mr-1 transition"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                  <button onclick="app.deleteStudent('${s.id}')" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-rose-100 text-stone-600 hover:text-rose-700 transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
 
         // 2. Mobile Cards
-        mobileContainer.innerHTML = filtered.map(s => {
-          const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
-          const inst2Alert = this.getInstallment2Alert(s);
+        if (mobileContainer) {
+          mobileContainer.innerHTML = filtered.map(s => {
+            const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
+            const inst2Alert = this.getInstallment2Alert(s);
 
-          return `
-            <div class="p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-2xs space-y-2.5 active:bg-amber-50/40 transition cursor-pointer" onclick="app.viewStudent('${s.id}')">
-              <div class="flex items-start justify-between gap-2 border-b border-stone-100 pb-2">
-                <div class="min-w-0 flex-1">
-                  <h4 class="font-bold text-slate-900 text-sm truncate uppercase tracking-tight">${s.fullName}</h4>
-                  <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-2">
-                    <span>${s.dob ? `Sinh: ${this.formatDate(s.dob)}` : 'Chưa có ngày sinh'}</span>
-                    <span>•</span>
-                    <span class="text-slate-700 font-semibold">${s.district || '-'}</span>
+            return `
+              <div class="p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-2xs space-y-2.5 active:bg-amber-50/40 transition cursor-pointer" onclick="app.viewStudent('${s.id}')">
+                <div class="flex items-start justify-between gap-2 border-b border-stone-100 pb-2">
+                  <div class="min-w-0 flex-1">
+                    <h4 class="font-bold text-slate-900 text-sm truncate uppercase tracking-tight">${s.fullName}</h4>
+                    <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-2">
+                      <span>${s.dob ? `Sinh: ${this.formatDate(s.dob)}` : 'Chưa có ngày sinh'}</span>
+                      <span>•</span>
+                      <span class="text-slate-700 font-semibold">${s.district || '-'}</span>
+                    </div>
+                  </div>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold border shrink-0 ${badgeClass}">
+                    ${s.licenseType === 'Bổ túc' ? '<i class="fa-solid fa-steering-wheel mr-1 text-[9px]"></i>' : ''}
+                    ${s.licenseType}
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 p-2 rounded-xl bg-stone-50 border border-stone-200/60">
+                  <div>
+                    <span class="text-[10px] text-slate-500 block font-medium">Học phí sau giảm:</span>
+                    <div class="text-xs font-bold text-emerald-700 truncate">${this.formatVND(s.tuitionFee)}</div>
+                  </div>
+                  <div class="border-l border-stone-200 pl-2">
+                    <span class="text-[10px] text-slate-500 block font-medium">Hoa hồng nhận:</span>
+                    <div class="text-xs font-bold text-pink-600 truncate">${this.formatVND(s.commission)}</div>
                   </div>
                 </div>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold border shrink-0 ${badgeClass}">
-                  ${s.licenseType === 'Bổ túc' ? '<i class="fa-solid fa-steering-wheel mr-1 text-[9px]"></i>' : ''}
-                  ${s.licenseType}
-                </span>
-              </div>
 
-              <div class="grid grid-cols-2 gap-2 p-2 rounded-xl bg-stone-50 border border-stone-200/60">
-                <div>
-                  <span class="text-[10px] text-slate-500 block font-medium">Học phí sau giảm:</span>
-                  <div class="text-xs font-bold text-emerald-700 truncate">${this.formatVND(s.tuitionFee)}</div>
+                <div class="space-y-1.5 text-[11px]">
+                  <div class="flex items-center justify-between text-slate-600">
+                    <span>Tiến độ phí:</span>
+                    ${s.payFullOnce ? '<span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Đã đóng Full</span>' : `<span>Đ1: <b>${this.formatVND(s.inst1Amount)}</b></span>`}
+                  </div>
+                  ${!s.payFullOnce ? `<div class="flex items-center justify-between">${inst2Alert}</div>` : ''}
+                  <div class="flex items-center justify-between text-slate-500 pt-1 border-t border-stone-100 text-[10px]">
+                    <span>${s.examMonth ? `Thi: T${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : 'Chưa có khóa thi'}</span>
+                    <span>${s.studyDate ? `Dự kiến học: ${this.formatDate(s.studyDate)}` : ''}</span>
+                  </div>
                 </div>
-                <div class="border-l border-stone-200 pl-2">
-                  <span class="text-[10px] text-slate-500 block font-medium">Hoa hồng nhận:</span>
-                  <div class="text-xs font-bold text-pink-600 truncate">${this.formatVND(s.commission)}</div>
-                </div>
-              </div>
 
-              <div class="space-y-1.5 text-[11px]">
-                <div class="flex items-center justify-between text-slate-600">
-                  <span>Tiến độ phí:</span>
-                  ${s.payFullOnce ? '<span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Đã đóng Full</span>' : `<span>Đ1: <b>${this.formatVND(s.inst1Amount)}</b></span>`}
-                </div>
-                ${!s.payFullOnce ? `<div class="flex items-center justify-between">${inst2Alert}</div>` : ''}
-                <div class="flex items-center justify-between text-slate-500 pt-1 border-t border-stone-100 text-[10px]">
-                  <span>${s.examMonth ? `Thi: T${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : 'Chưa có khóa thi'}</span>
-                  <span>${s.studyDate ? `Dự kiến học: ${this.formatDate(s.studyDate)}` : ''}</span>
+                <div class="flex items-center justify-end gap-2 pt-1 border-t border-stone-100" onclick="event.stopPropagation()">
+                  <button onclick="app.editStudent('${s.id}')" class="px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700 text-xs font-bold flex items-center gap-1 active:bg-amber-100">
+                    <i class="fa-solid fa-pen-to-square text-[10px]"></i> Sửa
+                  </button>
+                  <button onclick="app.deleteStudent('${s.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 text-xs font-bold flex items-center gap-1 active:bg-rose-100">
+                    <i class="fa-solid fa-trash text-[10px]"></i> Xóa
+                  </button>
                 </div>
               </div>
-
-              <div class="flex items-center justify-end gap-2 pt-1 border-t border-stone-100" onclick="event.stopPropagation()">
-                <button onclick="app.editStudent('${s.id}')" class="px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700 text-xs font-bold flex items-center gap-1 active:bg-amber-100">
-                  <i class="fa-solid fa-pen-to-square text-[10px]"></i> Sửa
-                </button>
-                <button onclick="app.deleteStudent('${s.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 text-xs font-bold flex items-center gap-1 active:bg-rose-100">
-                  <i class="fa-solid fa-trash text-[10px]"></i> Xóa
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
+            `;
+          }).join('');
+        }
       },
 
       getLicenseBadgeStyle(type) {
@@ -1061,47 +994,62 @@
 
       updateStats() {
         const filtered = this.getFilteredStudents();
-        document.getElementById('statTotalStudents').textContent = filtered.length;
-        document.getElementById('statTotalCommission').textContent = this.formatVND(filtered.reduce((sum, s) => sum + (s.commission || 0), 0));
-        document.getElementById('statTotalTuition').textContent = this.formatVND(filtered.reduce((sum, s) => sum + (s.tuitionFee || 0), 0));
+        const elTotal = document.getElementById('statTotalStudents');
+        const elComm = document.getElementById('statTotalCommission');
+        const elTuit = document.getElementById('statTotalTuition');
+        const elBreak = document.getElementById('statTuitionBreakdown');
+        const elPend = document.getElementById('statPendingInstallment2');
+
+        if (elTotal) elTotal.textContent = filtered.length;
+        if (elComm) elComm.textContent = this.formatVND(filtered.reduce((sum, s) => sum + (s.commission || 0), 0));
+        if (elTuit) elTuit.textContent = this.formatVND(filtered.reduce((sum, s) => sum + (s.tuitionFee || 0), 0));
         const totalInst1 = filtered.reduce((sum, s) => sum + (s.payFullOnce ? (s.tuitionFee || 0) : (s.inst1Amount || 0)), 0);
-        document.getElementById('statTuitionBreakdown').textContent = `Đã thu Đ1: ${this.formatVND(totalInst1)}`;
-        document.getElementById('statPendingInstallment2').textContent = filtered.filter(s => !s.payFullOnce && !s.inst2Paid).length;
+        if (elBreak) elBreak.textContent = `Đã thu Đ1: ${this.formatVND(totalInst1)}`;
+        if (elPend) elPend.textContent = filtered.filter(s => !s.payFullOnce && !s.inst2Paid).length;
 
         const counts = { 'A1': 0, 'A': 0, 'B01': 0, 'B2': 0, 'C1': 0, 'Bổ túc': 0, 'Khác': 0 };
         filtered.forEach(s => { if (counts[s.licenseType] !== undefined) counts[s.licenseType]++; else counts['Khác']++; });
-        document.getElementById('count-A1').textContent = counts['A1'];
-        document.getElementById('count-A').textContent = counts['A'];
-        document.getElementById('count-B01').textContent = counts['B01'];
-        document.getElementById('count-B2').textContent = counts['B2'];
-        document.getElementById('count-C1').textContent = counts['C1'];
-        document.getElementById('count-Botuc').textContent = counts['Bổ túc'];
-        document.getElementById('count-Khac').textContent = counts['Khác'];
+        
+        ['A1', 'A', 'B01', 'B2', 'C1', 'Botuc', 'Khác'].forEach(k => {
+          const el = document.getElementById(`count-${k}`);
+          if (el) el.textContent = k === 'Botuc' ? counts['Bổ túc'] : counts[k] || 0;
+        });
       },
 
       filterData() { this.renderAllViews(); this.updateStats(); },
-      filterByLicense(type) { document.getElementById('filterLicense').value = type; this.filterData(); },
-      filterByInstallment2Pending() { document.getElementById('filterPayment').value = 'pending'; this.filterData(); },
-      resetFilters() { document.getElementById('filterMonth').value = 'all'; document.getElementById('filterLicense').value = 'all'; document.getElementById('filterPayment').value = 'all'; document.getElementById('searchInput').value = ''; this.filterData(); },
+      filterByLicense(type) { const el = document.getElementById('filterLicense'); if (el) el.value = type; this.filterData(); },
+      filterByInstallment2Pending() { const el = document.getElementById('filterPayment'); if (el) el.value = 'pending'; this.filterData(); },
+      resetFilters() { 
+        const m = document.getElementById('filterMonth'); if (m) m.value = 'all';
+        const l = document.getElementById('filterLicense'); if (l) l.value = 'all';
+        const p = document.getElementById('filterPayment'); if (p) p.value = 'all';
+        const s = document.getElementById('searchInput'); if (s) s.value = '';
+        this.filterData(); 
+      },
 
       openModal(isEdit = false) {
-        document.getElementById('studentModal').classList.remove('hidden');
+        const modal = document.getElementById('studentModal');
+        if (modal) modal.classList.remove('hidden');
         if (!isEdit) {
-          document.getElementById('studentForm').reset();
-          document.getElementById('studentId').value = '';
+          const form = document.getElementById('studentForm');
+          if (form) form.reset();
+          const sid = document.getElementById('studentId');
+          if (sid) sid.value = '';
           this.initDefaultDate();
           this.onLicenseChange();
         }
       },
-      closeModal() { document.getElementById('studentModal').classList.add('hidden'); },
+      closeModal() { const modal = document.getElementById('studentModal'); if (modal) modal.classList.add('hidden'); },
 
       onLicenseChange() {
-        const type = document.getElementById('licenseType').value;
+        const typeEl = document.getElementById('licenseType');
         const commInput = document.getElementById('commission');
         const tuitionInput = document.getElementById('tuitionFee');
         const inst1Input = document.getElementById('inst1Amount');
         const inst2Input = document.getElementById('inst2Amount');
+        if (!typeEl || !commInput || !tuitionInput || !inst1Input || !inst2Input) return;
 
+        const type = typeEl.value;
         if (this.defaultCommissions[type] !== undefined) commInput.value = this.formatNumberString(this.defaultCommissions[type]);
         if (this.defaultTuitions[type]) tuitionInput.value = this.formatNumberString(this.defaultTuitions[type]);
 
@@ -1111,19 +1059,23 @@
       },
 
       togglePayFull() {
-        const isFull = document.getElementById('payFullOnce').checked;
+        const payFullEl = document.getElementById('payFullOnce');
+        const isFull = payFullEl ? payFullEl.checked : false;
         const container = document.getElementById('installmentContainer');
-        if (isFull) container.classList.add('opacity-40', 'pointer-events-none');
-        else container.classList.remove('opacity-40', 'pointer-events-none');
+        if (container) {
+          if (isFull) container.classList.add('opacity-40', 'pointer-events-none');
+          else container.classList.remove('opacity-40', 'pointer-events-none');
+        }
       },
 
       autoCalculateStudyDate() {
-        const val = document.getElementById('examMonth').value;
-        if (!val) return;
-        let [year, month] = val.split('-').map(Number);
+        const valEl = document.getElementById('examMonth');
+        if (!valEl || !valEl.value) return;
+        let [year, month] = valEl.value.split('-').map(Number);
         month -= 2;
         if (month <= 0) { month += 12; year -= 1; }
-        document.getElementById('studyDate').value = `${year}-${String(month).padStart(2, '0')}-01`;
+        const sDate = document.getElementById('studyDate');
+        if (sDate) sDate.value = `${year}-${String(month).padStart(2, '0')}-01`;
       },
 
       saveStudent(e) {
@@ -1131,32 +1083,32 @@
         const id = document.getElementById('studentId').value || 'STU_' + Date.now();
         const student = {
           id: id,
-          fullName: document.getElementById('fullName').value.trim().toUpperCase(),
-          dob: document.getElementById('dob').value,
-          district: document.getElementById('district').value,
-          licenseType: document.getElementById('licenseType').value,
-          studySchedule: document.getElementById('studySchedule').value,
-          existingLicense: document.getElementById('existingLicense').value,
+          fullName: (document.getElementById('fullName').value || '').trim().toUpperCase(),
+          dob: document.getElementById('dob').value || '',
+          district: document.getElementById('district').value || 'Tân Bình',
+          licenseType: document.getElementById('licenseType').value || 'B01',
+          studySchedule: document.getElementById('studySchedule').value || 'Trong tuần (T2 - T6)',
+          existingLicense: document.getElementById('existingLicense').value || 'Chưa có',
           tuitionFee: this.parseCurrency(document.getElementById('tuitionFee').value),
           discountAmount: this.parseCurrency(document.getElementById('discountAmount').value),
-          discountReason: document.getElementById('discountReason').value,
+          discountReason: document.getElementById('discountReason').value || 'Không giảm',
           commission: this.parseCurrency(document.getElementById('commission').value),
           payFullOnce: document.getElementById('payFullOnce').checked,
           inst1Amount: this.parseCurrency(document.getElementById('inst1Amount').value),
-          inst1Date: document.getElementById('inst1Date').value,
+          inst1Date: document.getElementById('inst1Date').value || '',
           inst2Amount: this.parseCurrency(document.getElementById('inst2Amount').value),
-          inst2DueDate: document.getElementById('inst2DueDate').value,
+          inst2DueDate: document.getElementById('inst2DueDate').value || '',
           inst2Paid: document.getElementById('inst2Paid').checked,
           registerDate: document.getElementById('registerDate').value || new Date().toISOString().split('T')[0],
-          examMonth: document.getElementById('examMonth').value,
-          studyDate: document.getElementById('studyDate').value,
-          note: document.getElementById('note').value.trim()
+          examMonth: document.getElementById('examMonth').value || '',
+          studyDate: document.getElementById('studyDate').value || '',
+          note: (document.getElementById('note').value || '').trim()
         };
         const idx = this.students.findIndex(s => s.id === id);
         if (idx >= 0) this.students[idx] = student; else this.students.unshift(student);
         this.saveToStorage();
         this.closeModal();
-        this.showToast(`Đã lưu hồ sơ: ${student.fullName}`);
+        this.showToast(`Đã lưu: ${student.fullName}`);
       },
 
       editStudent(id) {
@@ -1199,45 +1151,53 @@
         const s = this.students.find(item => item.id === id);
         if (!s) return;
         const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
-        document.getElementById('studentDetailContent').innerHTML = `
-          <div class="space-y-3.5">
-            <div class="flex items-center justify-between border-b border-stone-200 pb-2.5">
-              <div class="min-w-0 flex-1">
-                <h2 class="text-base font-bold text-slate-900 truncate uppercase">${s.fullName}</h2>
-                <p class="text-[11px] text-slate-500">Mã: #${s.id.slice(-4)} | Ngày nhập: ${this.formatDate(s.registerDate)}</p>
+        const detailEl = document.getElementById('studentDetailContent');
+        if (detailEl) {
+          detailEl.innerHTML = `
+            <div class="space-y-3.5">
+              <div class="flex items-center justify-between border-b border-stone-200 pb-2.5">
+                <div class="min-w-0 flex-1">
+                  <h2 class="text-base font-bold text-slate-900 truncate uppercase">${s.fullName}</h2>
+                  <p class="text-[11px] text-slate-500">Mã: #${s.id.slice(-4)} | Ngày nhập: ${this.formatDate(s.registerDate)}</p>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border shrink-0 ${badgeClass}">Hạng ${s.licenseType}</span>
               </div>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border shrink-0 ${badgeClass}">Hạng ${s.licenseType}</span>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Ngày sinh: <b class="text-slate-900 block mt-0.5">${s.dob ? this.formatDate(s.dob) : '-'}</b></div>
+                <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Khu vực: <b class="text-slate-900 block mt-0.5">${s.district || '-'}</b></div>
+                <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Lịch học: <b class="text-slate-900 block mt-0.5">${s.studySchedule || '-'}</b></div>
+                <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">GPLX khác: <b class="text-slate-900 block mt-0.5">${s.existingLicense || 'Chưa có'}</b></div>
+                <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">Khóa thi: <b class="text-amber-900 block mt-0.5">${s.examMonth ? `Tháng ${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : '-'}</b></div>
+                <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Dự kiến học: <b class="text-slate-900 block mt-0.5">${s.studyDate ? this.formatDate(s.studyDate) : '-'}</b></div>
+              </div>
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 flex justify-between">
+                <div><span class="text-[11px] text-slate-600">Học phí sau giảm:</span><div class="text-sm font-bold text-emerald-700">${this.formatVND(s.tuitionFee)}</div></div>
+                <div><span class="text-[11px] text-slate-600">Hoa hồng nhận:</span><div class="text-sm font-bold text-pink-600">${this.formatVND(s.commission)}</div></div>
+              </div>
+              ${s.note ? `<div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-xs text-slate-700"><b>Ghi chú:</b> ${s.note}</div>` : ''}
             </div>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Ngày sinh: <b class="text-slate-900 block mt-0.5">${s.dob ? this.formatDate(s.dob) : '-'}</b></div>
-              <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Khu vực: <b class="text-slate-900 block mt-0.5">${s.district || '-'}</b></div>
-              <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Lịch học: <b class="text-slate-900 block mt-0.5">${s.studySchedule || '-'}</b></div>
-              <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">GPLX khác: <b class="text-slate-900 block mt-0.5">${s.existingLicense || 'Chưa có'}</b></div>
-              <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">Khóa thi: <b class="text-amber-900 block mt-0.5">${s.examMonth ? `Tháng ${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : '-'}</b></div>
-              <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Dự kiến học: <b class="text-slate-900 block mt-0.5">${s.studyDate ? this.formatDate(s.studyDate) : '-'}</b></div>
-            </div>
-            <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 flex justify-between">
-              <div><span class="text-[11px] text-slate-600">Học phí sau giảm:</span><div class="text-sm font-bold text-emerald-700">${this.formatVND(s.tuitionFee)}</div></div>
-              <div><span class="text-[11px] text-slate-600">Hoa hồng nhận:</span><div class="text-sm font-bold text-pink-600">${this.formatVND(s.commission)}</div></div>
-            </div>
-            ${s.note ? `<div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-xs text-slate-700"><b>Ghi chú:</b> ${s.note}</div>` : ''}
-          </div>
-        `;
-        document.getElementById('viewModal').classList.remove('hidden');
+          `;
+        }
+        const vModal = document.getElementById('viewModal');
+        if (vModal) vModal.classList.remove('hidden');
       },
-      closeViewModal() { document.getElementById('viewModal').classList.add('hidden'); },
+      closeViewModal() { const modal = document.getElementById('viewModal'); if (modal) modal.classList.add('hidden'); },
 
       openConfigModal() {
-        document.getElementById('configList').innerHTML = Object.entries(this.defaultCommissions).map(([key, val]) => `
-          <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-stone-50 border border-stone-200">
-            <span class="text-xs font-bold text-slate-800 w-20">Hạng ${key}:</span>
-            <input type="text" id="cfg_${key}" value="${this.formatNumberString(val)}" oninput="app.formatCurrencyInput(this)" class="om-input px-2.5 py-1 rounded-lg text-xs font-bold text-right flex-1">
-            <span class="text-xs text-slate-500">₫</span>
-          </div>
-        `).join('');
-        document.getElementById('configModal').classList.remove('hidden');
+        const cList = document.getElementById('configList');
+        if (cList) {
+          cList.innerHTML = Object.entries(this.defaultCommissions).map(([key, val]) => `
+            <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-stone-50 border border-stone-200">
+              <span class="text-xs font-bold text-slate-800 w-20">Hạng ${key}:</span>
+              <input type="text" id="cfg_${key}" value="${this.formatNumberString(val)}" oninput="app.formatCurrencyInput(this)" class="om-input px-2.5 py-1 rounded-lg text-xs font-bold text-right flex-1">
+              <span class="text-xs text-slate-500">₫</span>
+            </div>
+          `).join('');
+        }
+        const cModal = document.getElementById('configModal');
+        if (cModal) cModal.classList.remove('hidden');
       },
-      closeConfigModal() { document.getElementById('configModal').classList.add('hidden'); },
+      closeConfigModal() { const modal = document.getElementById('configModal'); if (modal) modal.classList.add('hidden'); },
       saveConfig() {
         Object.keys(this.defaultCommissions).forEach(key => {
           const input = document.getElementById(`cfg_${key}`);
@@ -1248,8 +1208,8 @@
         this.showToast('Đã lưu mức hoa hồng mặc định!');
       },
 
-      openBackupModal() { document.getElementById('backupModal').classList.remove('hidden'); },
-      closeBackupModal() { document.getElementById('backupModal').classList.add('hidden'); },
+      openBackupModal() { const modal = document.getElementById('backupModal'); if (modal) modal.classList.remove('hidden'); },
+      closeBackupModal() { const modal = document.getElementById('backupModal'); if (modal) modal.classList.add('hidden'); },
       exportBackupJSON() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.students, null, 2));
         const a = document.createElement('a');
