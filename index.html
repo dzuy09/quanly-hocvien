@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Quản Lý Hồ Sơ Học Viên & Tính Hoa Hồng</title>
   
+  <!-- 100% Font: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -39,14 +41,17 @@
     }
   </script>
 
+  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- SheetJS for Excel Export -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
-  <!-- Firebase SDK Compat -->
+  <!-- Firebase SDK (Version 10.8.0 Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <style>
+    /* Chống tràn ngang và cố định khung nhìn trên Mobile */
     html, body {
       overflow-x: hidden !important;
       max-width: 100vw !important;
@@ -67,6 +72,7 @@
       font-family: "Plus Jakarta Sans", sans-serif;
     }
 
+    /* Tối ưu hóa ô nhập liệu & chống tràn ô ngày tháng */
     input, select, textarea {
       font-size: 14px !important;
       min-width: 0 !important;
@@ -156,6 +162,7 @@
   <div class="om-orb-gold"></div>
   <div class="om-orb-lotus"></div>
 
+  <!-- Toast Notification -->
   <div id="toastNotification" class="fixed top-4 right-4 z-50 transform transition-all duration-300 translate-y-[-100px] opacity-0 pointer-events-none px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-bold bg-slate-900 text-white border border-slate-700">
     <span id="toastIcon">ℹ️</span>
     <span id="toastMessage">Thông báo</span>
@@ -182,16 +189,19 @@
         </div>
 
         <div class="flex items-center gap-1.5 shrink-0">
+          <!-- Add Student Button -->
           <button onclick="app.openModal()" class="om-btn-gold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5">
             <i class="fa-solid fa-plus text-[10px]"></i>
             <span class="hidden sm:inline">Thêm Học Viên</span>
             <span class="sm:hidden">Thêm</span>
           </button>
 
+          <!-- Firebase Cloud Settings Button (Mobile) -->
           <button onclick="app.openFirebaseModal()" title="Cài đặt Firebase Cloud" class="om-btn-outline w-8 h-8 rounded-xl flex sm:hidden items-center justify-center text-amber-700 bg-amber-50 border-amber-200">
             <i class="fa-solid fa-fire text-xs"></i>
           </button>
 
+          <!-- Desktop Quick Actions -->
           <div class="hidden sm:flex items-center gap-1.5">
             <button onclick="app.openFirebaseModal()" title="Cài đặt Firebase Cloud" class="om-btn-outline p-2 rounded-2xl text-amber-700 bg-amber-50 border-amber-200"><i class="fa-solid fa-fire text-sm"></i></button>
             <button onclick="app.exportToExcel()" title="Xuất file Excel" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-file-excel text-sm"></i></button>
@@ -570,15 +580,8 @@
           </p>
 
           <div>
-            <label class="block text-[10px] font-bold text-amber-900 mb-1">Cấu hình Firebase (JSON hoặc firebaseConfig = {...})</label>
-            <textarea id="cfgFirebaseText" rows="6" placeholder='const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "quanly-hocvien.firebaseapp.com",
-  projectId: "quanly-hocvien-123",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "..."
-};' class="om-input w-full px-3 py-2 rounded-xl text-xs font-mono"></textarea>
+            <label class="block text-[10px] font-bold text-amber-900 mb-1">Cấu hình Firebase (Dán toàn bộ hoặc khối const firebaseConfig = {...})</label>
+            <textarea id="cfgFirebaseText" rows="6" placeholder="Dán đoạn mã Firebase của bạn vào đây..." class="om-input w-full px-3 py-2 rounded-xl text-xs font-mono"></textarea>
           </div>
 
           <button onclick="app.saveFirebaseConfig()" class="w-full py-2.5 rounded-xl om-btn-gold text-xs font-bold shadow-xs flex items-center justify-center gap-1.5">
@@ -708,7 +711,7 @@
           // Realtime 2-Way Listener: Updates in 0.1s
           this.db.collection('app_data').doc('students_db')
             .onSnapshot((doc) => {
-              if (doc.exists && Array.isArray(doc.data().students)) {
+              if (doc && doc.exists && Array.isArray(doc.data().students)) {
                 const cloudStudents = doc.data().students;
                 if (JSON.stringify(cloudStudents) !== JSON.stringify(this.students)) {
                   this.students = cloudStudents;
@@ -773,6 +776,42 @@
         if (modal) modal.classList.add('hidden');
       },
 
+      // ULTRA-ROBUST PARSER THAT ACCEPTS ANY JS / JSON SYNTAX
+      parseFirebaseConfigInput(raw) {
+        let target = raw.trim();
+
+        const fbMatch = target.match(/firebaseConfig\s*=\s*(\{[\s\S]*?\});?/);
+        if (fbMatch) {
+          target = fbMatch;
+        } else {
+          const objMatches = target.match(/\{[^{}]*"?projectId"?[^{}]*\}/g) || target.match(/\{[\s\S]*?\}/g);
+          if (objMatches && objMatches.length > 0) {
+            const best = objMatches.find(m => m.includes('projectId') || m.includes('apiKey'));
+            if (best) target = best;
+          }
+        }
+
+        try {
+          const fn = new Function("return (" + target + ")");
+          const cfg = fn();
+          if (cfg && (cfg.projectId || cfg.apiKey)) return cfg;
+        } catch (e) {}
+
+        const apiKey = (raw.match(/apiKey\s*:\s*["']([^"']+)["']/i) || []);
+        const authDomain = (raw.match(/authDomain\s*:\s*["']([^"']+)["']/i) || []);
+        const projectId = (raw.match(/projectId\s*:\s*["']([^"']+)["']/i) || []);
+        const storageBucket = (raw.match(/storageBucket\s*:\s*["']([^"']+)["']/i) || []);
+        const messagingSenderId = (raw.match(/messagingSenderId\s*:\s*["']([^"']+)["']/i) || []);
+        const appId = (raw.match(/appId\s*:\s*["']([^"']+)["']/i) || []);
+        const measurementId = (raw.match(/measurementId\s*:\s*["']([^"']+)["']/i) || []);
+
+        if (projectId || apiKey) {
+          return { apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId, measurementId };
+        }
+
+        throw new Error('Vui lòng kiểm tra lại đoạn mã Firebase (cần có projectId hoặc apiKey).');
+      },
+
       saveFirebaseConfig() {
         const raw = (document.getElementById('cfgFirebaseText').value || '').trim();
         if (!raw) {
@@ -781,19 +820,9 @@
         }
 
         try {
-          let parsedConfig = null;
-          const jsonMatch = raw.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            let cleanJson = jsonMatch[0]
-              .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":')
-              .replace(/'/g, '"')
-              .replace(/,\s*}/g, '}');
-            parsedConfig = JSON.parse(cleanJson);
-          } else {
-            parsedConfig = JSON.parse(raw);
-          }
+          const parsedConfig = this.parseFirebaseConfigInput(raw);
 
-          if (!parsedConfig || !parsedConfig.projectId) {
+          if (!parsedConfig || (!parsedConfig.projectId && !parsedConfig.apiKey)) {
             throw new Error('Không tìm thấy projectId trong cấu hình.');
           }
 
@@ -810,7 +839,7 @@
           }
 
         } catch (e) {
-          alert('Lỗi đọc cấu hình: Hãy đảm bảo bạn dán đúng đoạn mã firebaseConfig. Chi tiết: ' + e.message);
+          alert('Lỗi đọc cấu hình: ' + e.message);
         }
       },
 
@@ -935,7 +964,7 @@
                   ${s.payFullOnce ? '<span class="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold text-[11px]">Đóng Full 1 lần</span>' : `<div>Đ1: <b>${this.formatVND(s.inst1Amount)}</b></div><div>${inst2Alert}</div>`}
                 </td>
                 <td class="py-3 px-4 text-center text-xs">
-                  <div class="font-bold text-amber-800">${s.examMonth ? `Thi: T${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : '-'}</div>
+                  <div class="font-bold text-amber-800">${s.examMonth ? `Thi: T${s.examMonth.split('-')}/${s.examMonth.split('-')[0]}` : '-'}</div>
                   <div class="text-[11px] text-slate-500">${s.studyDate ? `Học: ${this.formatDate(s.studyDate)}` : '-'}</div>
                 </td>
                 <td class="py-3 px-4 text-center" onclick="event.stopPropagation()">
@@ -988,7 +1017,7 @@
                   </div>
                   ${!s.payFullOnce ? `<div class="flex items-center justify-between">${inst2Alert}</div>` : ''}
                   <div class="flex items-center justify-between text-slate-500 pt-1 border-t border-stone-100 text-[10px]">
-                    <span>${s.examMonth ? `Thi: T${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : 'Chưa có khóa thi'}</span>
+                    <span>${s.examMonth ? `Thi: T${s.examMonth.split('-')}/${s.examMonth.split('-')[0]}` : 'Chưa có khóa thi'}</span>
                     <span>${s.studyDate ? `Dự kiến học: ${this.formatDate(s.studyDate)}` : ''}</span>
                   </div>
                 </div>
@@ -1203,7 +1232,7 @@
                 <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Khu vực: <b class="text-slate-900 block mt-0.5">${s.district || '-'}</b></div>
                 <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Lịch học: <b class="text-slate-900 block mt-0.5">${s.studySchedule || '-'}</b></div>
                 <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">GPLX khác: <b class="text-slate-900 block mt-0.5">${s.existingLicense || 'Chưa có'}</b></div>
-                <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">Khóa thi: <b class="text-amber-900 block mt-0.5">${s.examMonth ? `Tháng ${s.examMonth.split('-')[1]}/${s.examMonth.split('-')[0]}` : '-'}</b></div>
+                <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">Khóa thi: <b class="text-amber-900 block mt-0.5">${s.examMonth ? `Tháng ${s.examMonth.split('-')}/${s.examMonth.split('-')[0]}` : '-'}</b></div>
                 <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">Dự kiến học: <b class="text-slate-900 block mt-0.5">${s.studyDate ? this.formatDate(s.studyDate) : '-'}</b></div>
               </div>
               <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 flex justify-between">
@@ -1306,7 +1335,7 @@
       formatDate(isoStr) {
         if (!isoStr) return '';
         const parts = isoStr.split('-');
-        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        if (parts.length === 3) return `${parts[2]}/${parts}/${parts[0]}`;
         return isoStr;
       }
     };
