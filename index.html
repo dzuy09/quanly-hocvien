@@ -51,7 +51,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <style>
-    /* Chống tràn ngang và khóa cuộn ngang trên Mobile */
+    /* Chống tràn ngang và cố định màn hình trên Mobile */
     html, body {
       overflow-x: hidden !important;
       max-width: 100vw !important;
@@ -72,7 +72,7 @@
       font-family: "Plus Jakarta Sans", sans-serif;
     }
 
-    /* Chuẩn hóa toàn bộ input để chữ tiếng Việt hoa (Â, Ê, Ô, Đ...) không bao giờ bị cắt dấu */
+    /* Đảm bảo ô input có chiều cao chuẩn 46px để không che dấu tiếng Việt hoa */
     input, select, textarea {
       font-size: 14px !important;
       min-width: 0 !important;
@@ -250,7 +250,7 @@
         </div>
       </div>
 
-      <!-- 3 STATS CARDS: ĐẸP MẮT & HOA HỒNG NỔI BẬT NHẤT -->
+      <!-- 3 STATS CARDS -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
         <!-- Thẻ 1: Tổng Học Viên -->
         <div class="om-card p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
@@ -401,7 +401,7 @@
       </div>
     </main>
 
-    <!-- Modal Form (Add / Edit Student) - CLEAN & TIẾNG VIỆT HOÀN HẢO -->
+    <!-- Modal Form (Add / Edit Student) -->
     <div id="studentModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-2xl p-4 sm:p-6 my-auto relative border border-white bg-white/98 shadow-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden">
         <button onclick="app.closeModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -425,13 +425,11 @@
             </h4>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <!-- Ô Họ Tên: Chiều cao chuẩn 46px, không che dấu tiếng Việt -->
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Họ Tên Học Viên <span class="text-rose-600">*</span></label>
                 <input type="text" id="fullName" required placeholder="NGUYỄN VĂN A" oninput="this.value = this.value.toUpperCase()" class="om-input om-input-name w-full rounded-xl">
               </div>
               
-              <!-- Ô Số Điện Thoại -->
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Số Điện Thoại</label>
                 <div class="relative">
@@ -529,7 +527,7 @@
             </div>
           </div>
 
-          <!-- Nhóm 3: Học phí & HOA HỒNG NỔI BẬT -->
+          <!-- Nhóm 3: Học phí & HOA HỒNG -->
           <div class="p-3.5 sm:p-4 rounded-2xl bg-white border border-stone-200 shadow-2xs space-y-3">
             <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-money-bill-wave text-emerald-600"></i>
@@ -618,10 +616,16 @@
             <textarea id="cfgFirebaseText" rows="6" placeholder="Dán đoạn mã Firebase của bạn vào đây..." class="om-input w-full px-3 py-2 rounded-xl text-xs font-mono"></textarea>
           </div>
 
-          <button onclick="app.saveFirebaseConfig()" class="w-full py-2.5 rounded-xl om-btn-gold text-xs font-bold shadow-xs flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-bolt"></i>
-            <span>Kết Nối Firebase Ngay</span>
-          </button>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="app.saveFirebaseConfig()" class="w-full py-2.5 rounded-xl om-btn-gold text-xs font-bold shadow-xs flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Lưu Cấu Hình</span>
+            </button>
+            <button onclick="app.pushToFirebase(true)" class="w-full py-2.5 rounded-xl om-btn-outline text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 text-amber-800">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Đẩy Lên Cloud</span>
+            </button>
+          </div>
         </div>
 
         <div class="flex items-center justify-between pt-2 border-t border-stone-200">
@@ -751,7 +755,7 @@
                   this.populateMonthFilter();
                   this.renderAllViews();
                   this.updateStats();
-                  this.showToast(`Firebase: Đã cập nhật ${this.students.length} hồ sơ tức thì!`);
+                  this.showToast(`Firebase: Đã nhận ${this.students.length} hồ sơ từ Cloud!`);
                 }
               }
             }, (error) => {
@@ -765,7 +769,10 @@
       },
 
       async pushToFirebase(showNotice = true) {
-        if (!this.isFirebaseReady || !this.db) return;
+        if (!this.isFirebaseReady || !this.db) {
+          if (showNotice) this.showToast('Chưa kết nối Firebase! Vui lòng dán cấu hình trước.', false);
+          return;
+        }
         try {
           await this.db.collection('app_data').doc('students_db').set({
             students: this.students,
@@ -810,32 +817,29 @@
 
       // ULTRA-ROBUST PARSER
       parseFirebaseConfigInput(raw) {
-        let target = raw.trim();
-
-        const fbMatch = target.match(/firebaseConfig\s*=\s*(\{[\s\S]*?\});?/);
-        if (fbMatch) {
-          target = fbMatch;
-        } else {
-          const objMatches = target.match(/\{[^{}]*"?projectId"?[^{}]*\}/g) || target.match(/\{[\s\S]*?\}/g);
-          if (objMatches && objMatches.length > 0) {
-            const best = objMatches.find(m => m.includes('projectId') || m.includes('apiKey'));
-            if (best) target = best;
-          }
-        }
+        const text = raw.trim();
 
         try {
-          const fn = new Function("return (" + target + ")");
-          const cfg = fn();
-          if (cfg && (cfg.projectId || cfg.apiKey)) return cfg;
-        } catch (e) {}
+          const match = text.match(/\{[\s\S]*\}/);
+          if (match) {
+            const fn = new Function('return (' + match[0] + ')');
+            const res = fn();
+            if (res && (res.projectId || res.apiKey)) return res;
+          }
+        } catch(e) {}
 
-        const apiKey = (raw.match(/apiKey\s*:\s*["']([^"']+)["']/i) || []);
-        const authDomain = (raw.match(/authDomain\s*:\s*["']([^"']+)["']/i) || []);
-        const projectId = (raw.match(/projectId\s*:\s*["']([^"']+)["']/i) || []);
-        const storageBucket = (raw.match(/storageBucket\s*:\s*["']([^"']+)["']/i) || []);
-        const messagingSenderId = (raw.match(/messagingSenderId\s*:\s*["']([^"']+)["']/i) || []);
-        const appId = (raw.match(/appId\s*:\s*["']([^"']+)["']/i) || []);
-        const measurementId = (raw.match(/measurementId\s*:\s*["']([^"']+)["']/i) || []);
+        const getVal = (key) => {
+          const m = text.match(new RegExp(key + '\\s*:\\s*["\']([^"\']+)["\']', 'i'));
+          return m ? m : '';
+        };
+
+        const apiKey = getVal('apiKey');
+        const authDomain = getVal('authDomain');
+        const projectId = getVal('projectId');
+        const storageBucket = getVal('storageBucket');
+        const messagingSenderId = getVal('messagingSenderId');
+        const appId = getVal('appId');
+        const measurementId = getVal('measurementId');
 
         if (projectId || apiKey) {
           return { apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId, measurementId };
@@ -913,10 +917,10 @@
         const sortedMonths = Array.from(months).sort().reverse();
         filterMonth.innerHTML = '<option value="all">Tất cả các tháng</option>';
         sortedMonths.forEach(m => {
-          const [yyyy, mm] = m.split('-');
+          const parts = m.split('-');
           const opt = document.createElement('option');
           opt.value = m;
-          opt.textContent = `Tháng ${mm}/${yyyy}`;
+          opt.textContent = `Tháng ${parts}/${parts[0]}`;
           filterMonth.appendChild(opt);
         });
         if (currentVal && Array.from(filterMonth.options).some(o => o.value === currentVal)) filterMonth.value = currentVal;
@@ -966,6 +970,8 @@
           tbody.innerHTML = filtered.map(s => {
             const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
             const isMoto = s.licenseType === 'A1' || s.licenseType === 'A';
+            const examParts = s.examMonth ? s.examMonth.split('-') : [];
+            const examStr = examParts.length === 2 ? `Tháng ${examParts}/${examParts[0]}` : '-';
             return `
               <tr class="hover:bg-amber-50/60 transition duration-150 group cursor-pointer" onclick="app.viewStudent('${s.id}')">
                 <td class="py-3 px-4 text-xs text-slate-500 font-medium">${s.registerDate ? this.formatDate(s.registerDate) : '-'}</td>
@@ -986,7 +992,7 @@
                 </td>
                 <td class="py-3 px-4 text-right font-bold text-emerald-700 text-xs">${this.formatVND(s.tuitionFee)}</td>
                 <td class="py-3 px-4 text-right font-black text-rose-600 text-sm bg-rose-50/40">${this.formatVND(s.commission)}</td>
-                <td class="py-3 px-4 text-center text-xs font-bold text-amber-800">${s.examMonth ? `Tháng ${s.examMonth.split('-')}/${s.examMonth.split('-')[0]}` : '-'}</td>
+                <td class="py-3 px-4 text-center text-xs font-bold text-amber-800">${examStr}</td>
                 <td class="py-3 px-4 text-center" onclick="event.stopPropagation()">
                   <button onclick="app.editStudent('${s.id}')" title="Chỉnh sửa" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-600 hover:text-amber-800 mr-1 transition"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
                   <button onclick="app.deleteStudent('${s.id}')" title="Xóa" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-rose-100 text-stone-600 hover:text-rose-700 transition"><i class="fa-solid fa-trash text-xs"></i></button>
@@ -1001,6 +1007,8 @@
           mobileContainer.innerHTML = filtered.map(s => {
             const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
             const isMoto = s.licenseType === 'A1' || s.licenseType === 'A';
+            const examParts = s.examMonth ? s.examMonth.split('-') : [];
+            const examStr = examParts.length === 2 ? `Khóa thi: T${examParts}/${examParts[0]}` : 'Chưa có khóa thi';
 
             return `
               <div class="p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-2xs space-y-2.5 active:bg-amber-50/40 transition cursor-pointer" onclick="app.viewStudent('${s.id}')">
@@ -1034,7 +1042,7 @@
                 </div>
 
                 <div class="flex items-center justify-between text-slate-600 text-[11px] pt-0.5">
-                  <span class="text-amber-900 font-bold">${s.examMonth ? `Khóa thi: T${s.examMonth.split('-')}/${s.examMonth.split('-')[0]}` : 'Chưa có khóa thi'}</span>
+                  <span class="text-amber-900 font-bold">${examStr}</span>
                   ${!isMoto && s.studySchedule ? `<span class="text-slate-500 text-[10px]">${s.studySchedule}</span>` : ''}
                 </div>
 
@@ -1196,6 +1204,9 @@
         if (!s) return;
         const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
         const isMoto = s.licenseType === 'A1' || s.licenseType === 'A';
+        const examParts = s.examMonth ? s.examMonth.split('-') : [];
+        const examStr = examParts.length === 2 ? `Tháng ${examParts}/${examParts[0]}` : '-';
+
         const detailEl = document.getElementById('studentDetailContent');
         if (detailEl) {
           detailEl.innerHTML = `
@@ -1222,7 +1233,7 @@
                 </div>
                 <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
                   <span class="text-amber-800 block text-[10px]">Khóa thi:</span>
-                  <b class="text-amber-900 block mt-0.5">${s.examMonth ? `Tháng ${s.examMonth.split('-')}/${s.examMonth.split('-')[0]}` : '-'}</b>
+                  <b class="text-amber-900 block mt-0.5">${examStr}</b>
                 </div>
                 ${!isMoto ? `
                   <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">
@@ -1309,23 +1320,27 @@
       exportToExcel() {
         const filtered = this.getFilteredStudents();
         if (filtered.length === 0) { alert('Không có dữ liệu để xuất!'); return; }
-        const data = filtered.map((s, idx) => ({
-          "STT": idx + 1,
-          "Ngày Nhập": s.registerDate || '',
-          "Họ Và Tên": s.fullName || '',
-          "Số Điện Thoại": s.phone || '',
-          "Ngày Sinh": s.dob || '',
-          "Quận": s.district || '',
-          "Hạng Bằng": s.licenseType || '',
-          "Lịch Học": s.studySchedule || '',
-          "GPLX Khác": s.existingLicense || '',
-          "Học Phí (VNĐ)": s.tuitionFee || 0,
-          "Giảm Giá (VNĐ)": s.discountAmount || 0,
-          "Lý Do Giảm": s.discountReason || '',
-          "Hoa Hồng Nhận (VNĐ)": s.commission || 0,
-          "Khóa Thi": s.examMonth || '',
-          "Ghi Chú": s.note || ''
-        }));
+        const data = filtered.map((s, idx) => {
+          const examParts = s.examMonth ? s.examMonth.split('-') : [];
+          const examStr = examParts.length === 2 ? `Tháng ${examParts}/${examParts[0]}` : '';
+          return {
+            "STT": idx + 1,
+            "Ngày Nhập": s.registerDate || '',
+            "Họ Và Tên": s.fullName || '',
+            "Số Điện Thoại": s.phone || '',
+            "Ngày Sinh": s.dob || '',
+            "Quận": s.district || '',
+            "Hạng Bằng": s.licenseType || '',
+            "Lịch Học": s.studySchedule || '',
+            "GPLX Khác": s.existingLicense || '',
+            "Học Phí (VNĐ)": s.tuitionFee || 0,
+            "Giảm Giá (VNĐ)": s.discountAmount || 0,
+            "Lý Do Giảm": s.discountReason || '',
+            "Hoa Hồng Nhận (VNĐ)": s.commission || 0,
+            "Khóa Thi": examStr,
+            "Ghi Chú": s.note || ''
+          };
+        });
         const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "DanhSachHocVien");
@@ -1335,7 +1350,7 @@
       formatDate(isoStr) {
         if (!isoStr) return '';
         const parts = isoStr.split('-');
-        if (parts.length === 3) return `${parts[2]}/${parts}/${parts[0]}`;
+        if (parts.length === 3) return `${parts}/${parts}/${parts[0]}`;
         return isoStr;
       }
     };
@@ -1343,9 +1358,7 @@
     document.addEventListener('DOMContentLoaded', () => app.init());
   </script>
 </body>
-    };
-
-    document.addEventListener('DOMContentLoaded', () => app.init());
-  </script>
-</body>
 </html>
+,title:QuanLyHocVien_Clean_Final_Firebase.html}
+
+http://googleusercontent.com/action_card_content/85e90e9d-d1c3-48e2-b8f0-d72dbeaaaec9
