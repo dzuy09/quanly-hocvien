@@ -42,8 +42,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
   <style>
-    /* Chống tràn ngang và cố định khung nhìn trên Mobile */
     html, body {
       overflow-x: hidden !important;
       max-width: 100vw !important;
@@ -64,7 +67,6 @@
       font-family: "Plus Jakarta Sans", sans-serif;
     }
 
-    /* Tối ưu hóa ô nhập liệu & chống tràn ô ngày tháng */
     input, select, textarea {
       font-size: 14px !important;
       min-width: 0 !important;
@@ -154,7 +156,6 @@
   <div class="om-orb-gold"></div>
   <div class="om-orb-lotus"></div>
 
-  <!-- Toast Notification -->
   <div id="toastNotification" class="fixed top-4 right-4 z-50 transform transition-all duration-300 translate-y-[-100px] opacity-0 pointer-events-none px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-bold bg-slate-900 text-white border border-slate-700">
     <span id="toastIcon">ℹ️</span>
     <span id="toastMessage">Thông báo</span>
@@ -171,7 +172,7 @@
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
               <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate tracking-tight">Quản Lý Học Viên</h1>
-              <span id="syncStatusBadge" onclick="app.openCloudModal()" class="cursor-pointer text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full border shrink-0 flex items-center gap-1 bg-stone-100 text-stone-600 border-stone-300">
+              <span id="syncStatusBadge" onclick="app.openFirebaseModal()" class="cursor-pointer text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full border shrink-0 flex items-center gap-1 bg-stone-100 text-stone-600 border-stone-300">
                 <span class="w-1.5 h-1.5 rounded-full bg-stone-400" id="syncStatusDot"></span>
                 <span id="syncStatusText">Chưa kết nối Cloud</span>
               </span>
@@ -181,23 +182,18 @@
         </div>
 
         <div class="flex items-center gap-1.5 shrink-0">
-          <button onclick="app.syncNow()" title="Đồng bộ đám mây" class="om-btn-outline px-2.5 sm:px-3 py-1.5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-1.5 text-xs font-bold text-amber-800">
-            <i class="fa-solid fa-arrows-rotate text-amber-600" id="syncSpinIcon"></i>
-            <span>Đồng bộ</span>
-          </button>
-
           <button onclick="app.openModal()" class="om-btn-gold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5">
             <i class="fa-solid fa-plus text-[10px]"></i>
             <span class="hidden sm:inline">Thêm Học Viên</span>
             <span class="sm:hidden">Thêm</span>
           </button>
 
-          <button onclick="app.openCloudModal()" title="Cài đặt JSONBin Cloud" class="om-btn-outline w-8 h-8 rounded-xl flex sm:hidden items-center justify-center text-indigo-700 bg-indigo-50 border-indigo-200">
-            <i class="fa-solid fa-cloud text-xs"></i>
+          <button onclick="app.openFirebaseModal()" title="Cài đặt Firebase Cloud" class="om-btn-outline w-8 h-8 rounded-xl flex sm:hidden items-center justify-center text-amber-700 bg-amber-50 border-amber-200">
+            <i class="fa-solid fa-fire text-xs"></i>
           </button>
 
           <div class="hidden sm:flex items-center gap-1.5">
-            <button onclick="app.openCloudModal()" title="Cài đặt JSONBin Cloud" class="om-btn-outline p-2 rounded-2xl text-indigo-700 bg-indigo-50 border-indigo-200"><i class="fa-solid fa-cloud text-sm"></i></button>
+            <button onclick="app.openFirebaseModal()" title="Cài đặt Firebase Cloud" class="om-btn-outline p-2 rounded-2xl text-amber-700 bg-amber-50 border-amber-200"><i class="fa-solid fa-fire text-sm"></i></button>
             <button onclick="app.exportToExcel()" title="Xuất file Excel" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-file-excel text-sm"></i></button>
             <button onclick="app.openConfigModal()" title="Cài đặt hoa hồng" class="om-btn-outline p-2 rounded-2xl text-amber-600"><i class="fa-solid fa-sliders text-sm"></i></button>
             <button onclick="app.openBackupModal()" title="Sao lưu / Khôi phục file" class="om-btn-outline p-2 rounded-2xl text-slate-600"><i class="fa-solid fa-database text-sm"></i></button>
@@ -208,7 +204,6 @@
 
     <!-- Main Body Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
-      <!-- Month Selector Bar -->
       <div class="flex items-center justify-between gap-2 p-2.5 bg-white/90 rounded-2xl border border-stone-200 shadow-2xs">
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <div class="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 text-xs"><i class="fa-regular fa-calendar"></i></div>
@@ -381,7 +376,7 @@
       </div>
     </main>
 
-    <!-- Modal Form (Add / Edit Student) - FULLY OPTIMIZED FOR MOBILE NO-WOBBLE -->
+    <!-- Modal Form (Add / Edit Student) -->
     <div id="studentModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-2xl p-4 sm:p-6 my-auto relative border border-white bg-white/98 shadow-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <button onclick="app.closeModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -394,7 +389,6 @@
         <form id="studentForm" onsubmit="app.saveStudent(event)" class="space-y-3.5 max-w-full">
           <input type="hidden" id="studentId">
           
-          <!-- Basic Info Group -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Họ Tên Học Viên <span class="text-rose-600">*</span></label>
@@ -433,7 +427,6 @@
             </div>
           </div>
 
-          <!-- License & Schedule Group -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Hạng Bằng <span class="text-rose-600">*</span></label>
@@ -466,7 +459,6 @@
             </div>
           </div>
 
-          <!-- Tuition & Commission Group -->
           <div class="p-3 sm:p-4 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-2.5">
             <h4 class="text-[11px] font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5"><i class="fa-solid fa-coins text-amber-600"></i><span>Học Phí, Giảm Giá & Hoa Hồng</span></h4>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -496,7 +488,6 @@
             </div>
           </div>
 
-          <!-- Installment Schedule Group -->
           <div class="p-3 sm:p-4 rounded-xl bg-white border border-stone-200 space-y-2.5">
             <div class="flex items-center justify-between">
               <h4 class="text-[11px] font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5"><i class="fa-solid fa-calendar-check text-amber-600"></i><span>Các Đợt Đóng Phí & Hạn Đợt 2</span></h4>
@@ -530,7 +521,6 @@
             </div>
           </div>
 
-          <!-- Exam & Study Dates Group -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div class="min-w-0">
               <label class="block text-xs font-bold text-slate-700 mb-1">Ngày Đăng Ký</label>
@@ -546,13 +536,11 @@
             </div>
           </div>
 
-          <!-- Note -->
           <div class="min-w-0">
             <label class="block text-xs font-bold text-slate-700 mb-1">Ghi Chú Thêm</label>
             <input type="text" id="note" placeholder="SĐT học viên, ghi chú giáo viên..." class="om-input w-full px-3 py-2 rounded-xl text-xs">
           </div>
 
-          <!-- Action Buttons -->
           <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-stone-200">
             <button type="button" onclick="app.closeModal()" class="om-btn-outline px-4 py-2 rounded-xl text-xs font-bold">Hủy bỏ</button>
             <button type="submit" class="om-btn-gold px-5 py-2 rounded-xl text-xs font-bold">Lưu Hồ Sơ</button>
@@ -561,46 +549,47 @@
       </div>
     </div>
 
-    <!-- Modal 1: JSONBIN CLOUD SETTINGS MODAL -->
-    <div id="cloudModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
+    <!-- Modal 1: FIREBASE CLOUD SETTINGS MODAL -->
+    <div id="firebaseModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-lg p-5 relative border border-white bg-white shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto overflow-x-hidden">
-        <button onclick="app.closeCloudModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+        <button onclick="app.closeFirebaseModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         
         <div class="flex items-center gap-2.5 border-b border-stone-200 pb-3">
-          <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg">
-            <i class="fa-solid fa-cloud"></i>
+          <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-fire"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-slate-900">Cài Đặt JSONBin Cloud</h3>
-            <p class="text-[11px] text-slate-500">Đồng bộ tức thì giữa Máy tính & Điện thoại</p>
+            <h3 class="text-base font-bold text-slate-900">Cài Đặt Google Firebase Firestore</h3>
+            <p class="text-[11px] text-slate-500">Đồng bộ tự động 0.1s - Miễn phí 50.000 lượt/ngày</p>
           </div>
         </div>
 
-        <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-3">
-          <p class="text-[11px] text-indigo-900 leading-relaxed">
-            Dán thông tin từ tài khoản <b>JSONBin.io</b> của bạn vào đây:
+        <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-3">
+          <p class="text-[11px] text-amber-950 leading-relaxed">
+            Dán đoạn mã <b>firebaseConfig</b> bạn copy từ Firebase Console vào đây:
           </p>
 
-          <div class="space-y-2">
-            <div>
-              <label class="block text-[10px] font-bold text-indigo-900 mb-1">Bin ID (Chuỗi mã Bin)</label>
-              <input type="text" id="cfgBinId" placeholder="VD: 66cc1234..." class="om-input w-full px-3.5 py-2 rounded-xl text-xs font-mono">
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold text-indigo-900 mb-1">Master Key (Bắt đầu bằng $2a$10$...)</label>
-              <input type="text" id="cfgMasterKey" placeholder="VD: $2a$10$..." class="om-input w-full px-3.5 py-2 rounded-xl text-xs font-mono">
-            </div>
+          <div>
+            <label class="block text-[10px] font-bold text-amber-900 mb-1">Cấu hình Firebase (JSON hoặc firebaseConfig = {...})</label>
+            <textarea id="cfgFirebaseText" rows="6" placeholder='const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "quanly-hocvien.firebaseapp.com",
+  projectId: "quanly-hocvien-123",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
+};' class="om-input w-full px-3 py-2 rounded-xl text-xs font-mono"></textarea>
           </div>
 
-          <button onclick="app.saveJsonBinConfig()" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-check"></i>
-            <span>Lưu Cấu Hình & Đồng Bộ Ngay</span>
+          <button onclick="app.saveFirebaseConfig()" class="w-full py-2.5 rounded-xl om-btn-gold text-xs font-bold shadow-xs flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Kết Nối Firebase Ngay</span>
           </button>
         </div>
 
         <div class="flex items-center justify-between pt-2 border-t border-stone-200">
-          <button onclick="app.disconnectAllCloud()" class="text-xs text-rose-600 hover:underline font-bold">Xóa thông tin Cloud</button>
-          <button onclick="app.closeCloudModal()" class="om-btn-outline px-4 py-1.5 rounded-xl text-xs font-bold">Đóng</button>
+          <button onclick="app.disconnectFirebase()" class="text-xs text-rose-600 hover:underline font-bold">Xóa kết nối Firebase</button>
+          <button onclick="app.closeFirebaseModal()" class="om-btn-outline px-4 py-1.5 rounded-xl text-xs font-bold">Đóng</button>
         </div>
       </div>
     </div>
@@ -647,22 +636,20 @@
   <script>
     const app = {
       students: [],
-      binId: '',
-      masterKey: '',
+      firebaseConfig: null,
+      db: null,
+      isFirebaseReady: false,
       defaultCommissions: { 'A1': 200000, 'A': 700000, 'B01': 2000000, 'B2': 2000000, 'C1': 2000000, 'Bổ túc': 500000, 'Khác': 1000000 },
       defaultTuitions: { 'A1': 1500000, 'A': 2500000, 'B01': 18000000, 'B2': 18000000, 'C1': 20000000, 'Bổ túc': 3500000, 'Khác': 10000000 },
 
       init() {
         this.loadFromStorage();
+        this.initFirebase();
         this.updateSyncBadge();
         this.populateMonthFilter();
         this.renderAllViews();
         this.updateStats();
         this.initDefaultDate();
-
-        if (this.binId && this.masterKey && this.students.length === 0) {
-          this.pullFromJsonBin(false);
-        }
       },
 
       showToast(msg, isSuccess = true) {
@@ -693,8 +680,8 @@
         if (stored) { try { this.students = JSON.parse(stored); } catch(e) { this.students = []; } }
         const storedCommissions = localStorage.getItem('thanhcong_commissions_cfg');
         if (storedCommissions) { try { this.defaultCommissions = { ...this.defaultCommissions, ...JSON.parse(storedCommissions) }; } catch(e) {} }
-        this.binId = localStorage.getItem('thanhcong_bin_id') || '';
-        this.masterKey = localStorage.getItem('thanhcong_master_key') || '';
+        const storedFb = localStorage.getItem('thanhcong_firebase_cfg');
+        if (storedFb) { try { this.firebaseConfig = JSON.parse(storedFb); } catch(e) { this.firebaseConfig = null; } }
       },
 
       saveToStorage() {
@@ -703,8 +690,55 @@
         this.renderAllViews();
         this.updateStats();
 
-        if (this.binId && this.masterKey) {
-          this.pushToJsonBin(false);
+        if (this.isFirebaseReady && this.db) {
+          this.pushToFirebase(false);
+        }
+      },
+
+      initFirebase() {
+        if (!this.firebaseConfig || !this.firebaseConfig.projectId) return;
+
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(this.firebaseConfig);
+          }
+          this.db = firebase.firestore();
+          this.isFirebaseReady = true;
+
+          // Realtime 2-Way Listener: Updates in 0.1s
+          this.db.collection('app_data').doc('students_db')
+            .onSnapshot((doc) => {
+              if (doc.exists && Array.isArray(doc.data().students)) {
+                const cloudStudents = doc.data().students;
+                if (JSON.stringify(cloudStudents) !== JSON.stringify(this.students)) {
+                  this.students = cloudStudents;
+                  localStorage.setItem('thanhcong_students_db', JSON.stringify(this.students));
+                  this.populateMonthFilter();
+                  this.renderAllViews();
+                  this.updateStats();
+                  this.showToast(`Firebase: Đã cập nhật ${this.students.length} hồ sơ tức thì!`);
+                }
+              }
+            }, (error) => {
+              console.warn('Firebase snapshot listener notice:', error);
+            });
+
+        } catch (e) {
+          console.error('Firebase init error:', e);
+          this.isFirebaseReady = false;
+        }
+      },
+
+      async pushToFirebase(showNotice = true) {
+        if (!this.isFirebaseReady || !this.db) return;
+        try {
+          await this.db.collection('app_data').doc('students_db').set({
+            students: this.students,
+            lastUpdated: new Date().toISOString()
+          });
+          if (showNotice) this.showToast(`Đã lưu ${this.students.length} hồ sơ lên Firebase Cloud!`);
+        } catch(err) {
+          if (showNotice) this.showToast('Lỗi lưu Firebase: ' + err.message, false);
         }
       },
 
@@ -714,10 +748,10 @@
         const badge = document.getElementById('syncStatusBadge');
         if (!dot || !text || !badge) return;
 
-        if (this.binId && this.masterKey) {
-          dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
-          text.textContent = 'JSONBin Đã Kết Nối';
-          badge.className = 'cursor-pointer text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full border transition flex items-center gap-1 bg-emerald-50 text-emerald-800 border-emerald-300';
+        if (this.isFirebaseReady) {
+          dot.className = 'w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse';
+          text.textContent = 'Firebase Đang Kết Nối';
+          badge.className = 'cursor-pointer text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full border transition flex items-center gap-1 bg-amber-50 text-amber-900 border-amber-300';
         } else {
           dot.className = 'w-1.5 h-1.5 rounded-full bg-stone-400';
           text.textContent = 'Chưa kết nối Cloud';
@@ -725,112 +759,69 @@
         }
       },
 
-      openCloudModal() {
-        const elBin = document.getElementById('cfgBinId');
-        const elKey = document.getElementById('cfgMasterKey');
-        const modal = document.getElementById('cloudModal');
-        if (elBin) elBin.value = this.binId || '';
-        if (elKey) elKey.value = this.masterKey || '';
+      openFirebaseModal() {
+        const txt = document.getElementById('cfgFirebaseText');
+        if (txt && this.firebaseConfig) {
+          txt.value = JSON.stringify(this.firebaseConfig, null, 2);
+        }
+        const modal = document.getElementById('firebaseModal');
         if (modal) modal.classList.remove('hidden');
       },
 
-      closeCloudModal() {
-        const modal = document.getElementById('cloudModal');
+      closeFirebaseModal() {
+        const modal = document.getElementById('firebaseModal');
         if (modal) modal.classList.add('hidden');
       },
 
-      saveJsonBinConfig() {
-        const elBin = document.getElementById('cfgBinId');
-        const elKey = document.getElementById('cfgMasterKey');
-        this.binId = elBin ? elBin.value.trim() : '';
-        this.masterKey = elKey ? elKey.value.trim() : '';
-
-        if (!this.binId || !this.masterKey) {
-          alert('Vui lòng nhập đầy đủ Bin ID và Master Key!');
+      saveFirebaseConfig() {
+        const raw = (document.getElementById('cfgFirebaseText').value || '').trim();
+        if (!raw) {
+          alert('Vui lòng dán cấu hình firebaseConfig!');
           return;
         }
 
-        localStorage.setItem('thanhcong_bin_id', this.binId);
-        localStorage.setItem('thanhcong_master_key', this.masterKey);
-        this.updateSyncBadge();
-        this.closeCloudModal();
-
-        this.pushToJsonBin(true);
-      },
-
-      disconnectAllCloud() {
-        this.binId = '';
-        this.masterKey = '';
-        localStorage.removeItem('thanhcong_bin_id');
-        localStorage.removeItem('thanhcong_master_key');
-        this.updateSyncBadge();
-        this.closeCloudModal();
-        this.showToast('Đã xóa thông tin kết nối Cloud.');
-      },
-
-      async syncNow() {
-        if (this.binId && this.masterKey) {
-          await this.pullFromJsonBin(true);
-        } else {
-          this.openCloudModal();
-        }
-      },
-
-      async pushToJsonBin(showNotice = true) {
-        if (!this.binId || !this.masterKey) return;
-        const icon = document.getElementById('syncSpinIcon');
-        if (icon) icon.className = 'fa-solid fa-spinner fa-spin text-amber-600';
-
         try {
-          const res = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Master-Key': this.masterKey
-            },
-            body: JSON.stringify({ students: this.students })
-          });
-          const data = await res.json();
-          if (res.ok) {
-            if (showNotice) this.showToast(`Đã lưu ${this.students.length} hồ sơ lên Cloud!`);
+          let parsedConfig = null;
+          const jsonMatch = raw.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            let cleanJson = jsonMatch[0]
+              .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":')
+              .replace(/'/g, '"')
+              .replace(/,\s*}/g, '}');
+            parsedConfig = JSON.parse(cleanJson);
           } else {
-            if (showNotice) this.showToast('Lỗi JSONBin: ' + (data.message || 'Kiểm tra lại Key/Bin ID'), false);
+            parsedConfig = JSON.parse(raw);
           }
-        } catch(err) {
-          if (showNotice) this.showToast('Lỗi kết nối: ' + err.message, false);
-        } finally {
-          if (icon) icon.className = 'fa-solid fa-arrows-rotate text-amber-600';
+
+          if (!parsedConfig || !parsedConfig.projectId) {
+            throw new Error('Không tìm thấy projectId trong cấu hình.');
+          }
+
+          this.firebaseConfig = parsedConfig;
+          localStorage.setItem('thanhcong_firebase_cfg', JSON.stringify(parsedConfig));
+          this.closeFirebaseModal();
+          this.initFirebase();
+          this.updateSyncBadge();
+
+          if (this.students.length > 0) {
+            this.pushToFirebase(true);
+          } else {
+            this.showToast('Kết nối Firebase thành công!');
+          }
+
+        } catch (e) {
+          alert('Lỗi đọc cấu hình: Hãy đảm bảo bạn dán đúng đoạn mã firebaseConfig. Chi tiết: ' + e.message);
         }
       },
 
-      async pullFromJsonBin(showNotice = true) {
-        if (!this.binId || !this.masterKey) return;
-        const icon = document.getElementById('syncSpinIcon');
-        if (icon) icon.className = 'fa-solid fa-spinner fa-spin text-amber-600';
-
-        try {
-          const res = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}/latest`, {
-            method: 'GET',
-            headers: {
-              'X-Master-Key': this.masterKey
-            }
-          });
-          const data = await res.json();
-          if (res.ok && data.record && Array.isArray(data.record.students)) {
-            this.students = data.record.students;
-            localStorage.setItem('thanhcong_students_db', JSON.stringify(this.students));
-            this.populateMonthFilter();
-            this.renderAllViews();
-            this.updateStats();
-            if (showNotice) this.showToast(`Đã tải về ${this.students.length} hồ sơ từ Cloud!`);
-          } else {
-            if (showNotice) this.showToast('Không có dữ liệu trên JSONBin.', false);
-          }
-        } catch(err) {
-          if (showNotice) this.showToast('Lỗi tải từ Cloud: ' + err.message, false);
-        } finally {
-          if (icon) icon.className = 'fa-solid fa-arrows-rotate text-amber-600';
-        }
+      disconnectFirebase() {
+        this.firebaseConfig = null;
+        this.isFirebaseReady = false;
+        this.db = null;
+        localStorage.removeItem('thanhcong_firebase_cfg');
+        this.updateSyncBadge();
+        this.closeFirebaseModal();
+        this.showToast('Đã ngắt kết nối Firebase.');
       },
 
       formatVND(amount) {
