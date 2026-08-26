@@ -43,7 +43,7 @@
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- SheetJS for Excel Export -->
+  <!-- SheetJS for Excel Export & Import Parsing -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
   <!-- Firebase SDK (Version 10.8.0 Compat) -->
@@ -215,6 +215,12 @@
             <span class="sm:hidden">Thêm</span>
           </button>
 
+          <!-- Reconciliation Button (So Sánh Lương Excel) -->
+          <button onclick="app.openReconcileModal()" title="So sánh hoa hồng với bảng lương Excel công ty" class="px-3 py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5 shadow-sm bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white transition active:scale-95">
+            <i class="fa-solid fa-scale-balanced text-[11px]"></i>
+            <span class="hidden md:inline">Đối Soát Lương</span>
+          </button>
+
           <!-- Firebase Cloud Settings Button (Mobile) -->
           <button onclick="app.openFirebaseModal()" title="Cài đặt Firebase Cloud" class="om-btn-outline w-9 h-9 rounded-xl flex sm:hidden items-center justify-center text-amber-700 bg-amber-50 border-amber-200">
             <i class="fa-solid fa-fire text-sm"></i>
@@ -224,7 +230,7 @@
           <div class="hidden sm:flex items-center gap-1.5">
             <button onclick="app.openFirebaseModal()" title="Cài đặt Firebase Cloud" class="om-btn-outline p-2 rounded-2xl text-amber-700 bg-amber-50 border-amber-200"><i class="fa-solid fa-fire text-sm"></i></button>
             <button onclick="app.exportToExcel()" title="Xuất file Excel" class="om-btn-outline p-2 rounded-2xl text-emerald-700"><i class="fa-solid fa-file-excel text-sm"></i></button>
-            <button onclick="app.openConfigModal()" title="Cài đặt hoa hồng mặc định" class="om-btn-outline p-2 rounded-2xl text-amber-600"><i class="fa-solid fa-sliders text-sm"></i></button>
+            <button onclick="app.openConfigModal()" title="Cài đặt học phí & hoa hồng mặc định" class="om-btn-outline p-2 rounded-2xl text-amber-600"><i class="fa-solid fa-sliders text-sm"></i></button>
             <button onclick="app.openBackupModal()" title="Sao lưu / Khôi phục file" class="om-btn-outline p-2 rounded-2xl text-slate-600"><i class="fa-solid fa-database text-sm"></i></button>
           </div>
         </div>
@@ -244,6 +250,7 @@
           </select>
         </div>
         <div class="flex items-center gap-1 sm:hidden">
+          <button onclick="app.openReconcileModal()" title="Đối soát lương" class="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center text-xs"><i class="fa-solid fa-scale-balanced"></i></button>
           <button onclick="app.exportToExcel()" title="Xuất Excel" class="w-8 h-8 rounded-lg bg-stone-100 text-emerald-700 flex items-center justify-center text-xs"><i class="fa-solid fa-file-excel"></i></button>
           <button onclick="app.openConfigModal()" title="Cài đặt" class="w-8 h-8 rounded-lg bg-stone-100 text-amber-700 flex items-center justify-center text-xs"><i class="fa-solid fa-sliders"></i></button>
           <button onclick="app.openBackupModal()" title="Sao lưu" class="w-8 h-8 rounded-lg bg-stone-100 text-slate-600 flex items-center justify-center text-xs"><i class="fa-solid fa-database"></i></button>
@@ -302,32 +309,32 @@
           <div onclick="app.filterByLicense('A1')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng A1</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-A1">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">200k</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">650k / 200k</div>
           </div>
           <div onclick="app.filterByLicense('A')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng A</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-A">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">700k</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">2.000k / 700k</div>
           </div>
           <div onclick="app.filterByLicense('B01')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng B01</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-B01">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">2.000k</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">22.3Tr / 2Tr</div>
           </div>
           <div onclick="app.filterByLicense('B2')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng B2</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-B2">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">2.000k</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">22.3Tr / 2Tr</div>
           </div>
           <div onclick="app.filterByLicense('C1')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng C1</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-C1">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">2.000k</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">22.3Tr / 2Tr</div>
           </div>
           <div onclick="app.filterByLicense('Bổ túc')" class="min-w-[95px] sm:min-w-0 flex-1 cursor-pointer bg-gradient-to-br from-amber-100 via-amber-50 to-orange-100 hover:border-amber-500 border border-amber-300 rounded-xl p-2 sm:p-3 text-center transition shadow-xs">
             <div class="text-[11px] font-bold text-amber-900 flex items-center justify-center gap-1"><i class="fa-solid fa-steering-wheel text-[9px]"></i><span>Bổ Túc</span></div>
             <div class="text-base sm:text-lg font-extrabold text-amber-950 mt-0.5" id="count-Botuc">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-800 font-bold">Tùy biến</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-800 font-bold">3.5Tr / 500k</div>
           </div>
           <div onclick="app.filterByLicense('Khác')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-slate-50 border border-stone-200 hover:border-slate-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-600">Khác</div>
@@ -486,12 +493,12 @@
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Hạng Bằng <span class="text-rose-600">*</span></label>
                 <select id="licenseType" onchange="app.onLicenseChange(true)" class="om-input w-full rounded-xl text-xs font-bold text-amber-900 bg-white">
-                  <option value="A1">Hạng A1 (Mô tô - Hoa hồng 200k)</option>
-                  <option value="A">Hạng A (A2 PKL - Hoa hồng 700k)</option>
-                  <option value="B01" selected>Hạng B01 (B1 Tự động - Hoa hồng 2.000k)</option>
-                  <option value="B2">Hạng B2 (Số sàn - Hoa hồng 2.000k)</option>
-                  <option value="C1">Hạng C1 (Tải - Hoa hồng 2.000k)</option>
-                  <option value="Bổ túc">Bổ túc tay lái</option>
+                  <option value="A1">Hạng A1 (Xe máy - 650k / HH: 200k)</option>
+                  <option value="A">Hạng A (A2 PKL - 2.000k / HH: 700k)</option>
+                  <option value="B01" selected>Hạng B01 (B1 Tự động - 22.300k / HH: 2.000k)</option>
+                  <option value="B2">Hạng B2 (Số sàn - 22.300k / HH: 2.000k)</option>
+                  <option value="C1">Hạng C1 (Tải - 22.300k / HH: 2.000k)</option>
+                  <option value="Bổ túc">Bổ túc tay lái (3.500k / HH: 500k)</option>
                   <option value="Khác">Khác / Nâng dấu</option>
                 </select>
               </div>
@@ -539,7 +546,7 @@
               <div class="space-y-3">
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1">Học Phí Sau Giảm <span class="text-rose-600">*</span></label>
-                  <input type="text" id="tuitionFee" required placeholder="18,000,000" oninput="app.formatCurrencyInput(this)" class="om-input w-full rounded-xl text-sm font-bold text-emerald-700">
+                  <input type="text" id="tuitionFee" required placeholder="22,300,000" oninput="app.formatCurrencyInput(this)" class="om-input w-full rounded-xl text-sm font-bold text-emerald-700">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                   <div>
@@ -648,13 +655,38 @@
       </div>
     </div>
 
-    <!-- Modal 3: Config -->
+    <!-- Modal 3: Config - Cài đặt Học Phí & Hoa Hồng Mặc Định -->
     <div id="configModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
-      <div class="om-card w-full max-w-lg p-4 sm:p-6 relative border border-white bg-white shadow-2xl">
+      <div class="om-card w-full max-w-lg p-4 sm:p-6 relative border border-white bg-white shadow-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden space-y-4">
         <button onclick="app.closeConfigModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
-        <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-sliders text-amber-600"></i><span>Cài Đặt Mức Hoa Hồng Mặc Định</span></h3>
-        <div class="space-y-2" id="configList"></div>
-        <div class="flex justify-end gap-2.5 mt-4 pt-3 border-t border-stone-200">
+        
+        <div class="border-b border-stone-200 pb-2">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-amber-600"></i>
+            <span>Cài Đặt Mức Mặc Định Theo Hạng Bằng</span>
+          </h3>
+          <p class="text-[11px] text-slate-500">Tự động điền khi tạo hồ sơ mới (bạn vẫn có thể sửa tự do theo từng học viên)</p>
+        </div>
+
+        <!-- Tab 1: Học Phí Sau Giảm Mặc Định -->
+        <div>
+          <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-money-bill text-emerald-600"></i>
+            <span>Học Phí Sau Giảm Mặc Định (VNĐ)</span>
+          </h4>
+          <div class="space-y-1.5" id="configTuitionList"></div>
+        </div>
+
+        <!-- Tab 2: Mức Hoa Hồng Mặc Định -->
+        <div class="pt-2 border-t border-stone-200">
+          <h4 class="text-xs font-bold text-rose-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-coins text-rose-600"></i>
+            <span>Hoa Hồng Nhận Mặc Định (VNĐ)</span>
+          </h4>
+          <div class="space-y-1.5" id="configCommissionList"></div>
+        </div>
+
+        <div class="flex justify-end gap-2.5 pt-3 border-t border-stone-200">
           <button onclick="app.closeConfigModal()" class="om-btn-outline px-3.5 py-1.5 rounded-xl text-xs font-bold">Đóng</button>
           <button onclick="app.saveConfig()" class="om-btn-gold px-4 py-1.5 rounded-xl text-xs font-bold">Lưu Cài Đặt</button>
         </div>
@@ -673,6 +705,114 @@
       </div>
     </div>
 
+    <!-- Modal 5: ĐỐI SOÁT LƯƠNG EXCEL VỚI WEB APP (TÍNH NĂNG MỚI) -->
+    <div id="reconcileModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
+      <div class="om-card w-full max-w-4xl p-4 sm:p-6 relative border border-white bg-white shadow-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden space-y-4">
+        <button onclick="app.closeReconcileModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+        
+        <!-- Header Modal -->
+        <div class="flex items-center gap-3 border-b border-stone-200 pb-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center text-lg shadow-sm">
+            <i class="fa-solid fa-scale-balanced"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">Đối Soát Lương Công Ty Với Web App</h3>
+            <p class="text-[11px] text-slate-500">So sánh bảng lương file Excel công ty gửi với số hồ sơ & hoa hồng bạn đã ghi nhận</p>
+          </div>
+        </div>
+
+        <!-- Khối Tải File & Chọn Tháng -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-purple-50/60 border border-purple-200/80 space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+            <div>
+              <label class="block text-xs font-bold text-purple-950 mb-1">1. Chọn Tháng Đối Soát</label>
+              <select id="reconcileMonth" class="om-input w-full rounded-xl text-xs font-bold bg-white text-purple-900 border-purple-300">
+                <option value="all">Tất cả thời gian</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-purple-950 mb-1">2. Chọn File Excel Lương Của Công Ty</label>
+              <div class="flex items-center gap-2">
+                <input type="file" id="reconcileFileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="app.handleExcelReconcileUpload(event)">
+                <button onclick="document.getElementById('reconcileFileInput').click()" class="om-btn-gold px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                  <i class="fa-solid fa-file-arrow-up"></i>
+                  <span>Tải Lên File Excel Lương</span>
+                </button>
+                <span id="reconcileFileName" class="text-xs text-slate-500 truncate italic">Chưa chọn file</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kết Quả Đối Soát (Chỉ hiện khi đã tải file) -->
+        <div id="reconcileResultSection" class="hidden space-y-4">
+          <!-- 4 Thẻ Thống Kê Tổng Quan -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+            <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
+              <span class="text-[10px] text-slate-500 font-bold uppercase block">Hoa Hồng Web App</span>
+              <div class="text-base sm:text-lg font-black text-rose-600" id="recStatWebComm">0 ₫</div>
+              <span class="text-[10px] text-slate-400" id="recStatWebCount">0 hồ sơ</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
+              <span class="text-[10px] text-slate-500 font-bold uppercase block">Lương Cty Tính (Excel)</span>
+              <div class="text-base sm:text-lg font-black text-indigo-700" id="recStatExcelComm">0 ₫</div>
+              <span class="text-[10px] text-slate-400" id="recStatExcelCount">0 dòng excel</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
+              <span class="text-[10px] text-slate-500 font-bold uppercase block">Chênh Lệch (Web - Cty)</span>
+              <div class="text-base sm:text-lg font-black" id="recStatDiff">0 ₫</div>
+              <span class="text-[10px]" id="recStatDiffNotice">-</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
+              <span class="text-[10px] text-slate-500 font-bold uppercase block">Mức Độ Khớp</span>
+              <div class="text-base sm:text-lg font-black text-emerald-700" id="recStatMatchRate">0%</div>
+              <span class="text-[10px] text-slate-400" id="recStatMatchCount">0 hồ sơ khớp</span>
+            </div>
+          </div>
+
+          <!-- Các Tab Phân Loại Báo Cáo -->
+          <div class="border-b border-stone-200 flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-bold">
+            <button onclick="app.switchReconcileTab('mismatched')" id="tabBtn-mismatched" class="py-2 px-3 border-b-2 border-amber-600 text-amber-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span>Lệch Tiền Hoa Hồng (<span id="badgeCount-mismatched">0</span>)</span>
+            </button>
+            <button onclick="app.switchReconcileTab('missing')" id="tabBtn-missing" class="py-2 px-3 border-b-2 border-transparent text-slate-500 hover:text-rose-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-xmark"></i>
+              <span>Cty Bỏ Sót / Chưa Tính (<span id="badgeCount-missing">0</span>)</span>
+            </button>
+            <button onclick="app.switchReconcileTab('extra')" id="tabBtn-extra" class="py-2 px-3 border-b-2 border-transparent text-slate-500 hover:text-blue-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-plus"></i>
+              <span>Cty Tính Thêm / Web Chưa Có (<span id="badgeCount-extra">0</span>)</span>
+            </button>
+            <button onclick="app.switchReconcileTab('matched')" id="tabBtn-matched" class="py-2 px-3 border-b-2 border-transparent text-slate-500 hover:text-emerald-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Khớp Hoàn Toàn (<span id="badgeCount-matched">0</span>)</span>
+            </button>
+          </div>
+
+          <!-- Nội Dung Tab Đang Chọn -->
+          <div id="reconcileTabContent" class="max-h-64 overflow-y-auto space-y-2 text-xs"></div>
+
+          <!-- Thao Tác Báo Cáo / Gửi Khiếu Nại Cho Cty -->
+          <div class="p-3 rounded-2xl bg-stone-50 border border-stone-200 flex flex-wrap items-center justify-between gap-2">
+            <div class="text-xs text-slate-600">
+              <span class="font-bold text-slate-800">Mẹo:</span> Bạn có thể sao chép nhanh danh sách sai sót để gửi cho kế toán kiểm tra.
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="app.copyReconcileReport()" class="om-btn-gold px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                <i class="fa-regular fa-copy"></i>
+                <span>Sao Chép Báo Cáo Khiếu Nại</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-2 border-t border-stone-200">
+          <button onclick="app.closeReconcileModal()" class="om-btn-outline px-4 py-1.5 rounded-xl text-xs font-bold">Đóng</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -688,11 +828,35 @@
 
     const app = {
       students: [],
+      deletedIds: new Set(),
       firebaseConfig: DEFAULT_FIREBASE_CONFIG,
       db: null,
       isFirebaseReady: false,
-      defaultCommissions: { 'A1': 200000, 'A': 700000, 'B01': 2000000, 'B2': 2000000, 'C1': 2000000, 'Bổ túc': 500000, 'Khác': 1000000 },
-      defaultTuitions: { 'A1': 1500000, 'A': 2500000, 'B01': 18000000, 'B2': 18000000, 'C1': 20000000, 'Bổ túc': 3500000, 'Khác': 10000000 },
+      reconcileResult: null,
+      currentReconcileTab: 'mismatched',
+      
+      // MỨC HOA HỒNG MẶC ĐỊNH
+      defaultCommissions: { 
+        'A1': 200000, 
+        'A': 700000, 
+        'B01': 2000000, 
+        'B2': 2000000, 
+        'C1': 2000000, 
+        'Bổ túc': 500000, 
+        'Khác': 1000000 
+      },
+
+      // MỨC HỌC PHÍ SAU GIẢM MẶC ĐỊNH
+      // Hạng A: 2.000.000 đ | Hạng A1: 650.000 đ | Hạng B01, B2, C1: 22.300.000 đ
+      defaultTuitions: { 
+        'A1': 650000, 
+        'A': 2000000, 
+        'B01': 22300000, 
+        'B2': 22300000, 
+        'C1': 22300000, 
+        'Bổ túc': 3500000, 
+        'Khác': 10000000 
+      },
 
       init() {
         this.loadFromStorage();
@@ -728,8 +892,16 @@
       loadFromStorage() {
         const stored = localStorage.getItem('thanhcong_students_db');
         if (stored) { try { this.students = JSON.parse(stored); } catch(e) { this.students = []; } }
+        
+        const storedDeleted = localStorage.getItem('thanhcong_deleted_ids');
+        if (storedDeleted) { try { this.deletedIds = new Set(JSON.parse(storedDeleted)); } catch(e) { this.deletedIds = new Set(); } }
+
         const storedCommissions = localStorage.getItem('thanhcong_commissions_cfg');
         if (storedCommissions) { try { this.defaultCommissions = { ...this.defaultCommissions, ...JSON.parse(storedCommissions) }; } catch(e) {} }
+
+        const storedTuitions = localStorage.getItem('thanhcong_tuitions_cfg');
+        if (storedTuitions) { try { this.defaultTuitions = { ...this.defaultTuitions, ...JSON.parse(storedTuitions) }; } catch(e) {} }
+
         const storedFb = localStorage.getItem('thanhcong_firebase_cfg');
         if (storedFb) { 
           try { this.firebaseConfig = JSON.parse(storedFb); } catch(e) { this.firebaseConfig = DEFAULT_FIREBASE_CONFIG; } 
@@ -740,6 +912,7 @@
 
       saveToStorage() {
         localStorage.setItem('thanhcong_students_db', JSON.stringify(this.students));
+        localStorage.setItem('thanhcong_deleted_ids', JSON.stringify(Array.from(this.deletedIds)));
         this.populateMonthFilter();
         this.renderAllViews();
         this.updateStats();
@@ -747,6 +920,43 @@
         if (this.isFirebaseReady && this.db) {
           this.pushToFirebase(false);
         }
+      },
+
+      // HỢP NHẤT DỮ LIỆU THÔNG MINH (SMART MERGE) - CHỐNG MẤT HỒ SƠ TUYỆT ĐỐI
+      mergeStudents(localList, cloudList) {
+        const mergedMap = new Map();
+
+        // 1. Thêm danh sách từ Cloud (bỏ qua những hồ sơ đã bị xóa)
+        cloudList.forEach(s => {
+          if (s && s.id && !this.deletedIds.has(s.id)) {
+            mergedMap.set(s.id, s);
+          }
+        });
+
+        // 2. Hợp nhất danh sách Local (giữ lại các hồ sơ vừa nhập tại máy chưa kịp đẩy lên Cloud)
+        localList.forEach(s => {
+          if (s && s.id && !this.deletedIds.has(s.id)) {
+            if (!mergedMap.has(s.id)) {
+              // Hồ sơ có trên máy nhưng chưa có trên Cloud -> GIỮ NGUYÊN
+              mergedMap.set(s.id, s);
+            } else {
+              // Cả 2 nơi đều có -> lấy bản ghi có thời gian cập nhật mới nhất
+              const cloudItem = mergedMap.get(s.id);
+              const localTime = new Date(s.updatedAt || s.registerDate || 0).getTime();
+              const cloudTime = new Date(cloudItem.updatedAt || cloudItem.registerDate || 0).getTime();
+              if (localTime > cloudTime) {
+                mergedMap.set(s.id, s);
+              }
+            }
+          }
+        });
+
+        // Sắp xếp theo ngày nhập / cập nhật giảm dần
+        return Array.from(mergedMap.values()).sort((a, b) => {
+          const tA = new Date(a.registerDate || a.updatedAt || 0).getTime();
+          const tB = new Date(b.registerDate || b.updatedAt || 0).getTime();
+          return tB - tA;
+        });
       },
 
       initFirebase() {
@@ -759,18 +969,32 @@
           this.db = firebase.firestore();
           this.isFirebaseReady = true;
 
-          // Realtime 2-Way Listener: Updates in 0.1s
+          // Lắng nghe dữ liệu thời gian thực 0.1s với Smart Merge
           this.db.collection('app_data').doc('students_db')
             .onSnapshot((doc) => {
-              if (doc && doc.exists && Array.isArray(doc.data().students)) {
-                const cloudStudents = doc.data().students;
-                if (JSON.stringify(cloudStudents) !== JSON.stringify(this.students)) {
-                  this.students = cloudStudents;
+              if (doc && doc.exists) {
+                const data = doc.data();
+                if (Array.isArray(data.students)) {
+                  const cloudStudents = data.students;
+                  const prevCount = this.students.length;
+                  const merged = this.mergeStudents(this.students, cloudStudents);
+                  const isChanged = JSON.stringify(merged) !== JSON.stringify(this.students);
+                  const cloudHasFewer = cloudStudents.length < merged.length;
+
+                  this.students = merged;
                   localStorage.setItem('thanhcong_students_db', JSON.stringify(this.students));
                   this.populateMonthFilter();
                   this.renderAllViews();
                   this.updateStats();
-                  this.showToast(`Firebase: Đã nhận ${this.students.length} hồ sơ từ Cloud!`);
+
+                  // Nếu Local có số hồ sơ nhiều hơn Cloud (vừa nhập xong), lập tức đẩy bản hợp nhất 32 hồ sơ lên Cloud!
+                  if (cloudHasFewer) {
+                    this.pushToFirebase(false);
+                  }
+
+                  if (isChanged && Math.abs(merged.length - prevCount) > 0) {
+                    this.showToast(`Đồng bộ Cloud: ${this.students.length} hồ sơ!`);
+                  }
                 }
               }
             }, (error) => {
@@ -792,7 +1016,7 @@
           await this.db.collection('app_data').doc('students_db').set({
             students: this.students,
             lastUpdated: new Date().toISOString()
-          });
+          }, { merge: true });
           if (showNotice) this.showToast(`Đã lưu ${this.students.length} hồ sơ lên Firebase Cloud!`);
         } catch(err) {
           if (showNotice) this.showToast('Lỗi lưu Firebase: ' + err.message, false);
@@ -915,7 +1139,8 @@
       },
 
       parseCurrency(val) {
-        if (!val) return 0;
+        if (!val && val !== 0) return 0;
+        if (typeof val === 'number') return Math.round(val);
         return parseInt(String(val).replace(/\D/g, '')) || 0;
       },
 
@@ -941,19 +1166,33 @@
 
       populateMonthFilter() {
         const filterMonth = document.getElementById('filterMonth');
+        const recMonth = document.getElementById('reconcileMonth');
         if (!filterMonth) return;
+        
         const currentVal = filterMonth.value;
         const months = new Set();
         this.students.forEach(s => { if (s.registerDate) months.add(s.registerDate.substring(0, 7)); });
         months.add(new Date().toISOString().substring(0, 7));
         const sortedMonths = Array.from(months).sort().reverse();
+        
         filterMonth.innerHTML = '<option value="all">Tất cả các tháng</option>';
+        if (recMonth) recMonth.innerHTML = '<option value="all">Tất cả các tháng</option>';
+
         sortedMonths.forEach(m => {
           if (/^\d{4}-\d{2}$/.test(m)) {
+            const label = m.replace(/^(\d{4})-(\d{2})$/, 'Tháng $2/$1');
+            
             const opt = document.createElement('option');
             opt.value = m;
-            opt.textContent = m.replace(/^(\d{4})-(\d{2})$/, 'Tháng $2/$1');
+            opt.textContent = label;
             filterMonth.appendChild(opt);
+
+            if (recMonth) {
+              const opt2 = document.createElement('option');
+              opt2.value = m;
+              opt2.textContent = label;
+              recMonth.appendChild(opt2);
+            }
           }
         });
         if (currentVal && Array.from(filterMonth.options).some(o => o.value === currentVal)) filterMonth.value = currentVal;
@@ -1193,7 +1432,7 @@
 
       saveStudent(e) {
         e.preventDefault();
-        const id = document.getElementById('studentId').value || 'STU_' + Date.now();
+        const id = document.getElementById('studentId').value || ('STU_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6));
         const licenseType = document.getElementById('licenseType').value || 'B01';
         const isMoto = licenseType === 'A1' || licenseType === 'A';
 
@@ -1212,8 +1451,10 @@
           commission: this.parseCurrency(document.getElementById('commission').value),
           registerDate: document.getElementById('registerDate').value || new Date().toISOString().split('T')[0],
           examMonth: document.getElementById('examMonth').value || '',
-          note: (document.getElementById('note').value || '').trim()
+          note: (document.getElementById('note').value || '').trim(),
+          updatedAt: new Date().toISOString()
         };
+        
         const idx = this.students.findIndex(s => s.id === id);
         if (idx >= 0) this.students[idx] = student; else this.students.unshift(student);
         this.saveToStorage();
@@ -1248,6 +1489,7 @@
 
       deleteStudent(id) {
         if (confirm('Bạn có chắc chắn muốn xóa hồ sơ học viên này?')) {
+          this.deletedIds.add(id);
           this.students = this.students.filter(s => s.id !== id);
           this.saveToStorage();
           this.showToast('Đã xóa hồ sơ thành công.');
@@ -1322,28 +1564,47 @@
       closeViewModal() { const modal = document.getElementById('viewModal'); if (modal) modal.classList.add('hidden'); },
 
       openConfigModal() {
-        const cList = document.getElementById('configList');
-        if (cList) {
-          cList.innerHTML = Object.entries(this.defaultCommissions).map(([key, val]) => `
+        const cTuitionList = document.getElementById('configTuitionList');
+        const cCommList = document.getElementById('configCommissionList');
+
+        if (cTuitionList) {
+          cTuitionList.innerHTML = Object.entries(this.defaultTuitions).map(([key, val]) => `
             <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-stone-50 border border-stone-200">
-              <span class="text-xs font-bold text-slate-800 w-20">Hạng ${key}:</span>
-              <input type="text" id="cfg_${key}" value="${this.formatNumberString(val)}" oninput="app.formatCurrencyInput(this)" class="om-input px-2.5 py-1 rounded-lg text-xs font-bold text-right flex-1">
+              <span class="text-xs font-bold text-slate-800 w-24">Hạng ${key}:</span>
+              <input type="text" id="cfg_t_${key}" value="${this.formatNumberString(val)}" oninput="app.formatCurrencyInput(this)" class="om-input px-2.5 py-1 rounded-lg text-xs font-bold text-right flex-1 text-emerald-700">
               <span class="text-xs text-slate-500">₫</span>
             </div>
           `).join('');
         }
+
+        if (cCommList) {
+          cCommList.innerHTML = Object.entries(this.defaultCommissions).map(([key, val]) => `
+            <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-stone-50 border border-stone-200">
+              <span class="text-xs font-bold text-slate-800 w-24">Hạng ${key}:</span>
+              <input type="text" id="cfg_c_${key}" value="${this.formatNumberString(val)}" oninput="app.formatCurrencyInput(this)" class="om-input px-2.5 py-1 rounded-lg text-xs font-bold text-right flex-1 text-rose-600">
+              <span class="text-xs text-slate-500">₫</span>
+            </div>
+          `).join('');
+        }
+
         const cModal = document.getElementById('configModal');
         if (cModal) cModal.classList.remove('hidden');
       },
       closeConfigModal() { const modal = document.getElementById('configModal'); if (modal) modal.classList.add('hidden'); },
+      
       saveConfig() {
+        Object.keys(this.defaultTuitions).forEach(key => {
+          const input = document.getElementById(`cfg_t_${key}`);
+          if (input) this.defaultTuitions[key] = this.parseCurrency(input.value);
+        });
         Object.keys(this.defaultCommissions).forEach(key => {
-          const input = document.getElementById(`cfg_${key}`);
+          const input = document.getElementById(`cfg_c_${key}`);
           if (input) this.defaultCommissions[key] = this.parseCurrency(input.value);
         });
+        localStorage.setItem('thanhcong_tuitions_cfg', JSON.stringify(this.defaultTuitions));
         localStorage.setItem('thanhcong_commissions_cfg', JSON.stringify(this.defaultCommissions));
         this.closeConfigModal();
-        this.showToast('Đã lưu mức hoa hồng mặc định!');
+        this.showToast('Đã lưu cài đặt học phí & hoa hồng mặc định!');
       },
 
       openBackupModal() { const modal = document.getElementById('backupModal'); if (modal) modal.classList.remove('hidden'); },
@@ -1399,6 +1660,371 @@
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "DanhSachHocVien");
         XLSX.writeFile(wb, `DanhSach_HocVien_${new Date().toISOString().split('T')[0]}.xlsx`);
+      },
+
+      // ==========================================
+      // TÍNH NĂNG ĐỐI SOÁT LƯƠNG EXCEL VỚI WEB APP
+      // ==========================================
+      openReconcileModal() {
+        const modal = document.getElementById('reconcileModal');
+        const filterMonth = document.getElementById('filterMonth');
+        const recMonth = document.getElementById('reconcileMonth');
+        if (recMonth && filterMonth) recMonth.value = filterMonth.value;
+
+        const fileInput = document.getElementById('reconcileFileInput');
+        if (fileInput) fileInput.value = '';
+        const fileNameEl = document.getElementById('reconcileFileName');
+        if (fileNameEl) fileNameEl.textContent = 'Chưa chọn file';
+
+        const resultSec = document.getElementById('reconcileResultSection');
+        if (resultSec) resultSec.classList.add('hidden');
+        this.reconcileResult = null;
+
+        if (modal) modal.classList.remove('hidden');
+      },
+
+      closeReconcileModal() {
+        const modal = document.getElementById('reconcileModal');
+        if (modal) modal.classList.add('hidden');
+      },
+
+      normalizeNameStr(name) {
+        if (!name || typeof name !== 'string') return '';
+        return name.trim().toUpperCase().replace(/\\s+/g, ' ');
+      },
+
+      handleExcelReconcileUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const fileNameEl = document.getElementById('reconcileFileName');
+        if (fileNameEl) fileNameEl.textContent = file.name;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+            if (!jsonData || jsonData.length === 0) {
+              alert('File Excel không có dữ liệu!');
+              return;
+            }
+
+            this.processReconciliation(jsonData);
+          } catch (err) {
+            alert('Lỗi đọc file Excel: ' + err.message);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      },
+
+      processReconciliation(excelRows) {
+        const recMonth = document.getElementById('reconcileMonth');
+        const targetMonth = recMonth ? recMonth.value : 'all';
+
+        // 1. Lọc danh sách học viên trên Web App theo tháng chọn
+        const webStudents = this.students.filter(s => {
+          if (targetMonth !== 'all' && (!s.registerDate || !s.registerDate.startsWith(targetMonth))) return false;
+          return true;
+        });
+
+        // 2. Tìm tên các cột trong file Excel (Tự động nhận diện linh hoạt)
+        const sampleRow = excelRows[0] || {};
+        const keys = Object.keys(sampleRow);
+
+        const findCol = (regexList) => {
+          for (const k of keys) {
+            const lowerK = k.trim().toLowerCase();
+            if (regexList.some(rx => rx.test(lowerK))) return k;
+          }
+          return null;
+        };
+
+        const nameCol = findCol([/tên/, /họ và tên/, /họ tên/, /học viên/, /name/, /khách hàng/]) || keys[0];
+        const commCol = findCol([/hoa hồng/, /lương/, /thành tiền/, /tiền/, /mức chi/, /thù lao/, /thực nhận/, /commission/, /amount/]) || keys || keys[0];
+        const phoneCol = findCol([/sđt/, /sdt/, /điện thoại/, /phone/, /mobile/, /liên hệ/]);
+        const licenseCol = findCol([/hạng/, /loại bằng/, /hạng bằng/, /license/]);
+
+        // 3. Chuẩn hóa dữ liệu Excel
+        const excelRecords = [];
+        excelRows.forEach((row, idx) => {
+          const rawName = String(row[nameCol] || '').trim();
+          const rawComm = row[commCol];
+          const comm = this.parseCurrency(rawComm);
+          const rawPhone = phoneCol ? String(row[phoneCol] || '').replace(/\\D/g, '') : '';
+          const rawLic = licenseCol ? String(row[licenseCol] || '').trim() : '';
+
+          if (rawName || comm > 0) {
+            excelRecords.push({
+              excelIdx: idx + 1,
+              name: rawName,
+              normName: this.normalizeNameStr(rawName),
+              phone: rawPhone,
+              license: rawLic,
+              commission: comm,
+              rawRow: row
+            });
+          }
+        });
+
+        // 4. Đối soát chéo từng học viên Web App với Excel
+        const matched = [];
+        const mismatchedAmount = [];
+        const missingInExcel = [];
+        const matchedExcelIndices = new Set();
+
+        webStudents.forEach(s => {
+          const sName = this.normalizeNameStr(s.fullName);
+          const sPhone = (s.phone || '').replace(/\\D/g, '');
+          const sComm = s.commission || 0;
+
+          // Tìm dòng khớp trong Excel
+          let foundExcel = null;
+          for (let er of excelRecords) {
+            if (matchedExcelIndices.has(er.excelIdx)) continue;
+            
+            const matchByPhone = sPhone && er.phone && sPhone === er.phone;
+            const matchByName = sName && er.normName && sName === er.normName;
+
+            if (matchByPhone || matchByName) {
+              foundExcel = er;
+              matchedExcelIndices.add(er.excelIdx);
+              break;
+            }
+          }
+
+          if (foundExcel) {
+            const diff = sComm - foundExcel.commission;
+            const item = {
+              student: s,
+              excelRecord: foundExcel,
+              webComm: sComm,
+              excelComm: foundExcel.commission,
+              diff: diff
+            };
+            if (diff === 0) {
+              matched.push(item);
+            } else {
+              mismatchedAmount.push(item);
+            }
+          } else {
+            missingInExcel.push({
+              student: s,
+              webComm: sComm
+            });
+          }
+        });
+
+        // 5. Tìm các dòng có trong Excel nhưng chưa có trên Web App
+        const extraInExcel = excelRecords.filter(er => !matchedExcelIndices.has(er.excelIdx));
+
+        // 6. Lưu và hiển thị kết quả
+        this.reconcileResult = {
+          targetMonth: targetMonth,
+          webStudentsCount: webStudents.length,
+          excelRecordsCount: excelRecords.length,
+          totalWebComm: webStudents.reduce((sum, s) => sum + (s.commission || 0), 0),
+          totalExcelComm: excelRecords.reduce((sum, er) => sum + (er.commission || 0), 0),
+          matched: matched,
+          mismatched: mismatchedAmount,
+          missing: missingInExcel,
+          extra: extraInExcel
+        };
+
+        this.renderReconciliationResult();
+      },
+
+      renderReconciliationResult() {
+        const res = this.reconcileResult;
+        if (!res) return;
+
+        const resultSec = document.getElementById('reconcileResultSection');
+        if (resultSec) resultSec.classList.remove('hidden');
+
+        // Điền 4 thẻ thống kê
+        document.getElementById('recStatWebComm').textContent = this.formatVND(res.totalWebComm);
+        document.getElementById('recStatWebCount').textContent = `${res.webStudentsCount} hồ sơ`;
+
+        document.getElementById('recStatExcelComm').textContent = this.formatVND(res.totalExcelComm);
+        document.getElementById('recStatExcelCount').textContent = `${res.excelRecordsCount} dòng Excel`;
+
+        const totalDiff = res.totalWebComm - res.totalExcelComm;
+        const diffEl = document.getElementById('recStatDiff');
+        const diffNoticeEl = document.getElementById('recStatDiffNotice');
+
+        if (totalDiff === 0) {
+          diffEl.textContent = '0 ₫ (Khớp 100%)';
+          diffEl.className = 'text-base sm:text-lg font-black text-emerald-700';
+          diffNoticeEl.textContent = 'Tiền lương khớp chuẩn';
+          diffNoticeEl.className = 'text-[10px] text-emerald-600 font-bold';
+        } else if (totalDiff > 0) {
+          diffEl.textContent = `+${this.formatVND(totalDiff)}`;
+          diffEl.className = 'text-base sm:text-lg font-black text-rose-600';
+          diffNoticeEl.textContent = 'Cty tính thiếu tiền bạn!';
+          diffNoticeEl.className = 'text-[10px] text-rose-700 font-bold';
+        } else {
+          diffEl.textContent = `${this.formatVND(totalDiff)}`;
+          diffEl.className = 'text-base sm:text-lg font-black text-blue-600';
+          diffNoticeEl.textContent = 'Cty tính thừa tiền';
+          diffNoticeEl.className = 'text-[10px] text-blue-700 font-bold';
+        }
+
+        const matchRate = res.webStudentsCount > 0 ? Math.round((res.matched.length / res.webStudentsCount) * 100) : 100;
+        document.getElementById('recStatMatchRate').textContent = `${matchRate}%`;
+        document.getElementById('recStatMatchCount').textContent = `${res.matched.length} hồ sơ khớp hoàn hảo`;
+
+        // Điền số lượng vào các Tab
+        document.getElementById('badgeCount-mismatched').textContent = res.mismatched.length;
+        document.getElementById('badgeCount-missing').textContent = res.missing.length;
+        document.getElementById('badgeCount-extra').textContent = res.extra.length;
+        document.getElementById('badgeCount-matched').textContent = res.matched.length;
+
+        // Mặc định nhảy vào tab có sai sót trước
+        if (res.mismatched.length > 0) this.switchReconcileTab('mismatched');
+        else if (res.missing.length > 0) this.switchReconcileTab('missing');
+        else this.switchReconcileTab('matched');
+      },
+
+      switchReconcileTab(tabName) {
+        this.currentReconcileTab = tabName;
+        const res = this.reconcileResult;
+        if (!res) return;
+
+        ['mismatched', 'missing', 'extra', 'matched'].forEach(t => {
+          const btn = document.getElementById(`tabBtn-${t}`);
+          if (btn) {
+            if (t === tabName) {
+              btn.className = 'py-2 px-3 border-b-2 border-purple-600 text-purple-900 flex items-center gap-1.5 font-black';
+            } else {
+              btn.className = 'py-2 px-3 border-b-2 border-transparent text-slate-500 hover:text-purple-700 flex items-center gap-1.5 font-medium';
+            }
+          }
+        });
+
+        const container = document.getElementById('reconcileTabContent');
+        if (!container) return;
+
+        if (tabName === 'mismatched') {
+          if (res.mismatched.length === 0) {
+            container.innerHTML = '<div class="p-6 text-center text-slate-400 font-medium">Không có hồ sơ nào bị lệch tiền hoa hồng.</div>';
+            return;
+          }
+          container.innerHTML = res.mismatched.map(item => `
+            <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 flex items-center justify-between gap-2">
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs uppercase">${item.student.fullName} <span class="text-slate-500 font-normal">(${item.student.licenseType || 'Hạng bằng'})</span></h5>
+                <div class="text-[11px] text-slate-600 mt-0.5 flex items-center gap-2">
+                  <span>Web App: <b class="text-rose-700">${this.formatVND(item.webComm)}</b></span>
+                  <span>|</span>
+                  <span>Cty tính: <b class="text-indigo-800">${this.formatVND(item.excelComm)}</b></span>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-slate-500 block">Chênh lệch:</span>
+                <span class="text-xs font-black ${item.diff > 0 ? 'text-rose-700' : 'text-blue-700'}">
+                  ${item.diff > 0 ? '+' : ''}${this.formatVND(item.diff)}
+                </span>
+              </div>
+            </div>
+          `).join('');
+        } else if (tabName === 'missing') {
+          if (res.missing.length === 0) {
+            container.innerHTML = '<div class="p-6 text-center text-slate-400 font-medium">Tuyệt vời! Công ty không bỏ sót hồ sơ nào của bạn.</div>';
+            return;
+          }
+          container.innerHTML = res.missing.map(item => `
+            <div class="p-3 rounded-xl bg-rose-50/70 border border-rose-200 flex items-center justify-between gap-2">
+              <div>
+                <h5 class="font-bold text-rose-950 text-xs uppercase flex items-center gap-1.5">
+                  <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                  <span>${item.student.fullName}</span>
+                  <span class="text-rose-800 font-normal">(${item.student.licenseType || 'Hạng bằng'})</span>
+                </h5>
+                <div class="text-[11px] text-rose-700 mt-0.5">
+                  <span>SĐT: ${item.student.phone || 'Chưa có'} | Ngày ĐK: ${this.formatDate(item.student.registerDate) || '-'}</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-rose-600 block font-bold">Chưa được tính:</span>
+                <span class="text-xs font-black text-rose-700">${this.formatVND(item.webComm)}</span>
+              </div>
+            </div>
+          `).join('');
+        } else if (tabName === 'extra') {
+          if (res.extra.length === 0) {
+            container.innerHTML = '<div class="p-6 text-center text-slate-400 font-medium">Không có dòng thừa nào trong file Excel.</div>';
+            return;
+          }
+          container.innerHTML = res.extra.map(item => `
+            <div class="p-3 rounded-xl bg-blue-50/70 border border-blue-200 flex items-center justify-between gap-2">
+              <div>
+                <h5 class="font-bold text-blue-950 text-xs uppercase">${item.name || 'Dòng không tên (Dòng #' + item.excelIdx + ')'}</h5>
+                <div class="text-[11px] text-blue-700 mt-0.5">
+                  <span>${item.phone ? 'SĐT: ' + item.phone + ' | ' : ''}${item.license ? 'Hạng: ' + item.license : ''}</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-blue-600 block">Tiền Cty tính:</span>
+                <span class="text-xs font-black text-blue-800">${this.formatVND(item.commission)}</span>
+              </div>
+            </div>
+          `).join('');
+        } else if (tabName === 'matched') {
+          if (res.matched.length === 0) {
+            container.innerHTML = '<div class="p-6 text-center text-slate-400 font-medium">Chưa có hồ sơ nào khớp.</div>';
+            return;
+          }
+          container.innerHTML = res.matched.map(item => `
+            <div class="p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-200 flex items-center justify-between gap-2">
+              <div>
+                <h5 class="font-bold text-slate-800 text-xs uppercase">${item.student.fullName} <span class="text-slate-500 font-normal">(${item.student.licenseType || ''})</span></h5>
+                <span class="text-[11px] text-slate-500">SĐT: ${item.student.phone || '-'}</span>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-bold text-emerald-800">${this.formatVND(item.webComm)}</span>
+                <span class="text-[10px] text-emerald-600 block">✓ Khớp chuẩn</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      },
+
+      copyReconcileReport() {
+        const res = this.reconcileResult;
+        if (!res) return;
+
+        let report = `📋 BÁO CÁO ĐỐI SOÁT LƯƠNG (${res.targetMonth === 'all' ? 'TẤT CẢ' : res.targetMonth})\n`;
+        report += `• Tổng hoa hồng Web App ghi nhận: ${this.formatVND(res.totalWebComm)} (${res.webStudentsCount} hồ sơ)\n`;
+        report += `• Tổng lương công ty tính: ${this.formatVND(res.totalExcelComm)} (${res.excelRecordsCount} dòng)\n`;
+        report += `• Chênh lệch: ${res.totalWebComm - res.totalExcelComm > 0 ? '+' : ''}${this.formatVND(res.totalWebComm - res.totalExcelComm)}\n\n`;
+
+        if (res.missing.length > 0) {
+          report += `❌ CÁC HỒ SƠ CÔNG TY CHƯA TÍNH (${res.missing.length} hồ sơ):\n`;
+          res.missing.forEach((item, idx) => {
+            report += `${idx + 1}. ${item.student.fullName} - Hạng: ${item.student.licenseType} - SĐT: ${item.student.phone || 'Chưa có'} - Hoa hồng: ${this.formatVND(item.webComm)}\n`;
+          });
+          report += `\n`;
+        }
+
+        if (res.mismatched.length > 0) {
+          report += `⚠️ CÁC HỒ SƠ LỆCH MỨC HOA HỒNG (${res.mismatched.length} hồ sơ):\n`;
+          res.mismatched.forEach((item, idx) => {
+            report += `${idx + 1}. ${item.student.fullName} (Hạng ${item.student.licenseType}): Web ghi nhận ${this.formatVND(item.webComm)} | Cty tính ${this.formatVND(item.excelComm)} -> Lệch: ${item.diff > 0 ? '+' : ''}${this.formatVND(item.diff)}\n`;
+          });
+          report += `\n`;
+        }
+
+        report += `Nhờ công ty kiểm tra và điều chỉnh lại giúp mình nhé! Cảm ơn công ty.`;
+
+        navigator.clipboard.writeText(report).then(() => {
+          this.showToast('Đã sao chép nội dung báo cáo khiếu nại!');
+        }).catch(err => {
+          alert('Không thể tự động sao chép: ' + err.message);
+        });
       }
     };
 
