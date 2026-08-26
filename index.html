@@ -209,7 +209,7 @@
 
         <div class="flex items-center gap-1.5 shrink-0">
           <!-- Add Student Button -->
-          <button onclick="app.openModal()" class="om-btn-gold px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <button onclick="app.openModal(false)" class="om-btn-gold px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-plus text-[10px]"></i>
             <span class="hidden sm:inline">Thêm Học Viên</span>
             <span class="sm:hidden">Thêm</span>
@@ -410,7 +410,7 @@
           <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-300 text-base shrink-0"><i class="fa-solid fa-user-pen" id="modalIcon"></i></div>
           <div>
             <h3 class="text-base sm:text-lg font-bold text-slate-900" id="modalTitle">Thêm Hồ Sơ Học Viên</h3>
-            <p class="text-[11px] text-slate-500">Nhập thông tin & tính hoa hồng nhận được</p>
+            <p class="text-[11px] text-slate-500" id="modalSubtitle">Nhập thông tin & tính hoa hồng nhận được</p>
           </div>
         </div>
 
@@ -485,7 +485,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Hạng Bằng <span class="text-rose-600">*</span></label>
-                <select id="licenseType" onchange="app.onLicenseChange()" class="om-input w-full rounded-xl text-xs font-bold text-amber-900 bg-white">
+                <select id="licenseType" onchange="app.onLicenseChange(true)" class="om-input w-full rounded-xl text-xs font-bold text-amber-900 bg-white">
                   <option value="A1">Hạng A1 (Mô tô - Hoa hồng 200k)</option>
                   <option value="A">Hạng A (A2 PKL - Hoa hồng 700k)</option>
                   <option value="B01" selected>Hạng B01 (B1 Tự động - Hoa hồng 2.000k)</option>
@@ -609,11 +609,11 @@
 
         <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-3">
           <p class="text-[11px] text-amber-950 leading-relaxed">
-            Dán đoạn mã <b>firebaseConfig</b> bạn copy từ Firebase Console vào đây:
+            Cấu hình Firebase đã được kích hoạt mặc định. Bạn có thể kiểm tra hoặc thay đổi tại đây:
           </p>
 
           <div>
-            <label class="block text-[10px] font-bold text-amber-900 mb-1">Cấu hình Firebase (Dán toàn bộ mã hoặc khối const firebaseConfig = {...})</label>
+            <label class="block text-[10px] font-bold text-amber-900 mb-1">Cấu hình Firebase</label>
             <textarea id="cfgFirebaseText" rows="6" placeholder="Dán đoạn mã Firebase của bạn vào đây..." class="om-input w-full px-3 py-2 rounded-xl text-xs font-mono"></textarea>
           </div>
 
@@ -1141,6 +1141,14 @@
 
       openModal(isEdit = false) {
         const modal = document.getElementById('studentModal');
+        const titleEl = document.getElementById('modalTitle');
+        const subTitleEl = document.getElementById('modalSubtitle');
+        const iconEl = document.getElementById('modalIcon');
+        
+        if (titleEl) titleEl.textContent = isEdit ? 'Chỉnh Sửa Hồ Sơ Học Viên' : 'Thêm Hồ Sơ Học Viên';
+        if (subTitleEl) subTitleEl.textContent = isEdit ? 'Cập nhật lại thông tin học viên' : 'Nhập thông tin & tính hoa hồng nhận được';
+        if (iconEl) iconEl.className = isEdit ? 'fa-solid fa-user-pen' : 'fa-solid fa-user-plus';
+
         if (modal) modal.classList.remove('hidden');
         if (!isEdit) {
           const form = document.getElementById('studentForm');
@@ -1148,22 +1156,30 @@
           const sid = document.getElementById('studentId');
           if (sid) sid.value = '';
           this.initDefaultDate();
-          this.onLicenseChange();
+          this.onLicenseChange(true);
         }
       },
       closeModal() { const modal = document.getElementById('studentModal'); if (modal) modal.classList.add('hidden'); },
 
-      // TỰ ĐỘNG ẨN LỊCH HỌC KHI LÀ A1 / A
-      onLicenseChange() {
+      // TỰ ĐỘNG ẨN LỊCH HỌC KHI LÀ A1 / A - CHỈ TỰ ĐIỀN TIỀN KHI autoFillDefaults = true
+      onLicenseChange(autoFillDefaults = false) {
         const typeEl = document.getElementById('licenseType');
         const commInput = document.getElementById('commission');
         const tuitionInput = document.getElementById('tuitionFee');
         const scheduleGroup = document.getElementById('studyScheduleGroup');
-        if (!typeEl || !commInput || !tuitionInput) return;
+        if (!typeEl) return;
 
         const type = typeEl.value;
-        if (this.defaultCommissions[type] !== undefined) commInput.value = this.formatNumberString(this.defaultCommissions[type]);
-        if (this.defaultTuitions[type]) tuitionInput.value = this.formatNumberString(this.defaultTuitions[type]);
+
+        // Chỉ ghi đè học phí & hoa hồng khi người dùng chủ động đổi Hạng Bằng hoặc khi Thêm Mới
+        if (autoFillDefaults) {
+          if (commInput && this.defaultCommissions[type] !== undefined) {
+            commInput.value = this.formatNumberString(this.defaultCommissions[type]);
+          }
+          if (tuitionInput && this.defaultTuitions[type]) {
+            tuitionInput.value = this.formatNumberString(this.defaultTuitions[type]);
+          }
+        }
 
         // Ẩn lịch học đối với A1 / A
         if (scheduleGroup) {
@@ -1205,6 +1221,7 @@
         this.showToast(`Đã lưu hồ sơ: ${student.fullName}`);
       },
 
+      // CHỈNH SỬA: GIỮ NGUYÊN 100% DỮ LIỆU CŨ, KHÔNG BỊ GHI ĐÈ
       editStudent(id) {
         const student = this.students.find(s => s.id === id);
         if (!student) return;
@@ -1224,7 +1241,9 @@
         document.getElementById('registerDate').value = student.registerDate || '';
         document.getElementById('examMonth').value = student.examMonth || '';
         document.getElementById('note').value = student.note || '';
-        this.onLicenseChange();
+        
+        // Gọi onLicenseChange với autoFillDefaults = false để KHÔNG ghi đè học phí & hoa hồng cũ của học viên
+        this.onLicenseChange(false);
       },
 
       deleteStudent(id) {
