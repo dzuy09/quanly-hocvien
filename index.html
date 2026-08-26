@@ -51,7 +51,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <style>
-    /* Chống tràn ngang và cố định màn hình trên Mobile */
+    /* Chống tràn ngang và khóa cuộn ngang trên Mobile */
     html, body {
       overflow-x: hidden !important;
       max-width: 100vw !important;
@@ -920,7 +920,7 @@
           const parts = m.split('-');
           const opt = document.createElement('option');
           opt.value = m;
-          opt.textContent = `Tháng ${parts}/${parts[0]}`;
+          opt.textContent = 'Tháng ' + parts + '/' + parts[0];
           filterMonth.appendChild(opt);
         });
         if (currentVal && Array.from(filterMonth.options).some(o => o.value === currentVal)) filterMonth.value = currentVal;
@@ -971,7 +971,7 @@
             const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
             const isMoto = s.licenseType === 'A1' || s.licenseType === 'A';
             const examParts = s.examMonth ? s.examMonth.split('-') : [];
-            const examStr = examParts.length === 2 ? `Tháng ${examParts}/${examParts[0]}` : '-';
+            const examStr = examParts.length === 2 ? ('Tháng ' + examParts + '/' + examParts[0]) : '-';
             return `
               <tr class="hover:bg-amber-50/60 transition duration-150 group cursor-pointer" onclick="app.viewStudent('${s.id}')">
                 <td class="py-3 px-4 text-xs text-slate-500 font-medium">${s.registerDate ? this.formatDate(s.registerDate) : '-'}</td>
@@ -1008,7 +1008,7 @@
             const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
             const isMoto = s.licenseType === 'A1' || s.licenseType === 'A';
             const examParts = s.examMonth ? s.examMonth.split('-') : [];
-            const examStr = examParts.length === 2 ? `Khóa thi: T${examParts}/${examParts[0]}` : 'Chưa có khóa thi';
+            const examStr = examParts.length === 2 ? ('Khóa thi: T' + examParts + '/' + examParts[0]) : 'Chưa có khóa thi';
 
             return `
               <div class="p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-2xs space-y-2.5 active:bg-amber-50/40 transition cursor-pointer" onclick="app.viewStudent('${s.id}')">
@@ -1205,7 +1205,7 @@
         const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
         const isMoto = s.licenseType === 'A1' || s.licenseType === 'A';
         const examParts = s.examMonth ? s.examMonth.split('-') : [];
-        const examStr = examParts.length === 2 ? `Tháng ${examParts}/${examParts[0]}` : '-';
+        const examStr = examParts.length === 2 ? ('Tháng ' + examParts + '/' + examParts[0]) : '-';
 
         const detailEl = document.getElementById('studentDetailContent');
         if (detailEl) {
@@ -1322,7 +1322,7 @@
         if (filtered.length === 0) { alert('Không có dữ liệu để xuất!'); return; }
         const data = filtered.map((s, idx) => {
           const examParts = s.examMonth ? s.examMonth.split('-') : [];
-          const examStr = examParts.length === 2 ? `Tháng ${examParts}/${examParts[0]}` : '';
+          const examStr = examParts.length === 2 ? ('Tháng ' + examParts + '/' + examParts[0]) : '';
           return {
             "STT": idx + 1,
             "Ngày Nhập": s.registerDate || '',
@@ -1350,7 +1350,7 @@
       formatDate(isoStr) {
         if (!isoStr) return '';
         const parts = isoStr.split('-');
-        if (parts.length === 3) return `${parts}/${parts}/${parts[0]}`;
+        if (parts.length === 3) return parts[2] + '/' + parts + '/' + parts[0];
         return isoStr;
       }
     };
@@ -1359,6 +1359,3 @@
   </script>
 </body>
 </html>
-,title:QuanLyHocVien_Clean_Final_Firebase.html}
-
-http://googleusercontent.com/action_card_content/85e90e9d-d1c3-48e2-b8f0-d72dbeaaaec9
