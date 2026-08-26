@@ -72,7 +72,7 @@
       font-family: "Plus Jakarta Sans", sans-serif;
     }
 
-    /* Đảm bảo ô input có chiều cao chuẩn 46px để không che dấu tiếng Việt hoa */
+    /* Đảm bảo ô input có chiều cao rộng rãi 52px để không che dấu tiếng Việt hoa (như ĐỖ, Â, Ể, Ở...) */
     input, select, textarea {
       font-size: 14px !important;
       min-width: 0 !important;
@@ -81,11 +81,11 @@
     }
 
     .om-input-name {
-      height: 46px !important;
-      min-height: 46px !important;
-      line-height: 1.5 !important;
-      padding: 9px 14px !important;
-      font-size: 14px !important;
+      height: 52px !important;
+      min-height: 52px !important;
+      line-height: 1.6 !important;
+      padding: 12px 14px 10px 14px !important;
+      font-size: 15px !important;
       font-weight: 700 !important;
       text-transform: uppercase !important;
     }
@@ -99,9 +99,9 @@
       width: 100% !important;
       display: block !important;
       box-sizing: border-box !important;
-      height: 42px !important;
-      line-height: 1.35 !important;
-      padding: 7px 12px !important;
+      height: 44px !important;
+      line-height: 1.4 !important;
+      padding: 8px 12px !important;
     }
 
     input[type="date"]::-webkit-date-and-time-value,
@@ -139,7 +139,7 @@
       border: 1px solid #e2d7c6;
       color: #1e293b;
       transition: all 0.2s ease;
-      height: 42px;
+      height: 44px;
       padding: 8px 12px;
     }
     .om-input:focus {
@@ -425,9 +425,10 @@
             </h4>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Ô Họ Tên: Chiều cao chuẩn 52px, padding rộng rãi không che dấu tiếng Việt -->
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Họ Tên Học Viên <span class="text-rose-600">*</span></label>
-                <input type="text" id="fullName" required placeholder="NGUYỄN VĂN A" oninput="this.value = this.value.toUpperCase()" class="om-input om-input-name w-full rounded-xl">
+                <input type="text" id="fullName" required placeholder="ĐỖ HUYỀN DUNG" oninput="this.value = this.value.toUpperCase()" class="om-input om-input-name w-full rounded-xl">
               </div>
               
               <div class="min-w-0">
@@ -907,6 +908,31 @@
 
       formatCurrencyInput(input) { input.value = this.formatNumberString(input.value); },
 
+      // CHUẨN HÓA ĐỊNH DẠNG NGÀY: DD/MM/YYYY (Ví dụ: 01/08/2026, 13/04/1994)
+      formatDate(isoStr) {
+        if (!isoStr || typeof isoStr !== 'string') return '';
+        const p = isoStr.split('-');
+        if (p.length === 3) {
+          const y = p[0];
+          const m = p;
+          const d = p;
+          return d + '/' + m + '/' + y;
+        }
+        return isoStr;
+      },
+
+      // CHUẨN HÓA ĐỊNH DẠNG KHÓA THI: Tháng MM/YYYY (Ví dụ: Tháng 01/2027)
+      formatExamMonth(monthStr) {
+        if (!monthStr || typeof monthStr !== 'string') return '-';
+        const p = monthStr.split('-');
+        if (p.length === 2) {
+          const y = p[0];
+          const m = p;
+          return 'Tháng ' + m + '/' + y;
+        }
+        return monthStr;
+      },
+
       populateMonthFilter() {
         const filterMonth = document.getElementById('filterMonth');
         if (!filterMonth) return;
@@ -917,11 +943,15 @@
         const sortedMonths = Array.from(months).sort().reverse();
         filterMonth.innerHTML = '<option value="all">Tất cả các tháng</option>';
         sortedMonths.forEach(m => {
-          const parts = m.split('-');
-          const opt = document.createElement('option');
-          opt.value = m;
-          opt.textContent = 'Tháng ' + parts + '/' + parts[0];
-          filterMonth.appendChild(opt);
+          const p = m.split('-');
+          if (p.length === 2) {
+            const y = p[0];
+            const mo = p;
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = 'Tháng ' + mo + '/' + y;
+            filterMonth.appendChild(opt);
+          }
         });
         if (currentVal && Array.from(filterMonth.options).some(o => o.value === currentVal)) filterMonth.value = currentVal;
       },
@@ -970,16 +1000,18 @@
           tbody.innerHTML = filtered.map(s => {
             const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
             const isMoto = s.licenseType === 'A1' || s.licenseType === 'A';
-            const examParts = s.examMonth ? s.examMonth.split('-') : [];
-            const examStr = examParts.length === 2 ? ('Tháng ' + examParts + '/' + examParts[0]) : '-';
+            const examStr = this.formatExamMonth(s.examMonth);
+            const regDateStr = this.formatDate(s.registerDate);
+            const dobStr = this.formatDate(s.dob);
+
             return `
               <tr class="hover:bg-amber-50/60 transition duration-150 group cursor-pointer" onclick="app.viewStudent('${s.id}')">
-                <td class="py-3 px-4 text-xs text-slate-500 font-medium">${s.registerDate ? this.formatDate(s.registerDate) : '-'}</td>
+                <td class="py-3 px-4 text-xs text-slate-500 font-semibold">${regDateStr || '-'}</td>
                 <td class="py-3 px-4">
-                  <div class="font-bold text-slate-900 group-hover:text-amber-700 transition uppercase tracking-tight">${s.fullName}</div>
+                  <div class="font-bold text-slate-900 group-hover:text-amber-700 transition uppercase tracking-tight text-sm leading-relaxed py-0.5">${s.fullName}</div>
                   ${s.phone ? `<a href="tel:${s.phone}" onclick="event.stopPropagation()" class="text-[11px] text-amber-700 font-semibold hover:underline flex items-center gap-1 mt-0.5"><i class="fa-solid fa-phone text-[9px]"></i><span>${s.phone}</span></a>` : '<span class="text-[11px] text-slate-400">Chưa có SĐT</span>'}
                 </td>
-                <td class="py-3 px-4 text-xs text-slate-600">${s.dob ? this.formatDate(s.dob) : '-'}</td>
+                <td class="py-3 px-4 text-xs text-slate-600 font-medium">${dobStr || '-'}</td>
                 <td class="py-3 px-4 text-xs">
                   <div class="text-slate-800 font-semibold">${s.district || '-'}</div>
                   ${!isMoto && s.studySchedule ? `<div class="text-[11px] text-slate-500">${s.studySchedule}</div>` : ''}
@@ -1007,18 +1039,19 @@
           mobileContainer.innerHTML = filtered.map(s => {
             const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
             const isMoto = s.licenseType === 'A1' || s.licenseType === 'A';
-            const examParts = s.examMonth ? s.examMonth.split('-') : [];
-            const examStr = examParts.length === 2 ? ('Khóa thi: T' + examParts + '/' + examParts[0]) : 'Chưa có khóa thi';
+            const examStr = this.formatExamMonth(s.examMonth);
+            const regDateStr = this.formatDate(s.registerDate);
+            const dobStr = this.formatDate(s.dob);
 
             return `
               <div class="p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-2xs space-y-2.5 active:bg-amber-50/40 transition cursor-pointer" onclick="app.viewStudent('${s.id}')">
                 <div class="flex items-start justify-between gap-2 border-b border-stone-100 pb-2">
                   <div class="min-w-0 flex-1">
-                    <h4 class="font-bold text-slate-900 text-sm truncate uppercase tracking-tight">${s.fullName}</h4>
+                    <h4 class="font-bold text-slate-900 text-sm truncate uppercase tracking-tight leading-relaxed py-0.5">${s.fullName}</h4>
                     <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
                       ${s.phone ? `<a href="tel:${s.phone}" onclick="event.stopPropagation()" class="text-amber-800 font-bold flex items-center gap-1"><i class="fa-solid fa-phone text-[9px]"></i><span>${s.phone}</span></a>` : ''}
                       <span>•</span>
-                      <span>${s.dob ? `Sinh: ${this.formatDate(s.dob)}` : 'Chưa có NS'}</span>
+                      <span>${dobStr ? ('Sinh: ' + dobStr) : 'Chưa có NS'}</span>
                       <span>•</span>
                       <span class="text-slate-700 font-semibold">${s.district || '-'}</span>
                     </div>
@@ -1047,7 +1080,7 @@
                 </div>
 
                 <div class="flex items-center justify-between pt-2 border-t border-stone-100" onclick="event.stopPropagation()">
-                  <span class="text-[10px] text-slate-400">Ngày nhập: ${this.formatDate(s.registerDate)}</span>
+                  <span class="text-[10px] text-slate-400">Ngày nhập: ${regDateStr || '-'}</span>
                   <div class="flex items-center gap-1.5">
                     <button onclick="app.editStudent('${s.id}')" class="px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700 text-xs font-bold flex items-center gap-1 active:bg-amber-100">
                       <i class="fa-solid fa-pen-to-square text-[10px]"></i> Sửa
@@ -1204,8 +1237,9 @@
         if (!s) return;
         const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
         const isMoto = s.licenseType === 'A1' || s.licenseType === 'A';
-        const examParts = s.examMonth ? s.examMonth.split('-') : [];
-        const examStr = examParts.length === 2 ? ('Tháng ' + examParts + '/' + examParts[0]) : '-';
+        const examStr = this.formatExamMonth(s.examMonth);
+        const regDateStr = this.formatDate(s.registerDate);
+        const dobStr = this.formatDate(s.dob);
 
         const detailEl = document.getElementById('studentDetailContent');
         if (detailEl) {
@@ -1213,8 +1247,8 @@
             <div class="space-y-3.5">
               <div class="flex items-center justify-between border-b border-stone-200 pb-2.5">
                 <div class="min-w-0 flex-1">
-                  <h2 class="text-base font-bold text-slate-900 truncate uppercase">${s.fullName}</h2>
-                  <p class="text-[11px] text-slate-500">Mã: #${s.id.slice(-4)} | Ngày nhập: ${this.formatDate(s.registerDate)}</p>
+                  <h2 class="text-base sm:text-lg font-bold text-slate-900 truncate uppercase leading-relaxed pt-1 pb-0.5">${s.fullName}</h2>
+                  <p class="text-[11px] text-slate-500">Mã: #${s.id.slice(-4)} | Ngày nhập: ${regDateStr || '-'}</p>
                 </div>
                 <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border shrink-0 ${badgeClass}">Hạng ${s.licenseType}</span>
               </div>
@@ -1225,7 +1259,7 @@
                 </div>
                 <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">
                   <span class="text-slate-500 block text-[10px]">Ngày sinh:</span>
-                  <b class="text-slate-900 block mt-0.5">${s.dob ? this.formatDate(s.dob) : '-'}</b>
+                  <b class="text-slate-900 block mt-0.5">${dobStr || '-'}</b>
                 </div>
                 <div class="p-2.5 rounded-xl bg-stone-50 border border-stone-200">
                   <span class="text-slate-500 block text-[10px]">Khu vực đăng ký:</span>
@@ -1321,14 +1355,12 @@
         const filtered = this.getFilteredStudents();
         if (filtered.length === 0) { alert('Không có dữ liệu để xuất!'); return; }
         const data = filtered.map((s, idx) => {
-          const examParts = s.examMonth ? s.examMonth.split('-') : [];
-          const examStr = examParts.length === 2 ? ('Tháng ' + examParts + '/' + examParts[0]) : '';
           return {
             "STT": idx + 1,
-            "Ngày Nhập": s.registerDate || '',
+            "Ngày Nhập": this.formatDate(s.registerDate) || '',
             "Họ Và Tên": s.fullName || '',
             "Số Điện Thoại": s.phone || '',
-            "Ngày Sinh": s.dob || '',
+            "Ngày Sinh": this.formatDate(s.dob) || '',
             "Quận": s.district || '',
             "Hạng Bằng": s.licenseType || '',
             "Lịch Học": s.studySchedule || '',
@@ -1337,7 +1369,7 @@
             "Giảm Giá (VNĐ)": s.discountAmount || 0,
             "Lý Do Giảm": s.discountReason || '',
             "Hoa Hồng Nhận (VNĐ)": s.commission || 0,
-            "Khóa Thi": examStr,
+            "Khóa Thi": this.formatExamMonth(s.examMonth) || '',
             "Ghi Chú": s.note || ''
           };
         });
@@ -1345,13 +1377,6 @@
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "DanhSachHocVien");
         XLSX.writeFile(wb, `DanhSach_HocVien_${new Date().toISOString().split('T')[0]}.xlsx`);
-      },
-
-      formatDate(isoStr) {
-        if (!isoStr) return '';
-        const parts = isoStr.split('-');
-        if (parts.length === 3) return parts[2] + '/' + parts + '/' + parts[0];
-        return isoStr;
       }
     };
 
