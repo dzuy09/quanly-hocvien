@@ -81,7 +81,7 @@
       font-family: "Plus Jakarta Sans", sans-serif;
     }
 
-    /* Đảm bảo ô input có chiều cao rộng rãi 52px để không che dấu tiếng Việt hoa (như ĐỖ, Â, Ể, Ở...) */
+    /* Đảm bảo ô input có chiều cao rộng rãi để không che dấu tiếng Việt */
     input, select, textarea {
       font-size: 14px !important;
       min-width: 0 !important;
@@ -254,8 +254,8 @@
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 text-xs"><i class="fa-regular fa-calendar"></i></div>
           <span class="text-xs font-bold text-slate-600 shrink-0">Lọc Tháng:</span>
-          <select id="filterMonth" onchange="app.filterData()" class="bg-transparent text-xs font-bold text-amber-900 focus:outline-none cursor-pointer truncate flex-1">
-            <option value="all">Tất cả các tháng</option>
+          <select id="filterMonth" onchange="app.onMonthChange()" class="bg-transparent text-xs font-bold text-amber-900 focus:outline-none cursor-pointer truncate flex-1">
+            <!-- Tự động điền theo tháng hiện tại & danh sách tháng có dữ liệu -->
           </select>
         </div>
         <div class="flex items-center gap-1 sm:hidden">
@@ -275,7 +275,7 @@
             <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 text-sm shrink-0"><i class="fa-solid fa-users"></i></div>
           </div>
           <div class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight" id="statTotalStudents">0</div>
-          <p class="text-[11px] text-slate-500 mt-1">Hồ sơ đã tiếp nhận</p>
+          <p class="text-[11px] text-slate-500 mt-1" id="statSubStudents">Hồ sơ trong tháng</p>
         </div>
 
         <!-- Thẻ 2: TỔNG HOA HỒNG - TO & NỔI BẬT NHẤT -->
@@ -289,7 +289,7 @@
           </div>
           <div class="text-2xl sm:text-4xl lg:text-4xl font-black text-rose-600 tracking-tight truncate" id="statTotalCommission">0 ₫</div>
           <div class="flex items-center justify-between mt-1 text-[11px] text-rose-700 font-bold">
-            <span>Thu nhập thực nhận</span>
+            <span id="statSubCommission">Thu nhập thực nhận</span>
             <span class="bg-rose-200/80 px-2 py-0.5 rounded-full text-[10px]">Tự động tính</span>
           </div>
         </div>
@@ -301,7 +301,7 @@
             <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200 text-sm shrink-0"><i class="fa-solid fa-receipt"></i></div>
           </div>
           <div class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-emerald-700 tracking-tight truncate" id="statTotalTuition">0 ₫</div>
-          <p class="text-[11px] text-emerald-600 mt-1">Doanh số khóa học</p>
+          <p class="text-[11px] text-emerald-600 mt-1" id="statSubTuition">Doanh số khóa học</p>
         </div>
       </div>
 
@@ -318,37 +318,37 @@
           <div onclick="app.filterByLicense('A1')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng A1</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-A1">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">650k / 200k</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-A1">650k / 200k</div>
           </div>
           <div onclick="app.filterByLicense('A')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng A</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-A">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">2.000k / 700k</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-A">2.000k / 700k</div>
           </div>
           <div onclick="app.filterByLicense('B01')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng B01</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-B01">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">22.3Tr / 2Tr</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-B01">22.3Tr / 2Tr</div>
           </div>
           <div onclick="app.filterByLicense('B2')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng B2</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-B2">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">22.3Tr / 2Tr</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-B2">22.3Tr / 2Tr</div>
           </div>
           <div onclick="app.filterByLicense('C1')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng C1</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-C1">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold">22.3Tr / 2Tr</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-C1">22.3Tr / 2Tr</div>
           </div>
           <div onclick="app.filterByLicense('Bổ túc')" class="min-w-[95px] sm:min-w-0 flex-1 cursor-pointer bg-gradient-to-br from-amber-100 via-amber-50 to-orange-100 hover:border-amber-500 border border-amber-300 rounded-xl p-2 sm:p-3 text-center transition shadow-xs">
             <div class="text-[11px] font-bold text-amber-900 flex items-center justify-center gap-1"><i class="fa-solid fa-steering-wheel text-[9px]"></i><span>Bổ Túc</span></div>
             <div class="text-base sm:text-lg font-extrabold text-amber-950 mt-0.5" id="count-Botuc">0</div>
-            <div class="text-[9px] sm:text-[10px] text-amber-800 font-bold">3.5Tr / 500k</div>
+            <div class="text-[9px] sm:text-[10px] text-amber-800 font-bold" id="badgeRate-Botuc">3.5Tr / 500k</div>
           </div>
           <div onclick="app.filterByLicense('Khác')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-slate-50 border border-stone-200 hover:border-slate-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-600">Khác</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-Khac">0</div>
-            <div class="text-[9px] sm:text-[10px] text-slate-500 font-medium">Tùy biến</div>
+            <div class="text-[9px] sm:text-[10px] text-slate-500 font-medium" id="badgeRate-Khac">Tùy biến</div>
           </div>
         </div>
       </div>
@@ -441,7 +441,6 @@
             </h4>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <!-- Ô Họ Tên: Chiều cao chuẩn 52px, padding rộng rãi không che dấu tiếng Việt -->
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Họ Tên Học Viên <span class="text-rose-600">*</span></label>
                 <input type="text" id="fullName" required placeholder="ĐỖ HUYỀN DUNG" oninput="this.value = this.value.toUpperCase()" class="om-input om-input-name w-full rounded-xl">
@@ -576,7 +575,7 @@
                 </div>
               </div>
 
-              <!-- KHỐI HOA HỒNG NỔI BẬT NHẤT TRONG FORM -->
+              <!-- KHỐI HOA HỒNG -->
               <div class="p-3.5 rounded-2xl commission-badge-hero flex flex-col justify-between">
                 <div class="flex items-center justify-between">
                   <span class="text-xs font-black text-rose-900 uppercase flex items-center gap-1">
@@ -664,39 +663,44 @@
       </div>
     </div>
 
-    <!-- Modal 3: Config - Cài đặt Học Phí & Hoa Hồng Mặc Định -->
-    <div id="configModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden space-y-4">
-      <button onclick="app.closeConfigModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
-      
-      <div class="border-b border-stone-200 pb-2">
-        <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-sliders text-amber-600"></i>
-          <span>Cài Đặt Mức Mặc Định Theo Hạng Bằng</span>
-        </h3>
-        <p class="text-[11px] text-slate-500">Tự động điền khi tạo hồ sơ mới (bạn vẫn có thể sửa tự do theo từng học viên)</p>
-      </div>
+    <!-- Modal 3: Config - Cài đặt Học Phí & Hoa Hồng Mặc Định (ĐÃ NÂNG CẤP CHUẨN RESPONSIVE CHO PC VÀ MOBILE) -->
+    <div id="configModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
+      <div class="om-card w-full max-w-3xl p-4 sm:p-6 my-auto relative border border-white bg-white/98 shadow-2xl max-h-[92vh] flex flex-col">
+        <!-- Pinned Header -->
+        <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-3 sm:mb-4 shrink-0">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-300 text-base shrink-0">
+              <i class="fa-solid fa-sliders"></i>
+            </div>
+            <div>
+              <h3 class="text-base sm:text-lg font-bold text-slate-900">Cài Đặt Mức Mặc Định Theo Hạng Bằng</h3>
+              <p class="text-[11px] text-slate-500">Tự động điền khi tạo hồ sơ mới (bạn vẫn có thể sửa tự do theo từng học viên)</p>
+            </div>
+          </div>
+          <button onclick="app.closeConfigModal()" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
 
-      <!-- Tab 1: Học Phí Sau Giảm Mặc Định -->
-      <div>
-        <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-          <i class="fa-solid fa-money-bill text-emerald-600"></i>
-          <span>Học Phí Sau Giảm Mặc Định (VNĐ)</span>
-        </h4>
-        <div class="space-y-1.5" id="configTuitionList"></div>
-      </div>
+        <!-- Scrollable List of License Configurations -->
+        <div class="flex-1 overflow-y-auto pr-1 space-y-3" id="configCardContainer">
+          <!-- Dynamic cards rendered by openConfigModal() -->
+        </div>
 
-      <!-- Tab 2: Mức Hoa Hồng Mặc Định -->
-      <div class="pt-2 border-t border-stone-200">
-        <h4 class="text-xs font-bold text-rose-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-          <i class="fa-solid fa-coins text-rose-600"></i>
-          <span>Hoa Hồng Nhận Mặc Định (VNĐ)</span>
-        </h4>
-        <div class="space-y-1.5" id="configCommissionList"></div>
-      </div>
-
-      <div class="flex justify-end gap-2.5 pt-3 border-t border-stone-200">
-        <button onclick="app.closeConfigModal()" class="om-btn-outline px-3.5 py-1.5 rounded-xl text-xs font-bold">Đóng</button>
-        <button onclick="app.saveConfig()" class="om-btn-gold px-4 py-1.5 rounded-xl text-xs font-bold">Lưu Cài Đặt</button>
+        <!-- Pinned Footer Actions -->
+        <div class="flex items-center justify-between pt-3 mt-3 border-t border-stone-200 shrink-0">
+          <button type="button" onclick="app.resetDefaultConfig()" class="text-xs text-amber-800 hover:text-amber-900 font-bold flex items-center gap-1.5 hover:underline py-1.5">
+            <i class="fa-solid fa-rotate-left text-[11px]"></i>
+            <span>Khôi phục gốc</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="app.closeConfigModal()" class="om-btn-outline px-4 py-2 rounded-xl text-xs font-bold">Hủy bỏ</button>
+            <button type="button" onclick="app.saveConfig()" class="om-btn-gold px-5 py-2 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5">
+              <i class="fa-solid fa-floppy-disk text-[11px]"></i>
+              <span>Lưu Cài Đặt</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -712,7 +716,7 @@
       </div>
     </div>
 
-    <!-- Modal 5: ĐỐI SOÁT LƯƠNG EXCEL / PDF (NÂNG CẤP TỌA ĐỘ CỘT SPATIAL THÔNG MINH) -->
+    <!-- Modal 5: ĐỐI SOÁT LƯƠNG EXCEL / PDF -->
     <div id="reconcileModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-4xl p-4 sm:p-6 relative border border-white bg-white shadow-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden space-y-4">
         <button onclick="app.closeReconcileModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -841,6 +845,7 @@
       isFirebaseReady: false,
       reconcileResult: null,
       currentReconcileTab: 'mismatched',
+      selectedMonth: undefined, // Mặc định tự động nhận diện tháng hiện tại
       
       // MỨC HOA HỒNG MẶC ĐỊNH
       defaultCommissions: { 
@@ -864,6 +869,13 @@
         'Khác': 10000000 
       },
 
+      getCurrentMonthStr() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        return `${y}-${m}`;
+      },
+
       init() {
         this.loadFromStorage();
         this.initFirebase();
@@ -871,6 +883,7 @@
         this.populateMonthFilter();
         this.renderAllViews();
         this.updateStats();
+        this.updateLicenseBadgeRates();
         this.initDefaultDate();
       },
 
@@ -1165,23 +1178,36 @@
         return monthStr;
       },
 
+      // BỘ LỌC THÁNG: MẶC ĐỊNH CHỈ HIỆN THÁNG HIỆN TẠI (VÍ DỤ THÁNG 9), BẤM VÀO MỚI CHỌN TẤT CẢ HOẶC THÁNG KHÁC
       populateMonthFilter() {
         const filterMonth = document.getElementById('filterMonth');
         const recMonth = document.getElementById('reconcileMonth');
         if (!filterMonth) return;
         
-        const currentVal = filterMonth.value;
+        const currentMonth = this.getCurrentMonthStr();
+
+        // Nếu chưa chọn thì mặc định lấy tháng hiện tại
+        if (this.selectedMonth === undefined) {
+          this.selectedMonth = currentMonth;
+        }
+
         const months = new Set();
-        this.students.forEach(s => { if (s.registerDate) months.add(s.registerDate.substring(0, 7)); });
-        months.add(new Date().toISOString().substring(0, 7));
+        this.students.forEach(s => { 
+          if (s.registerDate && /^\d{4}-\d{2}/.test(s.registerDate)) {
+            months.add(s.registerDate.substring(0, 7)); 
+          }
+        });
+        months.add(currentMonth);
         const sortedMonths = Array.from(months).sort().reverse();
         
-        filterMonth.innerHTML = '<option value="all">Tất cả các tháng</option>';
-        if (recMonth) recMonth.innerHTML = '<option value="all">Tất cả thời gian</option>';
+        filterMonth.innerHTML = '';
+        if (recMonth) recMonth.innerHTML = '';
 
+        // Thêm các tháng cụ thể trước
         sortedMonths.forEach(m => {
           if (/^\d{4}-\d{2}$/.test(m)) {
-            const label = m.replace(/^(\d{4})-(\d{2})$/, 'Tháng $2/$1');
+            const isCurrent = (m === currentMonth);
+            const label = m.replace(/^(\d{4})-(\d{2})$/, 'Tháng $2/$1') + (isCurrent ? ' (Hiện tại)' : '');
             
             const opt = document.createElement('option');
             opt.value = m;
@@ -1196,7 +1222,39 @@
             }
           }
         });
-        if (currentVal && Array.from(filterMonth.options).some(o => o.value === currentVal)) filterMonth.value = currentVal;
+
+        // Thêm lựa chọn "Tất cả các tháng" (khi người dùng bấm vào dropdown mới chọn)
+        const allOpt = document.createElement('option');
+        allOpt.value = 'all';
+        allOpt.textContent = '🌟 Tất cả các tháng';
+        filterMonth.appendChild(allOpt);
+
+        if (recMonth) {
+          const recAllOpt = document.createElement('option');
+          recAllOpt.value = 'all';
+          recAllOpt.textContent = '🌟 Tất cả thời gian';
+          recMonth.appendChild(recAllOpt);
+        }
+
+        // Chọn đúng tháng
+        if (this.selectedMonth && Array.from(filterMonth.options).some(o => o.value === this.selectedMonth)) {
+          filterMonth.value = this.selectedMonth;
+        } else {
+          filterMonth.value = currentMonth;
+          this.selectedMonth = currentMonth;
+        }
+
+        if (recMonth) {
+          recMonth.value = filterMonth.value;
+        }
+      },
+
+      onMonthChange() {
+        const filterMonth = document.getElementById('filterMonth');
+        if (filterMonth) {
+          this.selectedMonth = filterMonth.value;
+        }
+        this.filterData();
       },
 
       getFilteredStudents() {
@@ -1204,7 +1262,7 @@
         const licenseEl = document.getElementById('filterLicense');
         const searchEl = document.getElementById('searchInput');
 
-        const monthFilter = monthEl ? monthEl.value : 'all';
+        const monthFilter = monthEl ? monthEl.value : (this.selectedMonth || this.getCurrentMonthStr());
         const licenseFilter = licenseEl ? licenseEl.value : 'all';
         const search = searchEl ? (searchEl.value || '').trim().toLowerCase() : '';
 
@@ -1356,6 +1414,18 @@
         const elTotal = document.getElementById('statTotalStudents');
         const elComm = document.getElementById('statTotalCommission');
         const elTuit = document.getElementById('statTotalTuition');
+        const elSubStudents = document.getElementById('statSubStudents');
+        const elSubCommission = document.getElementById('statSubCommission');
+        const elSubTuition = document.getElementById('statSubTuition');
+
+        const monthEl = document.getElementById('filterMonth');
+        const currentMonthLabel = (monthEl && monthEl.value !== 'all') 
+          ? (monthEl.options[monthEl.selectedIndex]?.textContent || 'Tháng đang chọn')
+          : 'Toàn bộ thời gian';
+
+        if (elSubStudents) elSubStudents.textContent = monthEl && monthEl.value !== 'all' ? `Hồ sơ ${currentMonthLabel}` : 'Tất cả hồ sơ tiếp nhận';
+        if (elSubCommission) elSubCommission.textContent = monthEl && monthEl.value !== 'all' ? `Thu nhập ${currentMonthLabel}` : 'Thu nhập toàn bộ';
+        if (elSubTuition) elSubTuition.textContent = monthEl && monthEl.value !== 'all' ? `Doanh số ${currentMonthLabel}` : 'Doanh số toàn bộ';
 
         if (elTotal) elTotal.textContent = filtered.length;
         if (elComm) elComm.textContent = this.formatVND(filtered.reduce((sum, s) => sum + (s.commission || 0), 0));
@@ -1370,10 +1440,53 @@
         });
       },
 
+      updateLicenseBadgeRates() {
+        const formatShortMoney = (val) => {
+          if (!val) return '0';
+          if (val >= 1000000) {
+            const tr = val / 1000000;
+            return Number.isInteger(tr) ? `${tr}Tr` : `${tr.toFixed(1)}Tr`;
+          }
+          if (val >= 1000) {
+            return `${Math.round(val / 1000)}k`;
+          }
+          return `${val}`;
+        };
+
+        const pairs = [
+          { key: 'A1', id: 'badgeRate-A1' },
+          { key: 'A', id: 'badgeRate-A' },
+          { key: 'B01', id: 'badgeRate-B01' },
+          { key: 'B2', id: 'badgeRate-B2' },
+          { key: 'C1', id: 'badgeRate-C1' },
+          { key: 'Bổ túc', id: 'badgeRate-Botuc' }
+        ];
+
+        pairs.forEach(p => {
+          const el = document.getElementById(p.id);
+          if (el) {
+            const t = this.defaultTuitions[p.key];
+            const c = this.defaultCommissions[p.key];
+            if (t !== undefined && c !== undefined) {
+              el.textContent = `${formatShortMoney(t)} / ${formatShortMoney(c)}`;
+            }
+          }
+        });
+      },
+
       filterData() { this.renderAllViews(); this.updateStats(); },
-      filterByLicense(type) { const el = document.getElementById('filterLicense'); if (el) el.value = type; this.filterData(); },
+      filterByLicense(type) { 
+        const el = document.getElementById('filterLicense'); 
+        if (el) {
+          if (el.value === type) el.value = 'all';
+          else el.value = type;
+        } 
+        this.filterData(); 
+      },
       resetFilters() { 
-        const m = document.getElementById('filterMonth'); if (m) m.value = 'all';
+        const currentMonth = this.getCurrentMonthStr();
+        this.selectedMonth = currentMonth;
+        const m = document.getElementById('filterMonth'); if (m) m.value = currentMonth;
         const l = document.getElementById('filterLicense'); if (l) l.value = 'all';
         const s = document.getElementById('searchInput'); if (s) s.value = '';
         this.filterData(); 
@@ -1414,7 +1527,7 @@
           if (commInput && this.defaultCommissions[type] !== undefined) {
             commInput.value = this.formatNumberString(this.defaultCommissions[type]);
           }
-          if (tuitionInput && this.defaultTuitions[type]) {
+          if (tuitionInput && this.defaultTuitions[type] !== undefined) {
             tuitionInput.value = this.formatNumberString(this.defaultTuitions[type]);
           }
         }
@@ -1559,48 +1672,100 @@
       },
       closeViewModal() { const modal = document.getElementById('viewModal'); if (modal) modal.classList.add('hidden'); },
 
+      // NÂNG CẤP TOÀN DIỆN MODAL CÀI ĐẶT: GIAO DIỆN THEO THẺ TỪNG HẠNG BẰNG, GIÃN CÁCH ĐỀU ĐẶN TRÊN DESKTOP, TỰ NHẢY HÀNG MƯỢT MÀ TRÊN MOBILE
       openConfigModal() {
-        const cTuitionList = document.getElementById('configTuitionList');
-        const cCommList = document.getElementById('configCommissionList');
+        const container = document.getElementById('configCardContainer');
+        if (container) {
+          const licenseMeta = {
+            'A1': { title: 'Xe Máy', desc: 'Định mức: 650k / 200k', icon: '<i class="fa-solid fa-motorcycle text-[10px]"></i>' },
+            'A': { title: 'Mô Tô PKL (A2)', desc: 'Định mức: 2.000k / 700k', icon: '<i class="fa-solid fa-motorcycle text-[10px]"></i>' },
+            'B01': { title: 'B1 Số Tự Động', desc: 'Định mức: 22.3Tr / 2Tr', icon: '<i class="fa-solid fa-car text-[10px]"></i>' },
+            'B2': { title: 'Số Sàn', desc: 'Định mức: 22.3Tr / 2Tr', icon: '<i class="fa-solid fa-car-side text-[10px]"></i>' },
+            'C1': { title: 'Xe Tải', desc: 'Định mức: 22.3Tr / 2Tr', icon: '<i class="fa-solid fa-truck text-[10px]"></i>' },
+            'Bổ túc': { title: 'Bổ Túc Tay Lái', desc: 'Định mức: 3.5Tr / 500k', icon: '<i class="fa-solid fa-steering-wheel text-[10px]"></i>' },
+            'Khác': { title: 'Nâng Dấu / Khác', desc: 'Tùy biến định mức', icon: '<i class="fa-solid fa-ellipsis text-[10px]"></i>' }
+          };
 
-        if (cTuitionList) {
-          cTuitionList.innerHTML = Object.entries(this.defaultTuitions).map(([key, val]) => `
-            <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-stone-50 border border-stone-200">
-              <span class="text-xs font-bold text-slate-800 w-24">Hạng ${key}:</span>
-              <input type="text" id="cfg_t_${key}" value="${this.formatNumberString(val)}" oninput="app.formatCurrencyInput(this)" class="om-input px-2.5 py-1 rounded-lg text-xs font-bold text-right flex-1 text-emerald-700">
-              <span class="text-xs text-slate-500">₫</span>
-            </div>
-          `).join('');
-        }
+          const keys = ['A1', 'A', 'B01', 'B2', 'C1', 'Bổ túc', 'Khác'];
 
-        if (cCommList) {
-          cCommList.innerHTML = Object.entries(this.defaultCommissions).map(([key, val]) => `
-            <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-stone-50 border border-stone-200">
-              <span class="text-xs font-bold text-slate-800 w-24">Hạng ${key}:</span>
-              <input type="text" id="cfg_c_${key}" value="${this.formatNumberString(val)}" oninput="app.formatCurrencyInput(this)" class="om-input px-2.5 py-1 rounded-lg text-xs font-bold text-right flex-1 text-rose-600">
-              <span class="text-xs text-slate-500">₫</span>
-            </div>
-          `).join('');
+          container.innerHTML = keys.map(key => {
+            const meta = licenseMeta[key] || { title: key, desc: '', icon: '' };
+            const badgeClass = this.getLicenseBadgeStyle(key);
+            const tuitionVal = this.defaultTuitions[key] !== undefined ? this.defaultTuitions[key] : 0;
+            const commVal = this.defaultCommissions[key] !== undefined ? this.defaultCommissions[key] : 0;
+
+            return `
+              <div class="p-3 sm:p-4 rounded-2xl bg-stone-50/80 border border-stone-200 space-y-2.5 hover:border-amber-300 hover:bg-white transition duration-150">
+                <div class="flex items-center justify-between gap-2 border-b border-stone-200/60 pb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border shrink-0 ${badgeClass}">
+                      ${meta.icon} <span class="ml-1">Hạng ${key}</span>
+                    </span>
+                    <span class="text-xs font-bold text-slate-800">${meta.title}</span>
+                  </div>
+                  <span class="text-[10px] text-slate-400 font-medium hidden sm:inline">${meta.desc}</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
+                  <!-- Ô 1: Học Phí Sau Giảm (Trên Desktop chiếm 50%, trên Mobile tự động nhảy xuống hàng rộng 100%) -->
+                  <div class="space-y-1">
+                    <label class="block text-[11px] font-bold text-emerald-800 flex items-center justify-between">
+                      <span class="flex items-center gap-1.5"><i class="fa-solid fa-receipt text-emerald-600 text-[10px]"></i> Học Phí Sau Giảm</span>
+                      <span class="text-[10px] text-emerald-600 font-medium">Mặc định</span>
+                    </label>
+                    <div class="relative flex items-center">
+                      <input type="text" id="cfg_t_${key}" value="${this.formatNumberString(tuitionVal)}" oninput="app.formatCurrencyInput(this)" class="om-input w-full pr-8 rounded-xl text-xs font-bold text-emerald-700 text-right bg-white">
+                      <span class="absolute right-3 text-xs text-emerald-600 font-bold pointer-events-none">₫</span>
+                    </div>
+                  </div>
+
+                  <!-- Ô 2: Hoa Hồng Thực Nhận (Trên Desktop chiếm 50%, trên Mobile tự động nhảy xuống hàng rộng 100%) -->
+                  <div class="space-y-1">
+                    <label class="block text-[11px] font-bold text-rose-800 flex items-center justify-between">
+                      <span class="flex items-center gap-1.5"><i class="fa-solid fa-coins text-amber-500 text-[10px]"></i> Hoa Hồng Thực Nhận</span>
+                      <span class="text-[9px] text-rose-700 font-bold bg-rose-100 px-1.5 py-0.5 rounded-full">Tự động tính</span>
+                    </label>
+                    <div class="relative flex items-center">
+                      <input type="text" id="cfg_c_${key}" value="${this.formatNumberString(commVal)}" oninput="app.formatCurrencyInput(this)" class="om-input w-full pr-8 rounded-xl text-xs font-black text-rose-600 text-right bg-white border-rose-300 focus:border-rose-500">
+                      <span class="absolute right-3 text-xs text-rose-600 font-bold pointer-events-none">₫</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
         }
 
         const cModal = document.getElementById('configModal');
         if (cModal) cModal.classList.remove('hidden');
       },
+
       closeConfigModal() { const modal = document.getElementById('configModal'); if (modal) modal.classList.add('hidden'); },
       
       saveConfig() {
-        Object.keys(this.defaultTuitions).forEach(key => {
-          const input = document.getElementById(`cfg_t_${key}`);
-          if (input) this.defaultTuitions[key] = this.parseCurrency(input.value);
-        });
-        Object.keys(this.defaultCommissions).forEach(key => {
-          const input = document.getElementById(`cfg_c_${key}`);
-          if (input) this.defaultCommissions[key] = this.parseCurrency(input.value);
+        const keys = ['A1', 'A', 'B01', 'B2', 'C1', 'Bổ túc', 'Khác'];
+        keys.forEach(key => {
+          const tInput = document.getElementById(`cfg_t_${key}`);
+          if (tInput) this.defaultTuitions[key] = this.parseCurrency(tInput.value);
+          const cInput = document.getElementById(`cfg_c_${key}`);
+          if (cInput) this.defaultCommissions[key] = this.parseCurrency(cInput.value);
         });
         localStorage.setItem('thanhcong_tuitions_cfg', JSON.stringify(this.defaultTuitions));
         localStorage.setItem('thanhcong_commissions_cfg', JSON.stringify(this.defaultCommissions));
+        this.updateLicenseBadgeRates();
         this.closeConfigModal();
         this.showToast('Đã lưu cài đặt học phí & hoa hồng mặc định!');
+      },
+
+      resetDefaultConfig() {
+        if (!confirm('Khôi phục học phí và hoa hồng về định mức mặc định ban đầu?')) return;
+        this.defaultCommissions = { 'A1': 200000, 'A': 700000, 'B01': 2000000, 'B2': 2000000, 'C1': 2000000, 'Bổ túc': 500000, 'Khác': 1000000 };
+        this.defaultTuitions = { 'A1': 650000, 'A': 2000000, 'B01': 22300000, 'B2': 22300000, 'C1': 22300000, 'Bổ túc': 3500000, 'Khác': 10000000 };
+        localStorage.setItem('thanhcong_tuitions_cfg', JSON.stringify(this.defaultTuitions));
+        localStorage.setItem('thanhcong_commissions_cfg', JSON.stringify(this.defaultCommissions));
+        this.updateLicenseBadgeRates();
+        this.openConfigModal();
+        this.showToast('Đã khôi phục định mức ban đầu thành công.');
       },
 
       openBackupModal() { const modal = document.getElementById('backupModal'); if (modal) modal.classList.remove('hidden'); },
@@ -1778,7 +1943,6 @@
               const textContent = await page.getTextContent();
               const items = textContent.items;
 
-              // 1. Nhóm các phần tử text theo tọa độ dòng Y (dung sai ~ 5-7px)
               const lineMap = new Map();
               items.forEach(item => {
                 const y = item.transform[5];
@@ -1800,34 +1964,20 @@
                 });
               });
 
-              // Sắp xếp các dòng từ trên xuống dưới
               const sortedYKeys = Array.from(lineMap.keys()).sort((a, b) => b - a);
-              let colBounds = null;
 
               for (let yKey of sortedYKeys) {
                 const lineItems = lineMap.get(yKey).sort((a, b) => a.x - b.x);
                 const lineFullText = lineItems.map(it => it.text).join(' ').toUpperCase();
 
-                // Kiểm tra dòng tiêu đề bảng
                 if ((lineFullText.includes('HỌ VÀ TÊN') || lineFullText.includes('HỌ TÊN')) && (lineFullText.includes('LƯƠNG') || lineFullText.includes('ĐIỆN THOẠI'))) {
-                  colBounds = { nameX: 0, phoneX: 0, licX: 0, codeX: 0, commX: 0 };
-                  lineItems.forEach(it => {
-                    const txt = it.text.toUpperCase();
-                    if (txt.includes('HỌ') || txt.includes('TÊN')) colBounds.nameX = it.x;
-                    else if (txt.includes('ĐIỆN THOẠI') || txt.includes('SĐT')) colBounds.phoneX = it.x;
-                    else if (txt.includes('HẠNG')) colBounds.licX = it.x;
-                    else if (txt.includes('MÃ')) colBounds.codeX = it.x;
-                    else if (txt === 'LƯƠNG' || txt.includes('LƯƠNG')) colBounds.commX = it.x;
-                  });
                   continue;
                 }
 
-                // Bỏ qua tiêu đề nhóm, banner
                 if (lineFullText.includes('TRUNG TÂM') || lineFullText.includes('CHI TIẾT') || lineFullText.includes('TỔNG LƯƠNG') || lineFullText.includes('TỔNG CỘNG') || lineFullText.includes('▸') || lineFullText.includes('💰')) {
                   continue;
                 }
 
-                // Tìm mã học viên KH\d+ hoặc số điện thoại
                 const hasStudentCode = lineFullText.match(/\bKH\d{4,8}\b/);
                 const hasPhone = lineFullText.match(/\b0\d{9}\b/);
                 const hasLic = lineFullText.match(/\b(A1|A2|B01|B1|B2|C1)\b/);
@@ -1840,27 +1990,23 @@
                 let codeVal = hasStudentCode ? hasStudentCode[0] : '';
                 let commVal = 0;
 
-                // Tách các số tiền trong dòng
                 const numberTokens = lineItems.filter(it => /^\d{5,9}$/.test(it.text.replace(/\./g, '')));
                 if (numberTokens.length > 0) {
-                  // Số tiền ở vị trí sau cùng nhất của dòng chính là cột Lương
                   const lastNum = numberTokens[numberTokens.length - 1];
                   commVal = parseInt(lastNum.text.replace(/\D/g, ''), 10) || 0;
-                  // Nếu cột lương = 0
                   if (lineFullText.includes('ĐÃ TÍNH LƯƠNG')) commVal = 0;
                 } else if (lineItems.some(it => it.text === '0' || it.text.includes('ĐÃ TÍNH'))) {
                   commVal = 0;
                 }
 
-                // Gom Họ & Tên
                 lineItems.forEach(it => {
                   const t = it.text.trim();
                   if (!t) return;
-                  if (/^\d{1,3}$/.test(t)) return; // STT
+                  if (/^\d{1,3}$/.test(t)) return;
                   if (['A1', 'A2', 'B1', 'B2', 'C1', 'B01', 'T08', 'DUY QR', 'T2,T6', 'T7,CN', 'DUY'].includes(t.toUpperCase())) return;
                   if (/^KH\d+$/i.test(t)) return;
                   if (/^0\d{9}$/.test(t)) return;
-                  if (/^\d{4,9}$/.test(t.replace(/\./g, ''))) return; // Các số tiền giá gốc, giá bán
+                  if (/^\d{4,9}$/.test(t.replace(/\./g, ''))) return;
                   if (t.toUpperCase().includes('ĐÃ TÍNH') || t.toUpperCase().includes('B1 +') || t.toUpperCase().includes('B2 +')) return;
                   if (/[A-ZÀ-Ỹa-zà-ỹ]/.test(t)) {
                     nameTokens.push(t);
@@ -1899,7 +2045,6 @@
         reader.readAsArrayBuffer(file);
       },
 
-      // BỘ TRÍCH XUẤT HỒ SƠ TỪ BẢNG EXCEL
       extractSalaryRecordsFrom2DArray(rawRows) {
         const records = [];
         let currentColMap = null;
@@ -1912,7 +2057,6 @@
           const cellsUpper = cells.map(c => c.toUpperCase());
           const rowLineText = cellsUpper.join(' ');
 
-          // Kiểm tra dòng TIÊU ĐỀ BẢNG
           const hasNameHeader = cellsUpper.some(c => c.includes('HỌ VÀ TÊN') || c.includes('HỌ TÊN') || c.includes('TÊN HỌC VIÊN') || (c.includes('HỌ') && c.includes('TÊN')));
           const hasSalaryHeader = cellsUpper.some(c => c === 'LƯƠNG' || c.includes('HOA HỒNG') || c.includes('THỰC NHẬN') || c.includes('MỨC CHI') || c.includes('THÙ LAO'));
           const hasPhoneHeader = cellsUpper.some(c => c.includes('ĐIỆN THOẠI') || c.includes('SĐT') || c.includes('SDT') || c.includes('PHONE'));
@@ -1944,7 +2088,6 @@
 
           if (!currentColMap || currentColMap.name === undefined) continue;
 
-          // Bỏ qua các dòng tổng kết nhóm, banner
           if (rowLineText.includes('TỔNG LƯƠNG') || rowLineText.includes('TỔNG CỘNG') || rowLineText.startsWith('TỔNG') || rowLineText.includes('▸') || rowLineText.includes('💰')) {
             continue;
           }
@@ -1982,7 +2125,6 @@
         return records;
       },
 
-      // XỬ LÝ ĐỐI SOÁT VÀ KHỚP ĐA TIÊU CHÍ (MULTI-PASS MATCHING)
       processReconciliation(excelRecords) {
         const recMonth = document.getElementById('reconcileMonth');
         const targetMonth = recMonth ? recMonth.value : 'all';
