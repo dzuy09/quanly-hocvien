@@ -206,21 +206,21 @@
           </div>
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate tracking-tight">Quản Lý Học Viên</h1>
+              <h1 class="text-sm sm:text-base font-bold text-slate-900 truncate tracking-tight">Quản Lý Tuyển Sinh</h1>
               <span id="syncStatusBadge" onclick="app.openFirebaseModal()" class="cursor-pointer text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full border shrink-0 flex items-center gap-1 bg-stone-100 text-stone-600 border-stone-300">
                 <span class="w-1.5 h-1.5 rounded-full bg-stone-400" id="syncStatusDot"></span>
                 <span id="syncStatusText">Chưa kết nối Cloud</span>
               </span>
             </div>
-            <p class="text-[10px] sm:text-xs text-slate-500 font-medium truncate">Theo Dõi Hồ Sơ & Tính Hoa Hồng Tự Động</p>
+            <p class="text-[10px] sm:text-xs text-slate-500 font-medium truncate">Theo Dõi Hồ Sơ, CRM Khách & Đối Soát Lương</p>
           </div>
         </div>
 
         <div class="flex items-center gap-1.5 shrink-0">
-          <!-- Add Student Button -->
-          <button onclick="app.openModal(false)" class="om-btn-gold px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-plus text-[10px]"></i>
-            <span class="hidden sm:inline">Thêm Học Viên</span>
+          <!-- Main Action Button (Tự động thích ứng theo Tab) -->
+          <button id="headerMainActionBtn" onclick="app.onHeaderAddClick()" class="om-btn-gold px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-plus text-[10px]" id="headerAddIcon"></i>
+            <span class="hidden sm:inline" id="headerAddTextDesktop">Thêm Học Viên</span>
             <span class="sm:hidden">Thêm</span>
           </button>
 
@@ -244,10 +244,35 @@
           </div>
         </div>
       </div>
+
+      <!-- TAB ĐIỀU HƯỚNG CHÍNH (HỌC VIÊN ĐÃ CHỐT VS KHÁCH ĐANG TƯ VẤN) -->
+      <div class="max-w-7xl mx-auto mt-2.5 pt-2 border-t border-stone-200/70 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-1.5 p-1 bg-stone-200/60 rounded-xl sm:rounded-2xl w-full sm:w-auto">
+          <!-- Tab 1: Học Viên Đã Chốt -->
+          <button type="button" id="tabBtnStudents" onclick="app.switchMainTab('students')" class="flex-1 sm:flex-none px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 bg-white text-amber-900 shadow-xs border border-stone-200">
+            <i class="fa-solid fa-user-graduate text-[11px] text-amber-600"></i>
+            <span>Học Viên Đã Chốt</span>
+            <span id="tabBadgeStudents" class="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-900 font-extrabold">0</span>
+          </button>
+
+          <!-- Tab 2: Khách Đang Tư Vấn -->
+          <button type="button" id="tabBtnLeads" onclick="app.switchMainTab('leads')" class="flex-1 sm:flex-none px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:text-amber-800">
+            <i class="fa-solid fa-headset text-[11px] text-amber-600"></i>
+            <span>Khách Đang Tư Vấn</span>
+            <span id="tabBadgeLeads" class="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-200 text-slate-700 font-extrabold">0</span>
+          </button>
+        </div>
+
+        <div class="hidden md:flex items-center gap-2 text-xs text-slate-500 font-medium">
+          <span id="tabCurrentIndicator" class="italic flex items-center gap-1"><i class="fa-regular fa-folder-open text-amber-600"></i> Quản lý danh sách hồ sơ học viên chính thức</span>
+        </div>
+      </div>
     </header>
 
-    <!-- Main Body Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
+    <!-- ========================================================================= -->
+    <!-- TAB 1: MAIN CONTAINER HỌC VIÊN ĐÃ CHỐT (studentsMain) -->
+    <!-- ========================================================================= -->
+    <main id="studentsMain" class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
       
       <!-- Month Selector Bar -->
       <div class="flex items-center justify-between gap-2 p-2.5 bg-white/95 rounded-2xl border border-stone-200 shadow-2xs">
@@ -417,7 +442,141 @@
       </div>
     </main>
 
-    <!-- Modal Form (Add / Edit Student) -->
+    <!-- ========================================================================= -->
+    <!-- TAB 2: MAIN CONTAINER KHÁCH ĐANG TƯ VẤN (leadsMain - CRM MINI) -->
+    <!-- ========================================================================= -->
+    <main id="leadsMain" class="hidden flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
+      
+      <!-- 3 STATS CARDS CHO CRM TƯ VẤN -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+        <!-- Thẻ 1: Tổng Khách Đang Tư Vấn -->
+        <div class="om-card p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500">Khách Đang Tư Vấn</span>
+            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200 text-sm shrink-0">
+              <i class="fa-solid fa-comments"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight" id="leadStatTotal">0</div>
+          <p class="text-[11px] text-slate-500 mt-1">Khách tiềm năng trong danh sách</p>
+        </div>
+
+        <!-- Thẻ 2: CẦN CHĂM SÓC NGAY (HÔM NAY HOẶC QUÁ HẠN) -->
+        <div class="om-card p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between bg-gradient-to-br from-rose-50/90 via-amber-50/70 to-orange-50/80 border-2 border-rose-300 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-black uppercase tracking-wider text-rose-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-bell text-rose-600 animate-bounce"></i>
+              <span>Cần Chăm Sóc Ngay</span>
+            </span>
+            <div class="w-8 h-8 rounded-xl bg-rose-600 text-white flex items-center justify-center text-sm shadow-xs shrink-0">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-4xl font-black text-rose-600 tracking-tight" id="leadStatUrgent">0</div>
+          <div class="flex items-center justify-between mt-1 text-[11px] text-rose-700 font-bold">
+            <span id="leadStatUrgentNotice">Hôm nay & Quá hạn lịch hẹn</span>
+            <span class="bg-rose-200/80 px-2 py-0.5 rounded-full text-[10px]">Ưu tiên gọi</span>
+          </div>
+        </div>
+
+        <!-- Thẻ 3: Lịch Hẹn Sắp Tới -->
+        <div class="om-card p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-800">Lịch Hẹn Tương Lai</span>
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200 text-sm shrink-0">
+              <i class="fa-regular fa-calendar-check"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-emerald-700 tracking-tight truncate" id="leadStatUpcoming">0</div>
+          <p class="text-[11px] text-emerald-600 mt-1">Đã lên lịch hẹn sau</p>
+        </div>
+      </div>
+
+      <!-- Search & Filter Toolbar cho Leads -->
+      <div class="om-card p-3 sm:p-4 space-y-2.5 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-3">
+        <div class="relative w-full sm:w-80">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" id="leadSearchInput" oninput="app.filterLeadsData()" placeholder="Tìm tên khách, SĐT, ghi chú..." class="om-input w-full pl-9 pr-4 rounded-xl text-xs placeholder:text-slate-400">
+        </div>
+        <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          <!-- Lọc hạng bằng -->
+          <select id="leadFilterLicense" onchange="app.filterLeadsData()" class="om-input px-3 rounded-xl text-xs font-medium cursor-pointer flex-1 sm:flex-none">
+            <option value="all">Tất cả Hạng quan tâm</option>
+            <option value="A1">Hạng A1</option>
+            <option value="A">Hạng A (A2)</option>
+            <option value="B01">Hạng B01 (B1)</option>
+            <option value="B2">Hạng B2</option>
+            <option value="C1">Hạng C1</option>
+            <option value="Bổ túc">Bổ túc lái</option>
+            <option value="Khác">Khác / Nâng dấu</option>
+          </select>
+
+          <!-- Lọc trạng thái hẹn -->
+          <select id="leadFilterStatus" onchange="app.filterLeadsData()" class="om-input px-3 rounded-xl text-xs font-bold text-amber-900 cursor-pointer flex-1 sm:flex-none">
+            <option value="all">Tất cả lịch hẹn</option>
+            <option value="urgent">🔥 Cần gọi ngay (Hôm nay & Quá hạn)</option>
+            <option value="upcoming">📅 Lịch hẹn tương lai</option>
+            <option value="no_date">⚪ Chưa đặt ngày hẹn</option>
+          </select>
+
+          <!-- Nút Thêm Khách Nhanh Trên Toolbar -->
+          <button onclick="app.openLeadModal(false)" class="om-btn-gold px-3 sm:px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs shrink-0">
+            <i class="fa-solid fa-user-plus text-[10px]"></i>
+            <span>Thêm Khách Mới</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Leads View Container -->
+      <div class="om-card overflow-hidden">
+        <div class="px-4 py-3 sm:px-6 sm:py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50/50">
+          <div class="flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
+              <i class="fa-solid fa-address-book text-amber-600"></i>
+              <span>Danh Sách Khách Đang Tư Vấn</span>
+            </h3>
+            <span id="leadRecordCountBadge" class="text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-900 font-bold border border-blue-200">0 khách</span>
+          </div>
+          <button onclick="app.resetLeadFilters()" class="text-xs text-amber-700 font-bold hover:underline flex items-center gap-1">
+            <i class="fa-solid fa-rotate-left text-[10px]"></i>
+            <span>Đặt lại bộ lọc</span>
+          </button>
+        </div>
+
+        <!-- Mobile Card View cho Leads -->
+        <div id="leadMobileCards" class="block md:hidden p-3 space-y-3"></div>
+
+        <!-- Desktop Table View cho Leads -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-stone-200 text-[11px] uppercase tracking-wider text-slate-500 bg-stone-100/60">
+                <th class="py-3 px-4 font-bold">Khách Hàng</th>
+                <th class="py-3 px-4 font-bold">Số Điện Thoại</th>
+                <th class="py-3 px-4 font-bold text-center">Hạng Quan Tâm</th>
+                <th class="py-3 px-4 font-bold">Ngày Hẹn Chăm Sóc</th>
+                <th class="py-3 px-4 font-bold">Ghi Chú / Nhu Cầu</th>
+                <th class="py-3 px-4 font-bold text-center">Thao Tác Nhanh</th>
+              </tr>
+            </thead>
+            <tbody id="leadTableBody" class="divide-y divide-stone-200/80 text-xs"></tbody>
+          </table>
+        </div>
+
+        <!-- Trạng thái trống cho Leads -->
+        <div id="leadEmptyState" class="hidden py-12 px-4 text-center">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto mb-2.5 text-blue-700">
+            <i class="fa-solid fa-headset text-lg"></i>
+          </div>
+          <h4 class="text-slate-900 font-bold text-sm">Chưa có khách đang tư vấn</h4>
+          <p class="text-xs text-slate-500 max-w-xs mx-auto mt-0.5">Bấm nút "Thêm Khách Mới" để lưu thông tin khách hàng đang trao đổi.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 1: Form Thêm / Sửa Học Viên (studentModal - Giữ nguyên gốc 100%) -->
+    <!-- ========================================================================= -->
     <div id="studentModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-2xl p-4 sm:p-6 my-auto relative border border-white bg-white/98 shadow-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden">
         <button onclick="app.closeModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -607,7 +766,81 @@
       </div>
     </div>
 
-    <!-- Modal 1: FIREBASE CLOUD SETTINGS MODAL -->
+    <!-- ========================================================================= -->
+    <!-- MODAL MỚI: Form Thêm / Sửa Khách Đang Tư Vấn (leadModal - CRM MINI) -->
+    <!-- ========================================================================= -->
+    <div id="leadModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
+      <div class="om-card w-full max-w-lg p-4 sm:p-6 my-auto relative border border-white bg-white/98 shadow-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden">
+        <button onclick="app.closeLeadModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+        
+        <div class="flex items-center gap-2.5 mb-4 border-b border-stone-100 pb-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center border border-blue-300 text-base shrink-0">
+            <i class="fa-solid fa-user-clock" id="leadModalIcon"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900" id="leadModalTitle">Thêm Khách Tư Vấn</h3>
+            <p class="text-[11px] text-slate-500" id="leadModalSubtitle">Lưu thông tin nhu cầu & đặt lịch hẹn chăm sóc lại</p>
+          </div>
+        </div>
+
+        <form id="leadForm" onsubmit="app.saveLead(event)" class="space-y-3.5 max-w-full">
+          <input type="hidden" id="leadId">
+          
+          <!-- Họ Tên -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Họ Tên Khách Hàng <span class="text-rose-600">*</span></label>
+            <input type="text" id="leadFullName" required placeholder="NGUYỄN VĂN AN" oninput="this.value = this.value.toUpperCase()" class="om-input om-input-name w-full rounded-xl">
+          </div>
+
+          <!-- Số Điện Thoại -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Số Điện Thoại <span class="text-rose-600">*</span></label>
+            <div class="relative">
+              <i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="tel" id="leadPhone" required placeholder="0901 234 567" class="om-input w-full pl-8 rounded-xl font-bold text-slate-800">
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1">Dùng để kích hoạt gọi nhanh hoặc mở ứng dụng Chat Zalo trực tiếp.</p>
+          </div>
+
+          <!-- Hạng Bằng Quan Tâm -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Hạng Bằng Khách Quan Tâm <span class="text-rose-600">*</span></label>
+            <select id="leadLicenseType" class="om-input w-full rounded-xl text-xs font-bold text-amber-900 bg-white">
+              <option value="B01" selected>Hạng B01 (B1 Số Tự Động)</option>
+              <option value="B2">Hạng B2 (Số Sàn)</option>
+              <option value="C1">Hạng C1 (Xe Tải)</option>
+              <option value="A1">Hạng A1 (Xe Máy)</option>
+              <option value="A">Hạng A (Mô Tô PKL / A2)</option>
+              <option value="Bổ túc">Bổ Túc Tay Lái Ô Tô</option>
+              <option value="Khác">Khác / Nâng Dấu</option>
+            </select>
+          </div>
+
+          <!-- Ngày Hẹn Chăm Sóc Lại -->
+          <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200">
+            <label class="block text-xs font-bold text-amber-950 mb-1 flex items-center justify-between">
+              <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-amber-600"></i> Ngày Hẹn Chăm Sóc Lại</span>
+              <span class="text-[10px] text-amber-700 font-semibold">Tự động cảnh báo khi đến hạn</span>
+            </label>
+            <input type="date" id="leadNextFollowUpDate" class="om-input w-full rounded-xl text-xs font-bold text-slate-800 bg-white">
+          </div>
+
+          <!-- Ghi Chú / Vấn Đề Khách Hàng -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Ghi Chú / Vấn Đề Trao Đổi</label>
+            <textarea id="leadNote" rows="3" placeholder="Đang băn khoăn học phí, cần học gấp cuối tuần, hẹn gọi lại sau 18h..." class="om-input w-full rounded-xl text-xs h-auto py-2 leading-relaxed"></textarea>
+          </div>
+
+          <!-- Nút Lưu / Hủy -->
+          <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-stone-200">
+            <button type="button" onclick="app.closeLeadModal()" class="om-btn-outline px-4 py-2 rounded-xl text-xs font-bold">Hủy bỏ</button>
+            <button type="submit" class="om-btn-gold px-6 py-2.5 rounded-xl text-xs font-bold shadow-md">Lưu Khách Hàng</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal 2: FIREBASE CLOUD SETTINGS MODAL (Giữ nguyên) -->
     <div id="firebaseModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-lg p-5 relative border border-white bg-white shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <button onclick="app.closeFirebaseModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -651,7 +884,7 @@
       </div>
     </div>
 
-    <!-- Modal 2: View Student Detail -->
+    <!-- Modal 3: View Student Detail (Giữ nguyên) -->
     <div id="viewModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-lg p-4 sm:p-6 relative border border-white bg-white shadow-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <button onclick="app.closeViewModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -663,10 +896,9 @@
       </div>
     </div>
 
-    <!-- Modal 3: Config - Cài đặt Học Phí & Hoa Hồng Mặc Định (ĐÃ NÂNG CẤP CHUẨN RESPONSIVE CHO PC VÀ MOBILE) -->
+    <!-- Modal 4: Config - Cài đặt Học Phí & Hoa Hồng Mặc Định (Giữ nguyên) -->
     <div id="configModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-3xl p-4 sm:p-6 my-auto relative border border-white bg-white/98 shadow-2xl max-h-[92vh] flex flex-col">
-        <!-- Pinned Header -->
         <div class="flex items-center justify-between border-b border-stone-200 pb-3 mb-3 sm:mb-4 shrink-0">
           <div class="flex items-center gap-2.5">
             <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-300 text-base shrink-0">
@@ -682,12 +914,8 @@
           </button>
         </div>
 
-        <!-- Scrollable List of License Configurations -->
-        <div class="flex-1 overflow-y-auto pr-1 space-y-3" id="configCardContainer">
-          <!-- Dynamic cards rendered by openConfigModal() -->
-        </div>
+        <div class="flex-1 overflow-y-auto pr-1 space-y-3" id="configCardContainer"></div>
 
-        <!-- Pinned Footer Actions -->
         <div class="flex items-center justify-between pt-3 mt-3 border-t border-stone-200 shrink-0">
           <button type="button" onclick="app.resetDefaultConfig()" class="text-xs text-amber-800 hover:text-amber-900 font-bold flex items-center gap-1.5 hover:underline py-1.5">
             <i class="fa-solid fa-rotate-left text-[11px]"></i>
@@ -704,7 +932,7 @@
       </div>
     </div>
 
-    <!-- Modal 4: Backup / Restore JSON -->
+    <!-- Modal 5: Backup / Restore JSON (Giữ nguyên) -->
     <div id="backupModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-md p-4 sm:p-6 relative border border-white bg-white shadow-2xl space-y-3">
         <button onclick="app.closeBackupModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
@@ -716,12 +944,11 @@
       </div>
     </div>
 
-    <!-- Modal 5: ĐỐI SOÁT LƯƠNG EXCEL / PDF -->
+    <!-- Modal 6: ĐỐI SOÁT LƯƠNG EXCEL / PDF (Giữ nguyên) -->
     <div id="reconcileModal" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-sm hidden overflow-y-auto overflow-x-hidden">
       <div class="om-card w-full max-w-4xl p-4 sm:p-6 relative border border-white bg-white shadow-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden space-y-4">
         <button onclick="app.closeReconcileModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
         
-        <!-- Header Modal -->
         <div class="flex items-center gap-3 border-b border-stone-200 pb-3">
           <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center text-lg shadow-sm">
             <i class="fa-solid fa-scale-balanced"></i>
@@ -732,7 +959,6 @@
           </div>
         </div>
 
-        <!-- Khối Tải File & Chọn Tháng -->
         <div class="p-3.5 sm:p-4 rounded-2xl bg-purple-50/60 border border-purple-200/80 space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
             <div>
@@ -755,9 +981,7 @@
           </div>
         </div>
 
-        <!-- Kết Quả Đối Soát -->
         <div id="reconcileResultSection" class="hidden space-y-4">
-          <!-- 4 Thẻ Thống Kê Tổng Quan -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
             <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
               <span class="text-[10px] text-slate-500 font-bold uppercase block">Hoa Hồng Web App</span>
@@ -781,7 +1005,6 @@
             </div>
           </div>
 
-          <!-- Các Tab Phân Loại Báo Cáo -->
           <div class="border-b border-stone-200 flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-bold">
             <button onclick="app.switchReconcileTab('mismatched')" id="tabBtn-mismatched" class="py-2 px-3 border-b-2 border-amber-600 text-amber-800 flex items-center gap-1.5">
               <i class="fa-solid fa-triangle-exclamation"></i>
@@ -801,10 +1024,8 @@
             </button>
           </div>
 
-          <!-- Nội Dung Tab Đang Chọn -->
           <div id="reconcileTabContent" class="max-h-72 overflow-y-auto space-y-2 text-xs"></div>
 
-          <!-- Thao Tác Báo Cáo / Gửi Khiếu Nại Cho Cty -->
           <div class="p-3 rounded-2xl bg-stone-50 border border-stone-200 flex flex-wrap items-center justify-between gap-2">
             <div class="text-xs text-slate-600">
               <span class="font-bold text-slate-800">Mẹo:</span> Bạn có thể sao chép nhanh báo cáo danh sách sai sót để gửi cho kế toán kiểm tra lại qua Zalo.
@@ -838,14 +1059,17 @@
     };
 
     const app = {
+      currentMainTab: 'students', // 'students' | 'leads'
       students: [],
+      leads: [], // Danh sách khách đang tư vấn
       deletedIds: new Set(),
+      deletedLeadIds: new Set(),
       firebaseConfig: DEFAULT_FIREBASE_CONFIG,
       db: null,
       isFirebaseReady: false,
       reconcileResult: null,
       currentReconcileTab: 'mismatched',
-      selectedMonth: undefined, // Mặc định tự động nhận diện tháng hiện tại
+      selectedMonth: undefined,
       
       // MỨC HOA HỒNG MẶC ĐỊNH
       defaultCommissions: { 
@@ -876,15 +1100,85 @@
         return `${y}-${m}`;
       },
 
+      getTodayDateStr() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      },
+
       init() {
         this.loadFromStorage();
         this.initFirebase();
         this.updateSyncBadge();
         this.populateMonthFilter();
         this.renderAllViews();
+        this.renderLeadsView();
         this.updateStats();
+        this.updateLeadStats();
+        this.updateTabBadges();
         this.updateLicenseBadgeRates();
         this.initDefaultDate();
+      },
+
+      // =========================================================================
+      // TAB CONTROLLER: CHUYỂN ĐỔI GIỮA HỌC VIÊN VÀ KHÁCH TƯ VẤN
+      // =========================================================================
+      switchMainTab(tab) {
+        this.currentMainTab = tab;
+        const studentsMain = document.getElementById('studentsMain');
+        const leadsMain = document.getElementById('leadsMain');
+        const btnStudents = document.getElementById('tabBtnStudents');
+        const btnLeads = document.getElementById('tabBtnLeads');
+        const headerTextDesktop = document.getElementById('headerAddTextDesktop');
+        const indicator = document.getElementById('tabCurrentIndicator');
+
+        if (tab === 'students') {
+          if (studentsMain) studentsMain.classList.remove('hidden');
+          if (leadsMain) leadsMain.classList.add('hidden');
+
+          if (btnStudents) {
+            btnStudents.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 bg-white text-amber-900 shadow-xs border border-stone-200';
+          }
+          if (btnLeads) {
+            btnLeads.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:text-amber-800';
+          }
+          if (headerTextDesktop) headerTextDesktop.textContent = 'Thêm Học Viên';
+          if (indicator) indicator.innerHTML = '<i class="fa-regular fa-folder-open text-amber-600"></i> Quản lý danh sách hồ sơ học viên chính thức';
+          
+          this.renderAllViews();
+        } else {
+          if (studentsMain) studentsMain.classList.add('hidden');
+          if (leadsMain) leadsMain.classList.remove('hidden');
+
+          if (btnLeads) {
+            btnLeads.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 bg-white text-blue-900 shadow-xs border border-stone-200';
+          }
+          if (btnStudents) {
+            btnStudents.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:text-amber-800';
+          }
+          if (headerTextDesktop) headerTextDesktop.textContent = 'Thêm Khách Tư Vấn';
+          if (indicator) indicator.innerHTML = '<i class="fa-solid fa-headset text-blue-600"></i> CRM Quản lý khách đang trao đổi & chăm sóc lại';
+
+          this.renderLeadsView();
+          this.updateLeadStats();
+        }
+      },
+
+      onHeaderAddClick() {
+        if (this.currentMainTab === 'leads') {
+          this.openLeadModal(false);
+        } else {
+          this.openModal(false);
+        }
+      },
+
+      updateTabBadges() {
+        const badgeStu = document.getElementById('tabBadgeStudents');
+        const badgeLeads = document.getElementById('tabBadgeLeads');
+        if (badgeStu) badgeStu.textContent = this.students.length;
+        if (badgeLeads) badgeLeads.textContent = this.leads.length;
       },
 
       showToast(msg, isSuccess = true) {
@@ -903,18 +1197,29 @@
       },
 
       initDefaultDate() {
-        const today = new Date().toISOString().split('T')[0];
+        const today = this.getTodayDateStr();
         const regInput = document.getElementById('registerDate');
         if (regInput) regInput.value = today;
+        const followInput = document.getElementById('leadNextFollowUpDate');
+        if (followInput) followInput.value = today;
       },
 
       loadFromStorage() {
+        // Học viên
         const stored = localStorage.getItem('thanhcong_students_db');
         if (stored) { try { this.students = JSON.parse(stored); } catch(e) { this.students = []; } }
         
         const storedDeleted = localStorage.getItem('thanhcong_deleted_ids');
         if (storedDeleted) { try { this.deletedIds = new Set(JSON.parse(storedDeleted)); } catch(e) { this.deletedIds = new Set(); } }
 
+        // Khách tư vấn (Leads)
+        const storedLeads = localStorage.getItem('thanhcong_leads_db');
+        if (storedLeads) { try { this.leads = JSON.parse(storedLeads); } catch(e) { this.leads = []; } }
+
+        const storedDeletedLeads = localStorage.getItem('thanhcong_deleted_lead_ids');
+        if (storedDeletedLeads) { try { this.deletedLeadIds = new Set(JSON.parse(storedDeletedLeads)); } catch(e) { this.deletedLeadIds = new Set(); } }
+
+        // Cấu hình
         const storedCommissions = localStorage.getItem('thanhcong_commissions_cfg');
         if (storedCommissions) { try { this.defaultCommissions = { ...this.defaultCommissions, ...JSON.parse(storedCommissions) }; } catch(e) {} }
 
@@ -935,13 +1240,26 @@
         this.populateMonthFilter();
         this.renderAllViews();
         this.updateStats();
+        this.updateTabBadges();
 
         if (this.isFirebaseReady && this.db) {
           this.pushToFirebase(false);
         }
       },
 
-      // HỢP NHẤT DỮ LIỆU THÔNG MINH (SMART MERGE)
+      saveLeadsToStorage() {
+        localStorage.setItem('thanhcong_leads_db', JSON.stringify(this.leads));
+        localStorage.setItem('thanhcong_deleted_lead_ids', JSON.stringify(Array.from(this.deletedLeadIds)));
+        this.renderLeadsView();
+        this.updateLeadStats();
+        this.updateTabBadges();
+
+        if (this.isFirebaseReady && this.db) {
+          this.pushLeadsToFirebase(false);
+        }
+      },
+
+      // HỢP NHẤT DỮ LIỆU THÔNG MINH (SMART MERGE HỌC VIÊN)
       mergeStudents(localList, cloudList) {
         const mergedMap = new Map();
 
@@ -973,6 +1291,34 @@
         });
       },
 
+      // HỢP NHẤT DỮ LIỆU THÔNG MINH (SMART MERGE KHÁCH TƯ VẤN)
+      mergeLeads(localList, cloudList) {
+        const mergedMap = new Map();
+
+        cloudList.forEach(l => {
+          if (l && l.id && !this.deletedLeadIds.has(l.id)) {
+            mergedMap.set(l.id, l);
+          }
+        });
+
+        localList.forEach(l => {
+          if (l && l.id && !this.deletedLeadIds.has(l.id)) {
+            if (!mergedMap.has(l.id)) {
+              mergedMap.set(l.id, l);
+            } else {
+              const cloudItem = mergedMap.get(l.id);
+              const localTime = new Date(l.updatedAt || l.createdAt || 0).getTime();
+              const cloudTime = new Date(cloudItem.updatedAt || cloudItem.createdAt || 0).getTime();
+              if (localTime > cloudTime) {
+                mergedMap.set(l.id, l);
+              }
+            }
+          }
+        });
+
+        return Array.from(mergedMap.values());
+      },
+
       initFirebase() {
         if (!this.firebaseConfig || (!this.firebaseConfig.projectId && !this.firebaseConfig.apiKey)) return;
 
@@ -983,7 +1329,7 @@
           this.db = firebase.firestore();
           this.isFirebaseReady = true;
 
-          // Lắng nghe dữ liệu thời gian thực 0.1s với Smart Merge
+          // 1. Lắng nghe dữ liệu Học Viên (students_db)
           this.db.collection('app_data').doc('students_db')
             .onSnapshot((doc) => {
               if (doc && doc.exists) {
@@ -1000,6 +1346,7 @@
                   this.populateMonthFilter();
                   this.renderAllViews();
                   this.updateStats();
+                  this.updateTabBadges();
 
                   if (cloudHasFewer) {
                     this.pushToFirebase(false);
@@ -1011,7 +1358,38 @@
                 }
               }
             }, (error) => {
-              console.warn('Firebase snapshot notice:', error);
+              console.warn('Firebase snapshot notice (students):', error);
+            });
+
+          // 2. Lắng nghe dữ liệu Khách Tư Vấn (leads_db)
+          this.db.collection('app_data').doc('leads_db')
+            .onSnapshot((doc) => {
+              if (doc && doc.exists) {
+                const data = doc.data();
+                if (Array.isArray(data.leads)) {
+                  const cloudLeads = data.leads;
+                  const prevCount = this.leads.length;
+                  const merged = this.mergeLeads(this.leads, cloudLeads);
+                  const isChanged = JSON.stringify(merged) !== JSON.stringify(this.leads);
+                  const cloudHasFewer = cloudLeads.length < merged.length;
+
+                  this.leads = merged;
+                  localStorage.setItem('thanhcong_leads_db', JSON.stringify(this.leads));
+                  this.renderLeadsView();
+                  this.updateLeadStats();
+                  this.updateTabBadges();
+
+                  if (cloudHasFewer) {
+                    this.pushLeadsToFirebase(false);
+                  }
+
+                  if (isChanged && Math.abs(merged.length - prevCount) > 0) {
+                    this.showToast(`Đồng bộ Cloud: ${this.leads.length} khách tư vấn!`);
+                  }
+                }
+              }
+            }, (error) => {
+              console.warn('Firebase snapshot notice (leads):', error);
             });
 
         } catch (e) {
@@ -1030,9 +1408,25 @@
             students: this.students,
             lastUpdated: new Date().toISOString()
           }, { merge: true });
-          if (showNotice) this.showToast(`Đã lưu ${this.students.length} hồ sơ lên Firebase Cloud!`);
+
+          await this.pushLeadsToFirebase(false);
+
+          if (showNotice) this.showToast(`Đã lưu ${this.students.length} hồ sơ & ${this.leads.length} khách lên Cloud!`);
         } catch(err) {
           if (showNotice) this.showToast('Lỗi lưu Firebase: ' + err.message, false);
+        }
+      },
+
+      async pushLeadsToFirebase(showNotice = false) {
+        if (!this.isFirebaseReady || !this.db) return;
+        try {
+          await this.db.collection('app_data').doc('leads_db').set({
+            leads: this.leads,
+            lastUpdated: new Date().toISOString()
+          }, { merge: true });
+          if (showNotice) this.showToast(`Đã lưu ${this.leads.length} khách tư vấn lên Cloud!`);
+        } catch(err) {
+          console.warn('Lỗi lưu leads Firebase:', err);
         }
       },
 
@@ -1119,7 +1513,7 @@
           this.initFirebase();
           this.updateSyncBadge();
 
-          if (this.students.length > 0) {
+          if (this.students.length > 0 || this.leads.length > 0) {
             this.pushToFirebase(true);
           } else {
             this.showToast('Kết nối Firebase thành công!');
@@ -1160,7 +1554,6 @@
 
       formatCurrencyInput(input) { input.value = this.formatNumberString(input.value); },
 
-      // ĐỊNH DẠNG NGÀY: DD/MM/YYYY (Ví dụ: 01/08/2026, 13/04/1994)
       formatDate(isoStr) {
         if (!isoStr || typeof isoStr !== 'string') return '';
         if (/^\d{4}-\d{2}-\d{2}$/.test(isoStr)) {
@@ -1169,7 +1562,6 @@
         return isoStr;
       },
 
-      // ĐỊNH DẠNG KHÓA THI: Tháng MM/YYYY (Ví dụ: Tháng 01/2027)
       formatExamMonth(monthStr) {
         if (!monthStr || typeof monthStr !== 'string') return '-';
         if (/^\d{4}-\d{2}$/.test(monthStr)) {
@@ -1178,7 +1570,9 @@
         return monthStr;
       },
 
-      // BỘ LỌC THÁNG: MẶC ĐỊNH CHỈ HIỆN THÁNG HIỆN TẠI (VÍ DỤ THÁNG 9), BẤM VÀO MỚI CHỌN TẤT CẢ HOẶC THÁNG KHÁC
+      // =========================================================================
+      // HỌC VIÊN: BỘ LỌC, THỐNG KÊ & HIỂN THỊ
+      // =========================================================================
       populateMonthFilter() {
         const filterMonth = document.getElementById('filterMonth');
         const recMonth = document.getElementById('reconcileMonth');
@@ -1186,7 +1580,6 @@
         
         const currentMonth = this.getCurrentMonthStr();
 
-        // Nếu chưa chọn thì mặc định lấy tháng hiện tại
         if (this.selectedMonth === undefined) {
           this.selectedMonth = currentMonth;
         }
@@ -1203,7 +1596,6 @@
         filterMonth.innerHTML = '';
         if (recMonth) recMonth.innerHTML = '';
 
-        // Thêm các tháng cụ thể trước
         sortedMonths.forEach(m => {
           if (/^\d{4}-\d{2}$/.test(m)) {
             const isCurrent = (m === currentMonth);
@@ -1223,7 +1615,6 @@
           }
         });
 
-        // Thêm lựa chọn "Tất cả các tháng" (khi người dùng bấm vào dropdown mới chọn)
         const allOpt = document.createElement('option');
         allOpt.value = 'all';
         allOpt.textContent = '🌟 Tất cả các tháng';
@@ -1236,7 +1627,6 @@
           recMonth.appendChild(recAllOpt);
         }
 
-        // Chọn đúng tháng
         if (this.selectedMonth && Array.from(filterMonth.options).some(o => o.value === this.selectedMonth)) {
           filterMonth.value = this.selectedMonth;
         } else {
@@ -1363,7 +1753,6 @@
                   </span>
                 </div>
 
-                <!-- 2 Ô Học Phí & Hoa Hồng Nổi Bật -->
                 <div class="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-stone-50 border border-stone-200/60 items-center">
                   <div>
                     <span class="text-[10px] text-slate-500 block font-medium">Học phí:</span>
@@ -1560,7 +1949,7 @@
           discountAmount: this.parseCurrency(document.getElementById('discountAmount').value),
           discountReason: document.getElementById('discountReason').value || 'Không giảm',
           commission: this.parseCurrency(document.getElementById('commission').value),
-          registerDate: document.getElementById('registerDate').value || new Date().toISOString().split('T')[0],
+          registerDate: document.getElementById('registerDate').value || this.getTodayDateStr(),
           examMonth: document.getElementById('examMonth').value || '',
           note: (document.getElementById('note').value || '').trim(),
           updatedAt: new Date().toISOString()
@@ -1672,7 +2061,373 @@
       },
       closeViewModal() { const modal = document.getElementById('viewModal'); if (modal) modal.classList.add('hidden'); },
 
-      // NÂNG CẤP TOÀN DIỆN MODAL CÀI ĐẶT: GIAO DIỆN THEO THẺ TỪNG HẠNG BẰNG, GIÃN CÁCH ĐỀU ĐẶN TRÊN DESKTOP, TỰ NHẢY HÀNG MƯỢT MÀ TRÊN MOBILE
+      // =========================================================================
+      // KHÁCH ĐANG TƯ VẤN (CRM MINI): LOGIC, THỐNG KÊ, TỰ ĐỘNG CẢNH BÁO & CHỐT
+      // =========================================================================
+      openLeadModal(isEdit = false) {
+        const modal = document.getElementById('leadModal');
+        const titleEl = document.getElementById('leadModalTitle');
+        const subTitleEl = document.getElementById('leadModalSubtitle');
+        const iconEl = document.getElementById('leadModalIcon');
+        
+        if (titleEl) titleEl.textContent = isEdit ? 'Chỉnh Sửa Khách Tư Vấn' : 'Thêm Khách Tư Vấn';
+        if (subTitleEl) subTitleEl.textContent = isEdit ? 'Cập nhật lại thông tin & lịch hẹn' : 'Lưu thông tin nhu cầu & đặt lịch hẹn chăm sóc lại';
+        if (iconEl) iconEl.className = isEdit ? 'fa-solid fa-user-pen' : 'fa-solid fa-user-clock';
+
+        if (modal) modal.classList.remove('hidden');
+        if (!isEdit) {
+          const form = document.getElementById('leadForm');
+          if (form) form.reset();
+          const lid = document.getElementById('leadId');
+          if (lid) lid.value = '';
+          const nextDate = document.getElementById('leadNextFollowUpDate');
+          if (nextDate) nextDate.value = this.getTodayDateStr();
+        }
+      },
+
+      closeLeadModal() {
+        const modal = document.getElementById('leadModal');
+        if (modal) modal.classList.add('hidden');
+      },
+
+      saveLead(e) {
+        e.preventDefault();
+        const id = document.getElementById('leadId').value || ('LEAD_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6));
+        
+        const lead = {
+          id: id,
+          fullName: (document.getElementById('leadFullName').value || '').trim().toUpperCase(),
+          phone: (document.getElementById('leadPhone').value || '').trim(),
+          licenseType: document.getElementById('leadLicenseType').value || 'B01',
+          nextFollowUpDate: document.getElementById('leadNextFollowUpDate').value || '',
+          note: (document.getElementById('leadNote').value || '').trim(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+
+        const idx = this.leads.findIndex(l => l.id === id);
+        if (idx >= 0) {
+          lead.createdAt = this.leads[idx].createdAt || lead.createdAt;
+          this.leads[idx] = lead;
+        } else {
+          this.leads.unshift(lead);
+        }
+
+        this.saveLeadsToStorage();
+        this.closeLeadModal();
+        this.showToast(`Đã lưu khách tư vấn: ${lead.fullName}`);
+      },
+
+      editLead(id) {
+        const lead = this.leads.find(l => l.id === id);
+        if (!lead) return;
+        this.openLeadModal(true);
+        document.getElementById('leadId').value = lead.id;
+        document.getElementById('leadFullName').value = lead.fullName || '';
+        document.getElementById('leadPhone').value = lead.phone || '';
+        document.getElementById('leadLicenseType').value = lead.licenseType || 'B01';
+        document.getElementById('leadNextFollowUpDate').value = lead.nextFollowUpDate || '';
+        document.getElementById('leadNote').value = lead.note || '';
+      },
+
+      deleteLead(id, showConfirm = true) {
+        if (!showConfirm || confirm('Bạn có chắc chắn muốn xóa khách tư vấn này?')) {
+          this.deletedLeadIds.add(id);
+          this.leads = this.leads.filter(l => l.id !== id);
+          this.saveLeadsToStorage();
+          if (showConfirm) this.showToast('Đã xóa khách tư vấn.');
+        }
+      },
+
+      // TƯƠNG TÁC NHANH: CHỐT HỒ SƠ TỪ KHÁCH TƯ VẤN SANG HỌC VIÊN
+      convertLeadToStudent(leadId) {
+        const lead = this.leads.find(l => l.id === leadId);
+        if (!lead) return;
+
+        // 1. Chuyển sang Tab Học Viên Đã Chốt
+        this.switchMainTab('students');
+
+        // 2. Mở modal thêm học viên
+        this.openModal(false);
+
+        // 3. Tự động điền sẵn Họ Tên, SĐT, Hạng bằng và ghi chú
+        const fullNameEl = document.getElementById('fullName');
+        const phoneEl = document.getElementById('phone');
+        const licenseEl = document.getElementById('licenseType');
+        const noteEl = document.getElementById('note');
+
+        if (fullNameEl) fullNameEl.value = (lead.fullName || '').toUpperCase();
+        if (phoneEl) phoneEl.value = lead.phone || '';
+        if (licenseEl) {
+          licenseEl.value = lead.licenseType || 'B01';
+          this.onLicenseChange(true); // Tự động điền định mức học phí & hoa hồng tương ứng
+        }
+        if (noteEl && lead.note) {
+          noteEl.value = `[Khách tư vấn]: ${lead.note}`;
+        }
+
+        // 4. Xóa khách khỏi danh sách tư vấn (vì đã chốt thành học viên)
+        this.deleteLead(leadId, false);
+
+        this.showToast(`Đã chuyển khách "${lead.fullName}" sang form Chốt Hồ Sơ!`);
+      },
+
+      // LỌC VÀ TỰ ĐỘNG SẮP XẾP ƯU TIÊN KHÁCH CẦN CHĂM SÓC
+      getFilteredLeads() {
+        const todayStr = this.getTodayDateStr();
+        const searchEl = document.getElementById('leadSearchInput');
+        const licenseEl = document.getElementById('leadFilterLicense');
+        const statusEl = document.getElementById('leadFilterStatus');
+
+        const search = searchEl ? (searchEl.value || '').trim().toLowerCase() : '';
+        const licFilter = licenseEl ? licenseEl.value : 'all';
+        const statusFilter = statusEl ? statusEl.value : 'all';
+
+        let list = this.leads.filter(l => {
+          if (licFilter !== 'all' && l.licenseType !== licFilter) return false;
+          
+          if (statusFilter === 'urgent') {
+            if (!l.nextFollowUpDate || l.nextFollowUpDate > todayStr) return false;
+          } else if (statusFilter === 'upcoming') {
+            if (!l.nextFollowUpDate || l.nextFollowUpDate <= todayStr) return false;
+          } else if (statusFilter === 'no_date') {
+            if (l.nextFollowUpDate) return false;
+          }
+
+          if (search) {
+            const mName = (l.fullName || '').toLowerCase().includes(search);
+            const mPhone = (l.phone || '').toLowerCase().includes(search);
+            const mNote = (l.note || '').toLowerCase().includes(search);
+            if (!mName && !mPhone && !mNote) return false;
+          }
+          return true;
+        });
+
+        // SẮP XẾP: ĐẨY KHÁCH QUÁ HẠN / ĐẾN HẠN HÔM NAY LÊN ĐẦU DANH SÁCH
+        list.sort((a, b) => {
+          const aIsUrgent = (a.nextFollowUpDate && a.nextFollowUpDate <= todayStr) ? 1 : 0;
+          const bIsUrgent = (b.nextFollowUpDate && b.nextFollowUpDate <= todayStr) ? 1 : 0;
+
+          if (aIsUrgent !== bIsUrgent) {
+            return bIsUrgent - aIsUrgent; // Khách cần chăm sóc xếp lên đầu
+          }
+
+          if (aIsUrgent && bIsUrgent) {
+            // Cả 2 đều urgent: khách quá hạn lâu hơn xếp trước
+            return (a.nextFollowUpDate || '').localeCompare(b.nextFollowUpDate || '');
+          }
+
+          // Khách có ngày hẹn tương lai xếp tiếp theo
+          if (a.nextFollowUpDate && b.nextFollowUpDate) {
+            return a.nextFollowUpDate.localeCompare(b.nextFollowUpDate);
+          }
+          if (a.nextFollowUpDate) return -1;
+          if (b.nextFollowUpDate) return 1;
+
+          // Khách chưa có ngày hẹn xếp theo thời gian tạo mới nhất
+          return new Date(b.createdAt || b.updatedAt || 0).getTime() - new Date(a.createdAt || a.updatedAt || 0).getTime();
+        });
+
+        return list;
+      },
+
+      renderLeadsView() {
+        const filtered = this.getFilteredLeads();
+        const tbody = document.getElementById('leadTableBody');
+        const mobileContainer = document.getElementById('leadMobileCards');
+        const emptyState = document.getElementById('leadEmptyState');
+        const countBadge = document.getElementById('leadRecordCountBadge');
+        const todayStr = this.getTodayDateStr();
+
+        if (countBadge) countBadge.textContent = `${filtered.length} khách`;
+
+        if (filtered.length === 0) {
+          if (tbody) tbody.innerHTML = '';
+          if (mobileContainer) mobileContainer.innerHTML = '';
+          if (emptyState) emptyState.classList.remove('hidden');
+          return;
+        }
+        if (emptyState) emptyState.classList.add('hidden');
+
+        // 1. Desktop Table
+        if (tbody) {
+          tbody.innerHTML = filtered.map(l => {
+            const badgeClass = this.getLicenseBadgeStyle(l.licenseType);
+            const cleanPhone = (l.phone || '').replace(/\D/g, '');
+            const isOverdue = l.nextFollowUpDate && l.nextFollowUpDate < todayStr;
+            const isToday = l.nextFollowUpDate && l.nextFollowUpDate === todayStr;
+            const isUrgent = isOverdue || isToday;
+
+            // Highlight viền & nền đỏ/cam nếu quá hạn hoặc đến hạn hôm nay
+            let rowHighlightClass = 'hover:bg-amber-50/50 transition';
+            if (isOverdue) {
+              rowHighlightClass = 'bg-rose-50/70 border-l-4 border-l-rose-500 hover:bg-rose-100/60 font-semibold';
+            } else if (isToday) {
+              rowHighlightClass = 'bg-amber-50/70 border-l-4 border-l-amber-500 hover:bg-amber-100/60 font-semibold';
+            }
+
+            let dateBadge = '<span class="text-slate-400 italic">Chưa hẹn</span>';
+            if (isOverdue) {
+              dateBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-rose-100 text-rose-800 border border-rose-300 animate-pulse"><i class="fa-solid fa-triangle-exclamation text-rose-600"></i> Quá hạn: ${this.formatDate(l.nextFollowUpDate)}</span>`;
+            } else if (isToday) {
+              dateBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-900 border border-amber-400"><i class="fa-solid fa-bell text-amber-600"></i> Hôm nay: ${this.formatDate(l.nextFollowUpDate)}</span>`;
+            } else if (l.nextFollowUpDate) {
+              dateBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-stone-100 text-stone-700 border border-stone-200"><i class="fa-regular fa-calendar-check text-stone-500"></i> ${this.formatDate(l.nextFollowUpDate)}</span>`;
+            }
+
+            return `
+              <tr class="${rowHighlightClass}">
+                <td class="py-3 px-4">
+                  <div class="font-bold text-slate-900 uppercase tracking-tight text-sm">${l.fullName}</div>
+                  ${isUrgent ? `<span class="text-[10px] text-rose-600 font-extrabold flex items-center gap-1 mt-0.5"><i class="fa-solid fa-fire text-[9px]"></i> Cần liên hệ chăm sóc ngay!</span>` : ''}
+                </td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-2">
+                    ${l.phone ? `<a href="tel:${l.phone}" class="text-xs font-bold text-slate-800 hover:text-amber-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-phone text-[10px] text-slate-400"></i><span>${l.phone}</span></a>` : '<span class="text-slate-400">Chưa có SĐT</span>'}
+                  </div>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${badgeClass}">
+                    ${l.licenseType}
+                  </span>
+                </td>
+                <td class="py-3 px-4">${dateBadge}</td>
+                <td class="py-3 px-4 text-slate-600 max-w-xs truncate" title="${l.note || ''}">${l.note || '<span class="text-slate-400 italic">-</span>'}</td>
+                <td class="py-3 px-4 text-center">
+                  <div class="flex items-center justify-center gap-1.5">
+                    <!-- Nút Chat Zalo -->
+                    ${cleanPhone ? `
+                      <a href="https://zalo.me/${cleanPhone}" target="_blank" title="Mở Chat Zalo" class="px-2.5 py-1.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs flex items-center gap-1 shadow-xs transition active:scale-95">
+                        <i class="fa-solid fa-comment-dots text-[11px]"></i>
+                        <span>Zalo</span>
+                      </a>
+                    ` : ''}
+
+                    <!-- Nút Chốt Hồ Sơ -->
+                    <button onclick="app.convertLeadToStudent('${l.id}')" title="Chuyển thành học viên chính thức" class="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs transition active:scale-95">
+                      <i class="fa-solid fa-user-check text-[11px]"></i>
+                      <span>Chốt HS</span>
+                    </button>
+
+                    <!-- Nút Sửa & Xóa -->
+                    <button onclick="app.editLead('${l.id}')" title="Chỉnh sửa" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-600 hover:text-amber-800 flex items-center justify-center transition"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                    <button onclick="app.deleteLead('${l.id}')" title="Xóa" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-rose-100 text-stone-600 hover:text-rose-700 flex items-center justify-center transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        // 2. Mobile Cards
+        if (mobileContainer) {
+          mobileContainer.innerHTML = filtered.map(l => {
+            const badgeClass = this.getLicenseBadgeStyle(l.licenseType);
+            const cleanPhone = (l.phone || '').replace(/\D/g, '');
+            const isOverdue = l.nextFollowUpDate && l.nextFollowUpDate < todayStr;
+            const isToday = l.nextFollowUpDate && l.nextFollowUpDate === todayStr;
+            const isUrgent = isOverdue || isToday;
+
+            // Highlight viền đỏ/cam nổi bật trên mobile
+            let cardBorderClass = 'border-stone-200 bg-white';
+            if (isOverdue) {
+              cardBorderClass = 'border-2 border-rose-500 bg-rose-50/40 shadow-sm ring-1 ring-rose-300';
+            } else if (isToday) {
+              cardBorderClass = 'border-2 border-amber-500 bg-amber-50/40 shadow-sm ring-1 ring-amber-300';
+            }
+
+            return `
+              <div class="p-3.5 rounded-2xl border ${cardBorderClass} space-y-2.5 transition">
+                <div class="flex items-start justify-between gap-2 border-b border-stone-100 pb-2">
+                  <div class="min-w-0 flex-1">
+                    <h4 class="font-bold text-slate-900 text-sm truncate uppercase tracking-tight">${l.fullName}</h4>
+                    <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
+                      ${l.phone ? `<a href="tel:${l.phone}" class="text-amber-800 font-bold flex items-center gap-1"><i class="fa-solid fa-phone text-[9px]"></i><span>${l.phone}</span></a>` : '<span class="text-slate-400">Chưa có SĐT</span>'}
+                    </div>
+                  </div>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border shrink-0 ${badgeClass}">
+                    ${l.licenseType}
+                  </span>
+                </div>
+
+                <!-- Lịch hẹn & Ghi chú -->
+                <div class="p-2 rounded-xl bg-stone-50/80 border border-stone-200/70 text-xs space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase">Lịch hẹn chăm sóc:</span>
+                    ${isOverdue ? `
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-800 border border-rose-300 animate-pulse">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Quá hạn: ${this.formatDate(l.nextFollowUpDate)}
+                      </span>
+                    ` : (isToday ? `
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
+                        <i class="fa-solid fa-bell"></i> Hôm nay: ${this.formatDate(l.nextFollowUpDate)}
+                      </span>
+                    ` : (l.nextFollowUpDate ? `
+                      <span class="text-stone-700 font-bold text-[11px]">${this.formatDate(l.nextFollowUpDate)}</span>
+                    ` : `<span class="text-slate-400 italic text-[10px]">Chưa đặt lịch</span>`))}
+                  </div>
+                  ${l.note ? `
+                    <div class="text-slate-700 pt-1 text-[11px] border-t border-stone-200/50">
+                      <b class="text-slate-900">Ghi chú:</b> ${l.note}
+                    </div>
+                  ` : ''}
+                </div>
+
+                <!-- Thanh Nút Thao Tác Nhanh (Zalo & Chốt Hồ Sơ) -->
+                <div class="flex items-center justify-between pt-1.5 border-t border-stone-100 gap-2">
+                  <div class="flex items-center gap-1.5">
+                    ${cleanPhone ? `
+                      <a href="https://zalo.me/${cleanPhone}" target="_blank" class="px-3 py-1.5 rounded-xl bg-blue-500 active:bg-blue-600 text-white font-bold text-xs flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-comment-dots text-[11px]"></i>
+                        <span>Zalo</span>
+                      </a>
+                    ` : ''}
+                    <button onclick="app.convertLeadToStudent('${l.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-600 active:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs">
+                      <i class="fa-solid fa-user-check text-[11px]"></i>
+                      <span>Chốt Hồ Sơ</span>
+                    </button>
+                  </div>
+
+                  <div class="flex items-center gap-1">
+                    <button onclick="app.editLead('${l.id}')" class="w-8 h-8 rounded-xl bg-stone-100 text-stone-700 flex items-center justify-center text-xs active:bg-amber-100"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="app.deleteLead('${l.id}')" class="w-8 h-8 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center text-xs active:bg-rose-100"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      },
+
+      updateLeadStats() {
+        const todayStr = this.getTodayDateStr();
+        const total = this.leads.length;
+        const urgentCount = this.leads.filter(l => l.nextFollowUpDate && l.nextFollowUpDate <= todayStr).length;
+        const upcomingCount = this.leads.filter(l => l.nextFollowUpDate && l.nextFollowUpDate > todayStr).length;
+
+        const elTotal = document.getElementById('leadStatTotal');
+        const elUrgent = document.getElementById('leadStatUrgent');
+        const elUpcoming = document.getElementById('leadStatUpcoming');
+
+        if (elTotal) elTotal.textContent = total;
+        if (elUrgent) elUrgent.textContent = urgentCount;
+        if (elUpcoming) elUpcoming.textContent = upcomingCount;
+      },
+
+      filterLeadsData() {
+        this.renderLeadsView();
+      },
+
+      resetLeadFilters() {
+        const s = document.getElementById('leadSearchInput'); if (s) s.value = '';
+        const l = document.getElementById('leadFilterLicense'); if (l) l.value = 'all';
+        const st = document.getElementById('leadFilterStatus'); if (st) st.value = 'all';
+        this.renderLeadsView();
+      },
+
+      // =========================================================================
+      // CÀI ĐẶT MỨC MẶC ĐỊNH & SAO LƯU DỮ LIỆU
+      // =========================================================================
       openConfigModal() {
         const container = document.getElementById('configCardContainer');
         if (container) {
@@ -1707,7 +2462,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
-                  <!-- Ô 1: Học Phí Sau Giảm (Trên Desktop chiếm 50%, trên Mobile tự động nhảy xuống hàng rộng 100%) -->
                   <div class="space-y-1">
                     <label class="block text-[11px] font-bold text-emerald-800 flex items-center justify-between">
                       <span class="flex items-center gap-1.5"><i class="fa-solid fa-receipt text-emerald-600 text-[10px]"></i> Học Phí Sau Giảm</span>
@@ -1719,7 +2473,6 @@
                     </div>
                   </div>
 
-                  <!-- Ô 2: Hoa Hồng Thực Nhận (Trên Desktop chiếm 50%, trên Mobile tự động nhảy xuống hàng rộng 100%) -->
                   <div class="space-y-1">
                     <label class="block text-[11px] font-bold text-rose-800 flex items-center justify-between">
                       <span class="flex items-center gap-1.5"><i class="fa-solid fa-coins text-amber-500 text-[10px]"></i> Hoa Hồng Thực Nhận</span>
@@ -1770,13 +2523,20 @@
 
       openBackupModal() { const modal = document.getElementById('backupModal'); if (modal) modal.classList.remove('hidden'); },
       closeBackupModal() { const modal = document.getElementById('backupModal'); if (modal) modal.classList.add('hidden'); },
+      
       exportBackupJSON() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.students, null, 2));
+        const fullBackup = {
+          students: this.students,
+          leads: this.leads,
+          version: '2.0_CRM'
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullBackup, null, 2));
         const a = document.createElement('a');
         a.href = dataStr;
-        a.download = `SaoLuu_HocVien_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `SaoLuu_TuyenSinh_CRM_${this.getTodayDateStr()}.json`;
         a.click();
       },
+
       importBackupJSON(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -1788,7 +2548,14 @@
               this.students = imported;
               this.saveToStorage();
               this.closeBackupModal();
-              this.showToast(`Khôi phục thành công ${imported.length} hồ sơ!`);
+              this.showToast(`Khôi phục thành công ${imported.length} hồ sơ học viên!`);
+            } else if (imported && typeof imported === 'object') {
+              if (Array.isArray(imported.students)) this.students = imported.students;
+              if (Array.isArray(imported.leads)) this.leads = imported.leads;
+              this.saveToStorage();
+              this.saveLeadsToStorage();
+              this.closeBackupModal();
+              this.showToast(`Khôi phục thành công ${this.students.length} học viên & ${this.leads.length} khách tư vấn!`);
             }
           } catch(err) { alert('Lỗi đọc file: ' + err.message); }
         };
@@ -1820,7 +2587,7 @@
         const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "DanhSachHocVien");
-        XLSX.writeFile(wb, `DanhSach_HocVien_${new Date().toISOString().split('T')[0]}.xlsx`);
+        XLSX.writeFile(wb, `DanhSach_HocVien_${this.getTodayDateStr()}.xlsx`);
       },
 
       // =========================================================================
@@ -1924,7 +2691,6 @@
         reader.readAsArrayBuffer(file);
       },
 
-      // BỘ ĐỌC PDF THÔNG MINH THEO TỌA ĐỘ CỘT THỰC TẾ
       async parsePdfFile(file) {
         if (!window.pdfjsLib) {
           alert('Thư viện PDF.js chưa sẵn sàng. Vui lòng tải lại trang.');
