@@ -81,7 +81,6 @@
       font-family: "Plus Jakarta Sans", sans-serif;
     }
 
-    /* Đảm bảo ô input có chiều cao rộng rãi để không che dấu tiếng Việt */
     input, select, textarea {
       font-size: 14px !important;
       min-width: 0 !important;
@@ -177,7 +176,6 @@
       overscroll-behavior: contain !important;
     }
 
-    /* Hiệu ứng nổi bật cho số tiền hoa hồng */
     .commission-badge-hero {
       background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fecdd3 100%);
       border: 1.5px solid #fb7185;
@@ -217,14 +215,14 @@
         </div>
 
         <div class="flex items-center gap-1.5 shrink-0">
-          <!-- Main Action Button (Tự động thích ứng theo Tab) -->
+          <!-- Main Action Button -->
           <button id="headerMainActionBtn" onclick="app.onHeaderAddClick()" class="om-btn-gold px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-plus text-[10px]" id="headerAddIcon"></i>
             <span class="hidden sm:inline" id="headerAddTextDesktop">Thêm Học Viên</span>
             <span class="sm:hidden">Thêm</span>
           </button>
 
-          <!-- Reconciliation Button (Đối Soát Lương Excel / PDF) -->
+          <!-- Reconciliation Button (Đối Soát Lương) -->
           <button onclick="app.openReconcileModal()" title="So sánh hoa hồng với bảng lương Excel/PDF công ty" class="px-3 py-2 rounded-xl sm:rounded-2xl text-xs font-bold flex items-center gap-1.5 shadow-sm bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white transition active:scale-95">
             <i class="fa-solid fa-scale-balanced text-[11px]"></i>
             <span class="hidden md:inline">Đối Soát Lương</span>
@@ -245,7 +243,7 @@
         </div>
       </div>
 
-      <!-- TAB ĐIỀU HƯỚNG CHÍNH (HỌC VIÊN ĐÃ CHỐT VS KHÁCH ĐANG TƯ VẤN) -->
+      <!-- TAB ĐIỀU HƯỚNG CHÍNH -->
       <div class="max-w-7xl mx-auto mt-2.5 pt-2 border-t border-stone-200/70 flex items-center justify-between gap-2">
         <div class="flex items-center gap-1.5 p-1 bg-stone-200/60 rounded-xl sm:rounded-2xl w-full sm:w-auto">
           <!-- Tab 1: Học Viên Đã Chốt -->
@@ -280,7 +278,6 @@
           <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 text-xs"><i class="fa-regular fa-calendar"></i></div>
           <span class="text-xs font-bold text-slate-600 shrink-0">Lọc Tháng:</span>
           <select id="filterMonth" onchange="app.onMonthChange()" class="bg-transparent text-xs font-bold text-amber-900 focus:outline-none cursor-pointer truncate flex-1">
-            <!-- Tự động điền theo tháng hiện tại & danh sách tháng có dữ liệu -->
           </select>
         </div>
         <div class="flex items-center gap-1 sm:hidden">
@@ -293,7 +290,6 @@
 
       <!-- 3 STATS CARDS -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-        <!-- Thẻ 1: Tổng Học Viên -->
         <div class="om-card p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
           <div class="flex items-center justify-between mb-2">
             <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500">Tổng Học Viên</span>
@@ -303,7 +299,6 @@
           <p class="text-[11px] text-slate-500 mt-1" id="statSubStudents">Hồ sơ trong tháng</p>
         </div>
 
-        <!-- Thẻ 2: TỔNG HOA HỒNG - TO & NỔI BẬT NHẤT -->
         <div class="om-card commission-badge-hero p-4 sm:p-6 relative overflow-hidden flex flex-col justify-between transform md:-translate-y-1 transition duration-200">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-black uppercase tracking-wider text-rose-800 flex items-center gap-1.5">
@@ -319,7 +314,6 @@
           </div>
         </div>
 
-        <!-- Thẻ 3: Tổng Học Phí Thu -->
         <div class="om-card p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
           <div class="flex items-center justify-between mb-2">
             <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-800">Tổng Học Phí</span>
@@ -411,10 +405,8 @@
           </button>
         </div>
 
-        <!-- Mobile Card View -->
         <div id="studentMobileCards" class="block md:hidden p-3 space-y-3"></div>
 
-        <!-- Desktop Table View -->
         <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
@@ -449,7 +441,6 @@
       
       <!-- 3 STATS CARDS CHO CRM TƯ VẤN -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-        <!-- Thẻ 1: Tổng Khách Đang Tư Vấn -->
         <div class="om-card p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
           <div class="flex items-center justify-between mb-2">
             <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500">Khách Đang Tư Vấn</span>
@@ -461,7 +452,6 @@
           <p class="text-[11px] text-slate-500 mt-1">Khách tiềm năng trong danh sách</p>
         </div>
 
-        <!-- Thẻ 2: CẦN CHĂM SÓC NGAY (HÔM NAY HOẶC QUÁ HẠN) -->
         <div class="om-card p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between bg-gradient-to-br from-rose-50/90 via-amber-50/70 to-orange-50/80 border-2 border-rose-300 shadow-sm">
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-black uppercase tracking-wider text-rose-800 flex items-center gap-1.5">
@@ -479,7 +469,6 @@
           </div>
         </div>
 
-        <!-- Thẻ 3: Lịch Hẹn Sắp Tới -->
         <div class="om-card p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
           <div class="flex items-center justify-between mb-2">
             <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-800">Lịch Hẹn Tương Lai</span>
@@ -494,14 +483,14 @@
 
       <!-- Search & Filter Toolbar cho Leads -->
       <div class="om-card p-3 sm:p-4 space-y-2.5 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-3">
-        <div class="relative w-full sm:w-80">
+        <div class="relative w-full sm:w-72">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
           <input type="text" id="leadSearchInput" oninput="app.filterLeadsData()" placeholder="Tìm tên khách, SĐT, ghi chú..." class="om-input w-full pl-9 pr-4 rounded-xl text-xs placeholder:text-slate-400">
         </div>
         <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          <!-- Lọc hạng bằng -->
+          <!-- Lọc Hạng Bằng -->
           <select id="leadFilterLicense" onchange="app.filterLeadsData()" class="om-input px-3 rounded-xl text-xs font-medium cursor-pointer flex-1 sm:flex-none">
-            <option value="all">Tất cả Hạng quan tâm</option>
+            <option value="all">Tất cả Hạng</option>
             <option value="A1">Hạng A1</option>
             <option value="A">Hạng A (A2)</option>
             <option value="B01">Hạng B01 (B1)</option>
@@ -511,7 +500,20 @@
             <option value="Khác">Khác / Nâng dấu</option>
           </select>
 
-          <!-- Lọc trạng thái hẹn -->
+          <!-- Lọc Nguồn Khách Hàng -->
+          <select id="leadFilterSource" onchange="app.filterLeadsData()" class="om-input px-3 rounded-xl text-xs font-semibold text-slate-700 cursor-pointer flex-1 sm:flex-none">
+            <option value="all">Tất cả Nguồn khách</option>
+            <option value="Xem web">🌐 Xem Web</option>
+            <option value="HV cũ giới thiệu">👥 HV cũ giới thiệu</option>
+            <option value="Xem Maps">📍 Xem Maps</option>
+            <option value="Zalo trực tiếp">💬 Zalo trực tiếp</option>
+            <option value="Facebook / Fanpage">📘 Facebook</option>
+            <option value="TikTok">🎵 TikTok</option>
+            <option value="Trực tiếp / Người quen">🤝 Trực tiếp / Người quen</option>
+            <option value="Nguồn khác">✨ Nguồn khác</option>
+          </select>
+
+          <!-- Lọc Trạng Thái Lịch Hẹn -->
           <select id="leadFilterStatus" onchange="app.filterLeadsData()" class="om-input px-3 rounded-xl text-xs font-bold text-amber-900 cursor-pointer flex-1 sm:flex-none">
             <option value="all">Tất cả lịch hẹn</option>
             <option value="urgent">🔥 Cần gọi ngay (Hôm nay & Quá hạn)</option>
@@ -519,7 +521,6 @@
             <option value="no_date">⚪ Chưa đặt ngày hẹn</option>
           </select>
 
-          <!-- Nút Thêm Khách Nhanh Trên Toolbar -->
           <button onclick="app.openLeadModal(false)" class="om-btn-gold px-3 sm:px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs shrink-0">
             <i class="fa-solid fa-user-plus text-[10px]"></i>
             <span>Thêm Khách Mới</span>
@@ -543,15 +544,13 @@
           </button>
         </div>
 
-        <!-- Mobile Card View cho Leads -->
         <div id="leadMobileCards" class="block md:hidden p-3 space-y-3"></div>
 
-        <!-- Desktop Table View cho Leads -->
         <div class="hidden md:block overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b border-stone-200 text-[11px] uppercase tracking-wider text-slate-500 bg-stone-100/60">
-                <th class="py-3 px-4 font-bold">Khách Hàng</th>
+                <th class="py-3 px-4 font-bold">Khách Hàng & Nguồn</th>
                 <th class="py-3 px-4 font-bold">Số Điện Thoại</th>
                 <th class="py-3 px-4 font-bold text-center">Hạng Quan Tâm</th>
                 <th class="py-3 px-4 font-bold">Ngày Hẹn Chăm Sóc</th>
@@ -563,7 +562,6 @@
           </table>
         </div>
 
-        <!-- Trạng thái trống cho Leads -->
         <div id="leadEmptyState" class="hidden py-12 px-4 text-center">
           <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto mb-2.5 text-blue-700">
             <i class="fa-solid fa-headset text-lg"></i>
@@ -592,7 +590,6 @@
         <form id="studentForm" onsubmit="app.saveStudent(event)" class="space-y-4 max-w-full">
           <input type="hidden" id="studentId">
           
-          <!-- Nhóm 1: Họ tên, SĐT, Ngày sinh, Quận -->
           <div class="p-3.5 sm:p-4 rounded-2xl bg-stone-50/70 border border-stone-200/90 space-y-3">
             <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-id-card text-amber-600"></i>
@@ -649,7 +646,6 @@
             </div>
           </div>
 
-          <!-- Nhóm 2: Khóa học, Hạng bằng, Khóa thi -->
           <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-3">
             <h4 class="text-[11px] font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
               <i class="fa-solid fa-graduation-cap text-amber-600"></i>
@@ -670,7 +666,6 @@
                 </select>
               </div>
 
-              <!-- LỊCH HỌC: Ẩn khi chọn A1/A, Hiện khi chọn Ô tô -->
               <div id="studyScheduleGroup" class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Lịch Học Ô Tô</label>
                 <select id="studySchedule" class="om-input w-full rounded-xl text-xs bg-white">
@@ -702,7 +697,6 @@
             </div>
           </div>
 
-          <!-- Nhóm 3: Học phí & HOA HỒNG -->
           <div class="p-3.5 sm:p-4 rounded-2xl bg-white border border-stone-200 shadow-2xs space-y-3">
             <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-money-bill-wave text-emerald-600"></i>
@@ -734,7 +728,6 @@
                 </div>
               </div>
 
-              <!-- KHỐI HOA HỒNG -->
               <div class="p-3.5 rounded-2xl commission-badge-hero flex flex-col justify-between">
                 <div class="flex items-center justify-between">
                   <span class="text-xs font-black text-rose-900 uppercase flex items-center gap-1">
@@ -751,13 +744,11 @@
             </div>
           </div>
 
-          <!-- Ghi Chú -->
           <div class="min-w-0">
             <label class="block text-xs font-bold text-slate-700 mb-1">Ghi Chú Thêm</label>
             <input type="text" id="note" placeholder="Tên giáo viên phụ trách, yêu cầu đặc biệt..." class="om-input w-full rounded-xl text-xs">
           </div>
 
-          <!-- Nút Lưu / Hủy -->
           <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-stone-200">
             <button type="button" onclick="app.closeModal()" class="om-btn-outline px-4 py-2 rounded-xl text-xs font-bold">Hủy bỏ</button>
             <button type="submit" class="om-btn-gold px-6 py-2.5 rounded-xl text-xs font-bold shadow-md">Lưu Hồ Sơ</button>
@@ -792,28 +783,50 @@
             <input type="text" id="leadFullName" required placeholder="NGUYỄN VĂN AN" oninput="this.value = this.value.toUpperCase()" class="om-input om-input-name w-full rounded-xl">
           </div>
 
-          <!-- Số Điện Thoại -->
+          <!-- Số Điện Thoại & Nút Bấm Khách Zalo Nhanh -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Số Điện Thoại <span class="text-rose-600">*</span></label>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold text-slate-700">Số Điện Thoại <span class="text-slate-400 font-normal text-[11px]">(Không bắt buộc)</span></label>
+              <button type="button" onclick="app.setLeadPhoneZalo()" class="text-[11px] font-bold text-blue-700 hover:text-blue-900 flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-lg border border-blue-200 transition active:scale-95">
+                <i class="fa-solid fa-comment-dots text-blue-600 text-[10px]"></i>
+                <span>Bấm nếu là Khách Zalo</span>
+              </button>
+            </div>
             <div class="relative">
               <i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-              <input type="tel" id="leadPhone" required placeholder="0901 234 567" class="om-input w-full pl-8 rounded-xl font-bold text-slate-800">
+              <input type="text" id="leadPhone" placeholder="0901 234 567 hoặc bấm nút Khách Zalo..." class="om-input w-full pl-8 rounded-xl font-bold text-slate-800">
             </div>
-            <p class="text-[10px] text-slate-400 mt-1">Dùng để kích hoạt gọi nhanh hoặc mở ứng dụng Chat Zalo trực tiếp.</p>
+            <p class="text-[10px] text-slate-400 mt-1">Khách nhắn Zalo chưa biết số có thể bấm nút trên để tự động ghi chú "Khách Zalo".</p>
           </div>
 
-          <!-- Hạng Bằng Quan Tâm -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Hạng Bằng Khách Quan Tâm <span class="text-rose-600">*</span></label>
-            <select id="leadLicenseType" class="om-input w-full rounded-xl text-xs font-bold text-amber-900 bg-white">
-              <option value="B01" selected>Hạng B01 (B1 Số Tự Động)</option>
-              <option value="B2">Hạng B2 (Số Sàn)</option>
-              <option value="C1">Hạng C1 (Xe Tải)</option>
-              <option value="A1">Hạng A1 (Xe Máy)</option>
-              <option value="A">Hạng A (Mô Tô PKL / A2)</option>
-              <option value="Bổ túc">Bổ Túc Tay Lái Ô Tô</option>
-              <option value="Khác">Khác / Nâng Dấu</option>
-            </select>
+          <!-- Hạng Bằng Quan Tâm & Nguồn Khách Hàng -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Hạng Bằng Quan Tâm <span class="text-rose-600">*</span></label>
+              <select id="leadLicenseType" class="om-input w-full rounded-xl text-xs font-bold text-amber-900 bg-white">
+                <option value="B01" selected>Hạng B01 (B1 Số Tự Động)</option>
+                <option value="B2">Hạng B2 (Số Sàn)</option>
+                <option value="C1">Hạng C1 (Xe Tải)</option>
+                <option value="A1">Hạng A1 (Xe Máy)</option>
+                <option value="A">Hạng A (Mô Tô PKL / A2)</option>
+                <option value="Bổ túc">Bổ Túc Tay Lái Ô Tô</option>
+                <option value="Khác">Khác / Nâng Dấu</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Nguồn Khách Hàng <span class="text-rose-600">*</span></label>
+              <select id="leadSource" class="om-input w-full rounded-xl text-xs font-bold text-slate-800 bg-white">
+                <option value="Xem web" selected>🌐 Xem Web (Website)</option>
+                <option value="HV cũ giới thiệu">👥 HV cũ giới thiệu</option>
+                <option value="Xem Maps">📍 Xem Google Maps</option>
+                <option value="Zalo trực tiếp">💬 Nhắn Zalo trực tiếp</option>
+                <option value="Facebook / Fanpage">📘 Facebook / Fanpage</option>
+                <option value="TikTok">🎵 TikTok</option>
+                <option value="Trực tiếp / Người quen">🤝 Trực tiếp / Người quen</option>
+                <option value="Nguồn khác">✨ Nguồn khác</option>
+              </select>
+            </div>
           </div>
 
           <!-- Ngày Hẹn Chăm Sóc Lại -->
@@ -828,7 +841,7 @@
           <!-- Ghi Chú / Vấn Đề Khách Hàng -->
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Ghi Chú / Vấn Đề Trao Đổi</label>
-            <textarea id="leadNote" rows="3" placeholder="Đang băn khoăn học phí, cần học gấp cuối tuần, hẹn gọi lại sau 18h..." class="om-input w-full rounded-xl text-xs h-auto py-2 leading-relaxed"></textarea>
+            <textarea id="leadNote" rows="3" placeholder="Đang băn khoăn học phí, cần học gấp cuối tuần, nick Zalo là gì..." class="om-input w-full rounded-xl text-xs h-auto py-2 leading-relaxed"></textarea>
           </div>
 
           <!-- Nút Lưu / Hủy -->
@@ -1048,7 +1061,6 @@
   </div>
 
   <script>
-    // CẤU HÌNH FIREBASE MẶC ĐỊNH CHO MỌI THIẾT BỊ (PC & MOBILE TỰ ĐỘNG ĐỒNG BỘ)
     const DEFAULT_FIREBASE_CONFIG = {
       apiKey: "AIzaSyAkWW9JviukWY8JbwaVbw9uSVIlTA0HdG0",
       authDomain: "quanly-hocvien-7f342.firebaseapp.com",
@@ -1059,9 +1071,9 @@
     };
 
     const app = {
-      currentMainTab: 'students', // 'students' | 'leads'
+      currentMainTab: 'students',
       students: [],
-      leads: [], // Danh sách khách đang tư vấn
+      leads: [],
       deletedIds: new Set(),
       deletedLeadIds: new Set(),
       firebaseConfig: DEFAULT_FIREBASE_CONFIG,
@@ -1071,7 +1083,6 @@
       currentReconcileTab: 'mismatched',
       selectedMonth: undefined,
       
-      // MỨC HOA HỒNG MẶC ĐỊNH
       defaultCommissions: { 
         'A1': 200000, 
         'A': 700000, 
@@ -1082,7 +1093,6 @@
         'Khác': 1000000 
       },
 
-      // MỨC HỌC PHÍ SAU GIẢM MẶC ĐỊNH
       defaultTuitions: { 
         'A1': 650000, 
         'A': 2000000, 
@@ -1122,9 +1132,7 @@
         this.initDefaultDate();
       },
 
-      // =========================================================================
-      // TAB CONTROLLER: CHUYỂN ĐỔI GIỮA HỌC VIÊN VÀ KHÁCH TƯ VẤN
-      // =========================================================================
+      // TAB CONTROLLER
       switchMainTab(tab) {
         this.currentMainTab = tab;
         const studentsMain = document.getElementById('studentsMain');
@@ -1205,21 +1213,18 @@
       },
 
       loadFromStorage() {
-        // Học viên
         const stored = localStorage.getItem('thanhcong_students_db');
         if (stored) { try { this.students = JSON.parse(stored); } catch(e) { this.students = []; } }
         
         const storedDeleted = localStorage.getItem('thanhcong_deleted_ids');
         if (storedDeleted) { try { this.deletedIds = new Set(JSON.parse(storedDeleted)); } catch(e) { this.deletedIds = new Set(); } }
 
-        // Khách tư vấn (Leads)
         const storedLeads = localStorage.getItem('thanhcong_leads_db');
         if (storedLeads) { try { this.leads = JSON.parse(storedLeads); } catch(e) { this.leads = []; } }
 
         const storedDeletedLeads = localStorage.getItem('thanhcong_deleted_lead_ids');
         if (storedDeletedLeads) { try { this.deletedLeadIds = new Set(JSON.parse(storedDeletedLeads)); } catch(e) { this.deletedLeadIds = new Set(); } }
 
-        // Cấu hình
         const storedCommissions = localStorage.getItem('thanhcong_commissions_cfg');
         if (storedCommissions) { try { this.defaultCommissions = { ...this.defaultCommissions, ...JSON.parse(storedCommissions) }; } catch(e) {} }
 
@@ -1259,7 +1264,6 @@
         }
       },
 
-      // HỢP NHẤT DỮ LIỆU THÔNG MINH (SMART MERGE HỌC VIÊN)
       mergeStudents(localList, cloudList) {
         const mergedMap = new Map();
 
@@ -1291,7 +1295,6 @@
         });
       },
 
-      // HỢP NHẤT DỮ LIỆU THÔNG MINH (SMART MERGE KHÁCH TƯ VẤN)
       mergeLeads(localList, cloudList) {
         const mergedMap = new Map();
 
@@ -1329,7 +1332,6 @@
           this.db = firebase.firestore();
           this.isFirebaseReady = true;
 
-          // 1. Lắng nghe dữ liệu Học Viên (students_db)
           this.db.collection('app_data').doc('students_db')
             .onSnapshot((doc) => {
               if (doc && doc.exists) {
@@ -1361,7 +1363,6 @@
               console.warn('Firebase snapshot notice (students):', error);
             });
 
-          // 2. Lắng nghe dữ liệu Khách Tư Vấn (leads_db)
           this.db.collection('app_data').doc('leads_db')
             .onSnapshot((doc) => {
               if (doc && doc.exists) {
@@ -1570,9 +1571,7 @@
         return monthStr;
       },
 
-      // =========================================================================
       // HỌC VIÊN: BỘ LỌC, THỐNG KÊ & HIỂN THỊ
-      // =========================================================================
       populateMonthFilter() {
         const filterMonth = document.getElementById('filterMonth');
         const recMonth = document.getElementById('reconcileMonth');
@@ -1686,7 +1685,6 @@
         }
         if (emptyState) emptyState.classList.add('hidden');
 
-        // 1. Desktop Table
         if (tbody) {
           tbody.innerHTML = filtered.map(s => {
             const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
@@ -1725,7 +1723,6 @@
           }).join('');
         }
 
-        // 2. Mobile Cards
         if (mobileContainer) {
           mobileContainer.innerHTML = filtered.map(s => {
             const badgeClass = this.getLicenseBadgeStyle(s.licenseType);
@@ -1795,6 +1792,28 @@
           case 'C1': return 'bg-pink-50 text-pink-800 border-pink-200';
           case 'Bổ túc': return 'bg-amber-100 text-amber-950 border-amber-300 font-bold';
           default: return 'bg-slate-100 text-slate-700 border-slate-200';
+        }
+      },
+
+      // HUY HIỆU & ICON THEO TỪNG NGUỒN KHÁCH HÀNG
+      getSourceMeta(source) {
+        switch(source) {
+          case 'Xem web': 
+            return { label: 'Xem Web', icon: '<i class="fa-solid fa-globe mr-1"></i>', badge: 'bg-sky-50 text-sky-800 border-sky-200' };
+          case 'HV cũ giới thiệu': 
+            return { label: 'HV Cũ GT', icon: '<i class="fa-solid fa-users mr-1"></i>', badge: 'bg-purple-50 text-purple-800 border-purple-200' };
+          case 'Xem Maps': 
+            return { label: 'Xem Maps', icon: '<i class="fa-solid fa-location-dot mr-1 text-rose-500"></i>', badge: 'bg-emerald-50 text-emerald-800 border-emerald-200' };
+          case 'Zalo trực tiếp': 
+            return { label: 'Zalo Chat', icon: '<i class="fa-solid fa-comment-dots mr-1 text-blue-500"></i>', badge: 'bg-blue-50 text-blue-800 border-blue-200' };
+          case 'Facebook / Fanpage': 
+            return { label: 'Facebook', icon: '<i class="fa-brands fa-facebook mr-1 text-indigo-600"></i>', badge: 'bg-indigo-50 text-indigo-800 border-indigo-200' };
+          case 'TikTok': 
+            return { label: 'TikTok', icon: '<i class="fa-brands fa-tiktok mr-1 text-slate-900"></i>', badge: 'bg-slate-100 text-slate-800 border-slate-300' };
+          case 'Trực tiếp / Người quen': 
+            return { label: 'Trực Tiếp', icon: '<i class="fa-solid fa-handshake mr-1 text-amber-600"></i>', badge: 'bg-amber-50 text-amber-900 border-amber-200' };
+          default: 
+            return { label: source || 'Nguồn Khác', icon: '<i class="fa-solid fa-tag mr-1 text-slate-400"></i>', badge: 'bg-stone-100 text-stone-700 border-stone-200' };
         }
       },
 
@@ -2062,7 +2081,7 @@
       closeViewModal() { const modal = document.getElementById('viewModal'); if (modal) modal.classList.add('hidden'); },
 
       // =========================================================================
-      // KHÁCH ĐANG TƯ VẤN (CRM MINI): LOGIC, THỐNG KÊ, TỰ ĐỘNG CẢNH BÁO & CHỐT
+      // KHÁCH ĐANG TƯ VẤN (CRM MINI): NGUỒN KHÁCH, SĐT TÙY CHỌN & CHỐT HỒ SƠ
       // =========================================================================
       openLeadModal(isEdit = false) {
         const modal = document.getElementById('leadModal');
@@ -2082,12 +2101,24 @@
           if (lid) lid.value = '';
           const nextDate = document.getElementById('leadNextFollowUpDate');
           if (nextDate) nextDate.value = this.getTodayDateStr();
+          const srcSelect = document.getElementById('leadSource');
+          if (srcSelect) srcSelect.value = 'Xem web';
         }
       },
 
       closeLeadModal() {
         const modal = document.getElementById('leadModal');
         if (modal) modal.classList.add('hidden');
+      },
+
+      setLeadPhoneZalo() {
+        const pInput = document.getElementById('leadPhone');
+        if (pInput) pInput.value = 'Khách Zalo';
+        
+        const srcSelect = document.getElementById('leadSource');
+        if (srcSelect && srcSelect.value === 'Xem web') {
+          srcSelect.value = 'Zalo trực tiếp';
+        }
       },
 
       saveLead(e) {
@@ -2098,6 +2129,7 @@
           id: id,
           fullName: (document.getElementById('leadFullName').value || '').trim().toUpperCase(),
           phone: (document.getElementById('leadPhone').value || '').trim(),
+          source: document.getElementById('leadSource').value || 'Xem web',
           licenseType: document.getElementById('leadLicenseType').value || 'B01',
           nextFollowUpDate: document.getElementById('leadNextFollowUpDate').value || '',
           note: (document.getElementById('leadNote').value || '').trim(),
@@ -2125,6 +2157,7 @@
         document.getElementById('leadId').value = lead.id;
         document.getElementById('leadFullName').value = lead.fullName || '';
         document.getElementById('leadPhone').value = lead.phone || '';
+        document.getElementById('leadSource').value = lead.source || 'Xem web';
         document.getElementById('leadLicenseType').value = lead.licenseType || 'B01';
         document.getElementById('leadNextFollowUpDate').value = lead.nextFollowUpDate || '';
         document.getElementById('leadNote').value = lead.note || '';
@@ -2139,52 +2172,62 @@
         }
       },
 
-      // TƯƠNG TÁC NHANH: CHỐT HỒ SƠ TỪ KHÁCH TƯ VẤN SANG HỌC VIÊN
       convertLeadToStudent(leadId) {
         const lead = this.leads.find(l => l.id === leadId);
         if (!lead) return;
 
-        // 1. Chuyển sang Tab Học Viên Đã Chốt
         this.switchMainTab('students');
-
-        // 2. Mở modal thêm học viên
         this.openModal(false);
 
-        // 3. Tự động điền sẵn Họ Tên, SĐT, Hạng bằng và ghi chú
         const fullNameEl = document.getElementById('fullName');
         const phoneEl = document.getElementById('phone');
         const licenseEl = document.getElementById('licenseType');
         const noteEl = document.getElementById('note');
+        const discountReasonEl = document.getElementById('discountReason');
 
         if (fullNameEl) fullNameEl.value = (lead.fullName || '').toUpperCase();
-        if (phoneEl) phoneEl.value = lead.phone || '';
+        
+        if (phoneEl) {
+          const digits = (lead.phone || '').replace(/\D/g, '');
+          phoneEl.value = digits.length >= 9 ? lead.phone : '';
+        }
+        
         if (licenseEl) {
           licenseEl.value = lead.licenseType || 'B01';
-          this.onLicenseChange(true); // Tự động điền định mức học phí & hoa hồng tương ứng
-        }
-        if (noteEl && lead.note) {
-          noteEl.value = `[Khách tư vấn]: ${lead.note}`;
+          this.onLicenseChange(true);
         }
 
-        // 4. Xóa khách khỏi danh sách tư vấn (vì đã chốt thành học viên)
+        if (discountReasonEl && lead.source === 'HV cũ giới thiệu') {
+          discountReasonEl.value = 'Học viên cũ giới thiệu';
+        }
+
+        if (noteEl) {
+          let noteArr = [];
+          if (lead.source) noteArr.push(`Nguồn: ${lead.source}`);
+          if (lead.phone && !lead.phone.match(/\d{9}/)) noteArr.push(`Liên hệ: ${lead.phone}`);
+          if (lead.note) noteArr.push(lead.note);
+          noteEl.value = noteArr.join(' | ');
+        }
+
         this.deleteLead(leadId, false);
-
         this.showToast(`Đã chuyển khách "${lead.fullName}" sang form Chốt Hồ Sơ!`);
       },
 
-      // LỌC VÀ TỰ ĐỘNG SẮP XẾP ƯU TIÊN KHÁCH CẦN CHĂM SÓC
       getFilteredLeads() {
         const todayStr = this.getTodayDateStr();
         const searchEl = document.getElementById('leadSearchInput');
         const licenseEl = document.getElementById('leadFilterLicense');
+        const sourceEl = document.getElementById('leadFilterSource');
         const statusEl = document.getElementById('leadFilterStatus');
 
         const search = searchEl ? (searchEl.value || '').trim().toLowerCase() : '';
         const licFilter = licenseEl ? licenseEl.value : 'all';
+        const sourceFilter = sourceEl ? sourceEl.value : 'all';
         const statusFilter = statusEl ? statusEl.value : 'all';
 
         let list = this.leads.filter(l => {
           if (licFilter !== 'all' && l.licenseType !== licFilter) return false;
+          if (sourceFilter !== 'all' && (l.source || 'Xem web') !== sourceFilter) return false;
           
           if (statusFilter === 'urgent') {
             if (!l.nextFollowUpDate || l.nextFollowUpDate > todayStr) return false;
@@ -2198,33 +2241,30 @@
             const mName = (l.fullName || '').toLowerCase().includes(search);
             const mPhone = (l.phone || '').toLowerCase().includes(search);
             const mNote = (l.note || '').toLowerCase().includes(search);
-            if (!mName && !mPhone && !mNote) return false;
+            const mSource = (l.source || '').toLowerCase().includes(search);
+            if (!mName && !mPhone && !mNote && !mSource) return false;
           }
           return true;
         });
 
-        // SẮP XẾP: ĐẨY KHÁCH QUÁ HẠN / ĐẾN HẠN HÔM NAY LÊN ĐẦU DANH SÁCH
         list.sort((a, b) => {
           const aIsUrgent = (a.nextFollowUpDate && a.nextFollowUpDate <= todayStr) ? 1 : 0;
           const bIsUrgent = (b.nextFollowUpDate && b.nextFollowUpDate <= todayStr) ? 1 : 0;
 
           if (aIsUrgent !== bIsUrgent) {
-            return bIsUrgent - aIsUrgent; // Khách cần chăm sóc xếp lên đầu
+            return bIsUrgent - aIsUrgent;
           }
 
           if (aIsUrgent && bIsUrgent) {
-            // Cả 2 đều urgent: khách quá hạn lâu hơn xếp trước
             return (a.nextFollowUpDate || '').localeCompare(b.nextFollowUpDate || '');
           }
 
-          // Khách có ngày hẹn tương lai xếp tiếp theo
           if (a.nextFollowUpDate && b.nextFollowUpDate) {
             return a.nextFollowUpDate.localeCompare(b.nextFollowUpDate);
           }
           if (a.nextFollowUpDate) return -1;
           if (b.nextFollowUpDate) return 1;
 
-          // Khách chưa có ngày hẹn xếp theo thời gian tạo mới nhất
           return new Date(b.createdAt || b.updatedAt || 0).getTime() - new Date(a.createdAt || a.updatedAt || 0).getTime();
         });
 
@@ -2253,12 +2293,15 @@
         if (tbody) {
           tbody.innerHTML = filtered.map(l => {
             const badgeClass = this.getLicenseBadgeStyle(l.licenseType);
+            const sourceMeta = this.getSourceMeta(l.source);
             const cleanPhone = (l.phone || '').replace(/\D/g, '');
+            const hasRealPhone = cleanPhone && cleanPhone.length >= 9;
+            const isZaloLead = (l.phone && l.phone.toLowerCase().includes('zalo')) || (!hasRealPhone && l.source === 'Zalo trực tiếp');
+            
             const isOverdue = l.nextFollowUpDate && l.nextFollowUpDate < todayStr;
             const isToday = l.nextFollowUpDate && l.nextFollowUpDate === todayStr;
             const isUrgent = isOverdue || isToday;
 
-            // Highlight viền & nền đỏ/cam nếu quá hạn hoặc đến hạn hôm nay
             let rowHighlightClass = 'hover:bg-amber-50/50 transition';
             if (isOverdue) {
               rowHighlightClass = 'bg-rose-50/70 border-l-4 border-l-rose-500 hover:bg-rose-100/60 font-semibold';
@@ -2279,12 +2322,24 @@
               <tr class="${rowHighlightClass}">
                 <td class="py-3 px-4">
                   <div class="font-bold text-slate-900 uppercase tracking-tight text-sm">${l.fullName}</div>
-                  ${isUrgent ? `<span class="text-[10px] text-rose-600 font-extrabold flex items-center gap-1 mt-0.5"><i class="fa-solid fa-fire text-[9px]"></i> Cần liên hệ chăm sóc ngay!</span>` : ''}
+                  <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border ${sourceMeta.badge}">
+                      ${sourceMeta.icon}<span>${sourceMeta.label}</span>
+                    </span>
+                    ${isUrgent ? `<span class="text-[10px] text-rose-600 font-extrabold flex items-center gap-1"><i class="fa-solid fa-fire text-[9px]"></i> Cần gọi ngay!</span>` : ''}
+                  </div>
                 </td>
                 <td class="py-3 px-4">
-                  <div class="flex items-center gap-2">
-                    ${l.phone ? `<a href="tel:${l.phone}" class="text-xs font-bold text-slate-800 hover:text-amber-800 hover:underline flex items-center gap-1"><i class="fa-solid fa-phone text-[10px] text-slate-400"></i><span>${l.phone}</span></a>` : '<span class="text-slate-400">Chưa có SĐT</span>'}
-                  </div>
+                  ${hasRealPhone ? `
+                    <a href="tel:${cleanPhone}" class="text-xs font-bold text-slate-800 hover:text-amber-800 hover:underline flex items-center gap-1">
+                      <i class="fa-solid fa-phone text-[10px] text-slate-400"></i>
+                      <span>${l.phone}</span>
+                    </a>
+                  ` : (isZaloLead ? `
+                    <span class="inline-flex items-center gap-1 text-[11px] text-blue-800 font-bold bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-200">
+                      <i class="fa-solid fa-comment-dots text-[10px] text-blue-600"></i> Khách Zalo
+                    </span>
+                  ` : '<span class="text-slate-400 italic">Chưa có SĐT</span>')}
                 </td>
                 <td class="py-3 px-4 text-center">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${badgeClass}">
@@ -2295,21 +2350,23 @@
                 <td class="py-3 px-4 text-slate-600 max-w-xs truncate" title="${l.note || ''}">${l.note || '<span class="text-slate-400 italic">-</span>'}</td>
                 <td class="py-3 px-4 text-center">
                   <div class="flex items-center justify-center gap-1.5">
-                    <!-- Nút Chat Zalo -->
-                    ${cleanPhone ? `
+                    ${hasRealPhone ? `
                       <a href="https://zalo.me/${cleanPhone}" target="_blank" title="Mở Chat Zalo" class="px-2.5 py-1.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs flex items-center gap-1 shadow-xs transition active:scale-95">
                         <i class="fa-solid fa-comment-dots text-[11px]"></i>
                         <span>Zalo</span>
                       </a>
-                    ` : ''}
+                    ` : `
+                      <a href="https://zalo.me" target="_blank" title="Mở Zalo Web" class="px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-xs flex items-center gap-1 shadow-xs transition active:scale-95">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        <span>Zalo</span>
+                      </a>
+                    `}
 
-                    <!-- Nút Chốt Hồ Sơ -->
                     <button onclick="app.convertLeadToStudent('${l.id}')" title="Chuyển thành học viên chính thức" class="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs transition active:scale-95">
                       <i class="fa-solid fa-user-check text-[11px]"></i>
                       <span>Chốt HS</span>
                     </button>
 
-                    <!-- Nút Sửa & Xóa -->
                     <button onclick="app.editLead('${l.id}')" title="Chỉnh sửa" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-600 hover:text-amber-800 flex items-center justify-center transition"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
                     <button onclick="app.deleteLead('${l.id}')" title="Xóa" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-rose-100 text-stone-600 hover:text-rose-700 flex items-center justify-center transition"><i class="fa-solid fa-trash text-xs"></i></button>
                   </div>
@@ -2323,12 +2380,15 @@
         if (mobileContainer) {
           mobileContainer.innerHTML = filtered.map(l => {
             const badgeClass = this.getLicenseBadgeStyle(l.licenseType);
+            const sourceMeta = this.getSourceMeta(l.source);
             const cleanPhone = (l.phone || '').replace(/\D/g, '');
+            const hasRealPhone = cleanPhone && cleanPhone.length >= 9;
+            const isZaloLead = (l.phone && l.phone.toLowerCase().includes('zalo')) || (!hasRealPhone && l.source === 'Zalo trực tiếp');
+
             const isOverdue = l.nextFollowUpDate && l.nextFollowUpDate < todayStr;
             const isToday = l.nextFollowUpDate && l.nextFollowUpDate === todayStr;
             const isUrgent = isOverdue || isToday;
 
-            // Highlight viền đỏ/cam nổi bật trên mobile
             let cardBorderClass = 'border-stone-200 bg-white';
             if (isOverdue) {
               cardBorderClass = 'border-2 border-rose-500 bg-rose-50/40 shadow-sm ring-1 ring-rose-300';
@@ -2341,8 +2401,15 @@
                 <div class="flex items-start justify-between gap-2 border-b border-stone-100 pb-2">
                   <div class="min-w-0 flex-1">
                     <h4 class="font-bold text-slate-900 text-sm truncate uppercase tracking-tight">${l.fullName}</h4>
-                    <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
-                      ${l.phone ? `<a href="tel:${l.phone}" class="text-amber-800 font-bold flex items-center gap-1"><i class="fa-solid fa-phone text-[9px]"></i><span>${l.phone}</span></a>` : '<span class="text-slate-400">Chưa có SĐT</span>'}
+                    <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border ${sourceMeta.badge}">
+                        ${sourceMeta.icon}<span>${sourceMeta.label}</span>
+                      </span>
+                      ${hasRealPhone ? `
+                        <a href="tel:${cleanPhone}" class="text-amber-800 font-bold flex items-center gap-1"><i class="fa-solid fa-phone text-[9px]"></i><span>${l.phone}</span></a>
+                      ` : (isZaloLead ? `
+                        <span class="text-blue-700 font-bold flex items-center gap-1"><i class="fa-solid fa-comment-dots text-[10px]"></i> Khách Zalo</span>
+                      ` : '<span class="text-slate-400">Chưa có SĐT</span>')}
                     </div>
                   </div>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border shrink-0 ${badgeClass}">
@@ -2350,7 +2417,6 @@
                   </span>
                 </div>
 
-                <!-- Lịch hẹn & Ghi chú -->
                 <div class="p-2 rounded-xl bg-stone-50/80 border border-stone-200/70 text-xs space-y-1">
                   <div class="flex items-center justify-between">
                     <span class="text-[10px] text-slate-500 font-bold uppercase">Lịch hẹn chăm sóc:</span>
@@ -2373,15 +2439,19 @@
                   ` : ''}
                 </div>
 
-                <!-- Thanh Nút Thao Tác Nhanh (Zalo & Chốt Hồ Sơ) -->
                 <div class="flex items-center justify-between pt-1.5 border-t border-stone-100 gap-2">
                   <div class="flex items-center gap-1.5">
-                    ${cleanPhone ? `
+                    ${hasRealPhone ? `
                       <a href="https://zalo.me/${cleanPhone}" target="_blank" class="px-3 py-1.5 rounded-xl bg-blue-500 active:bg-blue-600 text-white font-bold text-xs flex items-center gap-1 shadow-xs">
                         <i class="fa-solid fa-comment-dots text-[11px]"></i>
                         <span>Zalo</span>
                       </a>
-                    ` : ''}
+                    ` : `
+                      <a href="https://zalo.me" target="_blank" class="px-3 py-1.5 rounded-xl bg-blue-50 active:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-xs flex items-center gap-1 shadow-xs">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        <span>Mở Zalo</span>
+                      </a>
+                    `}
                     <button onclick="app.convertLeadToStudent('${l.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-600 active:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs">
                       <i class="fa-solid fa-user-check text-[11px]"></i>
                       <span>Chốt Hồ Sơ</span>
@@ -2421,13 +2491,12 @@
       resetLeadFilters() {
         const s = document.getElementById('leadSearchInput'); if (s) s.value = '';
         const l = document.getElementById('leadFilterLicense'); if (l) l.value = 'all';
+        const src = document.getElementById('leadFilterSource'); if (src) src.value = 'all';
         const st = document.getElementById('leadFilterStatus'); if (st) st.value = 'all';
         this.renderLeadsView();
       },
 
-      // =========================================================================
-      // CÀI ĐẶT MỨC MẶC ĐỊNH & SAO LƯU DỮ LIỆU
-      // =========================================================================
+      // CÀI ĐẶT & SAO LƯU
       openConfigModal() {
         const container = document.getElementById('configCardContainer');
         if (container) {
@@ -2590,9 +2659,7 @@
         XLSX.writeFile(wb, `DanhSach_HocVien_${this.getTodayDateStr()}.xlsx`);
       },
 
-      // =========================================================================
-      // BỘ ĐỐI SOÁT LƯƠNG CHUYÊN DỤNG (HỖ TRỢ FILE EXCEL MỚI & FILE PDF BẢNG LƯƠNG)
-      // =========================================================================
+      // BỘ ĐỐI SOÁT LƯƠNG
       openReconcileModal() {
         const modal = document.getElementById('reconcileModal');
         const filterMonth = document.getElementById('filterMonth');
@@ -2913,7 +2980,6 @@
 
           let foundExcel = null;
 
-          // Pass 1: Khớp SĐT + Hạng Bằng
           for (let er of excelRecords) {
             if (matchedExcelIndices.has(er.excelIdx)) continue;
             if (sPhone && er.phone && sPhone === er.phone && sLic && er.normLicense && sLic === er.normLicense) {
@@ -2922,7 +2988,6 @@
             }
           }
 
-          // Pass 2: Khớp Họ Tên + Hạng Bằng
           if (!foundExcel) {
             for (let er of excelRecords) {
               if (matchedExcelIndices.has(er.excelIdx)) continue;
@@ -2933,7 +2998,6 @@
             }
           }
 
-          // Pass 3: Khớp SĐT
           if (!foundExcel && sPhone) {
             for (let er of excelRecords) {
               if (matchedExcelIndices.has(er.excelIdx)) continue;
@@ -2944,7 +3008,6 @@
             }
           }
 
-          // Pass 4: Khớp Họ Tên
           if (!foundExcel && sName) {
             for (let er of excelRecords) {
               if (matchedExcelIndices.has(er.excelIdx)) continue;
