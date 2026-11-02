@@ -331,40 +331,40 @@
             <i class="fa-solid fa-feather-pointed text-amber-600"></i>
             <span>Số Lượng Theo Hạng Bằng</span>
           </h2>
-          <span class="text-[10px] text-slate-500 italic">Nhấp để lọc nhanh</span>
+          <span class="text-[10px] text-slate-500 italic" id="licenseFilterHint">Nhấp để lọc nhanh (tích được nhiều hạng)</span>
         </div>
         <div class="flex sm:grid sm:grid-cols-7 overflow-x-auto no-scrollbar gap-2 pb-1">
-          <div onclick="app.filterByLicense('A1')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
+          <div data-license="A1" onclick="app.filterByLicense('A1')" class="lic-card min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng A1</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-A1">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-A1">650k / 200k</div>
           </div>
-          <div onclick="app.filterByLicense('A')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
+          <div data-license="A" onclick="app.filterByLicense('A')" class="lic-card min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng A</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-A">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-A">2.000k / 700k</div>
           </div>
-          <div onclick="app.filterByLicense('B01')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
+          <div data-license="B01" onclick="app.filterByLicense('B01')" class="lic-card min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng B01</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-B01">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-B01">22.3Tr / 2Tr</div>
           </div>
-          <div onclick="app.filterByLicense('B2')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
+          <div data-license="B2" onclick="app.filterByLicense('B2')" class="lic-card min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng B2</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-B2">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-B2">22.3Tr / 2Tr</div>
           </div>
-          <div onclick="app.filterByLicense('C1')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
+          <div data-license="C1" onclick="app.filterByLicense('C1')" class="lic-card min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-amber-50/60 border border-stone-200 hover:border-amber-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-800">Hạng C1</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-C1">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-700 font-bold" id="badgeRate-C1">22.3Tr / 2Tr</div>
           </div>
-          <div onclick="app.filterByLicense('Bổ túc')" class="min-w-[95px] sm:min-w-0 flex-1 cursor-pointer bg-gradient-to-br from-amber-100 via-amber-50 to-orange-100 hover:border-amber-500 border border-amber-300 rounded-xl p-2 sm:p-3 text-center transition shadow-xs">
+          <div data-license="Bổ túc" onclick="app.filterByLicense('Bổ túc')" class="lic-card min-w-[95px] sm:min-w-0 flex-1 cursor-pointer bg-gradient-to-br from-amber-100 via-amber-50 to-orange-100 hover:border-amber-500 border border-amber-300 rounded-xl p-2 sm:p-3 text-center transition shadow-xs">
             <div class="text-[11px] font-bold text-amber-900 flex items-center justify-center gap-1"><i class="fa-solid fa-steering-wheel text-[9px]"></i><span>Bổ Túc</span></div>
             <div class="text-base sm:text-lg font-extrabold text-amber-950 mt-0.5" id="count-Botuc">0</div>
             <div class="text-[9px] sm:text-[10px] text-amber-800 font-bold" id="badgeRate-Botuc">3.5Tr / 500k</div>
           </div>
-          <div onclick="app.filterByLicense('Khác')" class="min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-slate-50 border border-stone-200 hover:border-slate-400 rounded-xl p-2 sm:p-3 text-center transition">
+          <div data-license="Khác" onclick="app.filterByLicense('Khác')" class="lic-card min-w-[88px] sm:min-w-0 flex-1 cursor-pointer bg-white hover:bg-slate-50 border border-stone-200 hover:border-slate-400 rounded-xl p-2 sm:p-3 text-center transition">
             <div class="text-[11px] font-bold text-slate-600">Khác</div>
             <div class="text-base sm:text-lg font-extrabold text-slate-900 mt-0.5" id="count-Khac">0</div>
             <div class="text-[9px] sm:text-[10px] text-slate-500 font-medium" id="badgeRate-Khac">Tùy biến</div>
@@ -379,16 +379,25 @@
           <input type="text" id="searchInput" oninput="app.filterData()" placeholder="Tìm tên, SĐT, Quận..." class="om-input w-full pl-9 pr-4 rounded-xl text-xs placeholder:text-slate-400">
         </div>
         <div class="flex items-center gap-2">
-          <select id="filterLicense" onchange="app.filterData()" class="om-input px-3 rounded-xl text-xs font-medium cursor-pointer flex-1 sm:flex-none">
-            <option value="all">Tất cả Hạng bằng</option>
-            <option value="A1">Hạng A1</option>
-            <option value="A">Hạng A</option>
-            <option value="B01">Hạng B01</option>
-            <option value="B2">Hạng B2</option>
-            <option value="C1">Hạng C1</option>
-            <option value="Bổ túc">Bổ túc lái</option>
-            <option value="Khác">Khác / Nâng dấu</option>
-          </select>
+          <div class="relative flex-1 sm:flex-none" id="licenseFilterWrap">
+            <button type="button" id="filterLicenseBtn" onclick="app.toggleLicensePanel(event)" class="om-input w-full sm:w-auto px-3 py-2.5 rounded-xl text-xs font-bold cursor-pointer flex items-center justify-between sm:justify-start gap-2 bg-white text-amber-900">
+              <span id="filterLicenseLabel">Tất cả Hạng bằng</span>
+              <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+            </button>
+            <div id="licenseFilterPanel" class="hidden absolute right-0 left-0 sm:left-auto mt-1.5 w-full sm:w-60 bg-white border border-stone-200 rounded-xl shadow-xl z-30 p-2">
+              <p class="text-[10px] text-slate-400 px-1.5 pb-1.5">Tích 1 hoặc nhiều hạng để xem cùng lúc:</p>
+              <label class="flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-amber-50 cursor-pointer text-xs font-medium text-slate-700"><input type="checkbox" class="lic-filter-cb accent-amber-600 w-3.5 h-3.5" value="A1" onchange="app.toggleLicenseFilter('A1', this.checked)"> Hạng A1</label>
+              <label class="flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-amber-50 cursor-pointer text-xs font-medium text-slate-700"><input type="checkbox" class="lic-filter-cb accent-amber-600 w-3.5 h-3.5" value="A" onchange="app.toggleLicenseFilter('A', this.checked)"> Hạng A</label>
+              <label class="flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-amber-50 cursor-pointer text-xs font-medium text-slate-700"><input type="checkbox" class="lic-filter-cb accent-amber-600 w-3.5 h-3.5" value="B01" onchange="app.toggleLicenseFilter('B01', this.checked)"> Hạng B01 (B tự động)</label>
+              <label class="flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-amber-50 cursor-pointer text-xs font-medium text-slate-700"><input type="checkbox" class="lic-filter-cb accent-amber-600 w-3.5 h-3.5" value="B2" onchange="app.toggleLicenseFilter('B2', this.checked)"> Hạng B2 (B số sàn)</label>
+              <label class="flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-amber-50 cursor-pointer text-xs font-medium text-slate-700"><input type="checkbox" class="lic-filter-cb accent-amber-600 w-3.5 h-3.5" value="C1" onchange="app.toggleLicenseFilter('C1', this.checked)"> Hạng C1</label>
+              <label class="flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-amber-50 cursor-pointer text-xs font-medium text-slate-700"><input type="checkbox" class="lic-filter-cb accent-amber-600 w-3.5 h-3.5" value="Bổ túc" onchange="app.toggleLicenseFilter('Bổ túc', this.checked)"> Bổ túc lái</label>
+              <label class="flex items-center gap-2 px-1.5 py-1.5 rounded-lg hover:bg-amber-50 cursor-pointer text-xs font-medium text-slate-700"><input type="checkbox" class="lic-filter-cb accent-amber-600 w-3.5 h-3.5" value="Khác" onchange="app.toggleLicenseFilter('Khác', this.checked)"> Khác / Nâng dấu</label>
+              <div class="border-t border-stone-100 mt-1.5 pt-1.5 px-1.5 pb-1">
+                <button type="button" onclick="app.clearLicenseFilter()" class="text-[11px] text-amber-700 font-bold hover:underline">Bỏ chọn tất cả (xem hết)</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -614,7 +623,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Ngày Tháng Năm Sinh</label>
-                <input type="date" id="dob" class="om-input w-full rounded-xl">
+                <input type="text" id="dob" placeholder="dd/mm/yyyy — gõ hoặc dán" inputmode="numeric" autocomplete="off" oninput="app.autoFormatDateInput(this)" class="om-input w-full rounded-xl">
+                <p class="text-[10px] text-slate-400 mt-1">Gõ/dán kiểu nào cũng được: 15/08/2000, 15082000 hoặc 2000-08-15</p>
               </div>
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Học Ở Quận Mấy?</label>
@@ -677,13 +687,13 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div class="min-w-0">
+              <div class="min-w-0" id="examMonthGroup">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Khóa Thi <span class="text-rose-600">*</span></label>
                 <input type="month" id="examMonth" required class="om-input w-full rounded-xl text-xs font-bold text-amber-900 bg-white">
               </div>
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">Ngày Đăng Ký</label>
-                <input type="date" id="registerDate" class="om-input w-full rounded-xl text-xs bg-white">
+                <input type="text" id="registerDate" placeholder="dd/mm/yyyy — gõ hoặc dán" inputmode="numeric" autocomplete="off" oninput="app.autoFormatDateInput(this)" class="om-input w-full rounded-xl text-xs bg-white">
               </div>
               <div class="min-w-0">
                 <label class="block text-xs font-bold text-slate-700 mb-1">GPLX Đang Có Khác?</label>
@@ -1080,6 +1090,7 @@
       db: null,
       isFirebaseReady: false,
       reconcileResult: null,
+      selectedLicenses: [],
       currentReconcileTab: 'mismatched',
       selectedMonth: undefined,
       
@@ -1130,6 +1141,12 @@
         this.updateTabBadges();
         this.updateLicenseBadgeRates();
         this.initDefaultDate();
+        this.updateLicenseFilterUI();
+        document.addEventListener('click', (e) => {
+          const wrap = document.getElementById('licenseFilterWrap');
+          const panel = document.getElementById('licenseFilterPanel');
+          if (panel && wrap && !wrap.contains(e.target)) panel.classList.add('hidden');
+        });
       },
 
       // TAB CONTROLLER
@@ -1207,7 +1224,7 @@
       initDefaultDate() {
         const today = this.getTodayDateStr();
         const regInput = document.getElementById('registerDate');
-        if (regInput) regInput.value = today;
+        if (regInput) regInput.value = this.formatDate(today);
         const followInput = document.getElementById('leadNextFollowUpDate');
         if (followInput) followInput.value = today;
       },
@@ -1571,6 +1588,42 @@
         return monthStr;
       },
 
+      // Nhận nhiều kiểu ngày người dùng gõ/dán -> trả về ISO yyyy-mm-dd ('' nếu trống, null nếu sai)
+      parseFlexibleDate(str) {
+        if (!str) return '';
+        const s = String(str).trim();
+        if (!s) return '';
+        let y, m, d, match;
+        if ((match = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/))) { y = +match[1]; m = +match[2]; d = +match[3]; }
+        else if ((match = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/))) { d = +match[1]; m = +match[2]; y = +match[3]; }
+        else if ((match = s.match(/^(\d{2})(\d{2})(\d{4})$/))) { d = +match[1]; m = +match[2]; y = +match[3]; }
+        else return null;
+        if (y < 1900 || y > 2100 || m < 1 || m > 12 || d < 1 || d > 31) return null;
+        const dt = new Date(y, m - 1, d);
+        if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+        return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      },
+
+      getDateInputISO(id) {
+        const el = document.getElementById(id);
+        if (!el) return '';
+        const v = (el.value || '').trim();
+        if (!v) return '';
+        return this.parseFlexibleDate(v);
+      },
+
+      // Tự chèn dấu / khi gõ (dd/mm/yyyy); dán dạng ISO thì đổi sang dd/mm/yyyy ngay
+      autoFormatDateInput(input) {
+        const raw = (input.value || '').trim();
+        const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (iso) { input.value = `${iso[3]}/${iso[2]}/${iso[1]}`; return; }
+        const digits = raw.replace(/\D/g, '').slice(0, 8);
+        let out = digits;
+        if (digits.length > 4) out = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+        else if (digits.length > 2) out = digits.slice(0, 2) + '/' + digits.slice(2);
+        input.value = out;
+      },
+
       // HỌC VIÊN: BỘ LỌC, THỐNG KÊ & HIỂN THỊ
       populateMonthFilter() {
         const filterMonth = document.getElementById('filterMonth');
@@ -1648,16 +1701,15 @@
 
       getFilteredStudents() {
         const monthEl = document.getElementById('filterMonth');
-        const licenseEl = document.getElementById('filterLicense');
         const searchEl = document.getElementById('searchInput');
 
         const monthFilter = monthEl ? monthEl.value : (this.selectedMonth || this.getCurrentMonthStr());
-        const licenseFilter = licenseEl ? licenseEl.value : 'all';
+        const selectedLicenses = Array.isArray(this.selectedLicenses) ? this.selectedLicenses : [];
         const search = searchEl ? (searchEl.value || '').trim().toLowerCase() : '';
 
         return this.students.filter(s => {
           if (monthFilter !== 'all' && (!s.registerDate || !s.registerDate.startsWith(monthFilter))) return false;
-          if (licenseFilter !== 'all' && s.licenseType !== licenseFilter) return false;
+          if (selectedLicenses.length > 0 && !selectedLicenses.includes(s.licenseType)) return false;
           if (search) {
             const matchName = (s.fullName || '').toLowerCase().includes(search);
             const matchPhone = (s.phone || '').toLowerCase().includes(search);
@@ -1883,19 +1935,56 @@
       },
 
       filterData() { this.renderAllViews(); this.updateStats(); },
-      filterByLicense(type) { 
-        const el = document.getElementById('filterLicense'); 
-        if (el) {
-          if (el.value === type) el.value = 'all';
-          else el.value = type;
-        } 
-        this.filterData(); 
+      filterByLicense(type) {
+        if (!Array.isArray(this.selectedLicenses)) this.selectedLicenses = [];
+        const idx = this.selectedLicenses.indexOf(type);
+        if (idx >= 0) this.selectedLicenses.splice(idx, 1);
+        else this.selectedLicenses.push(type);
+        this.updateLicenseFilterUI();
+        this.filterData();
+      },
+
+      toggleLicenseFilter(type, checked) {
+        if (!Array.isArray(this.selectedLicenses)) this.selectedLicenses = [];
+        const idx = this.selectedLicenses.indexOf(type);
+        if (checked && idx < 0) this.selectedLicenses.push(type);
+        if (!checked && idx >= 0) this.selectedLicenses.splice(idx, 1);
+        this.updateLicenseFilterUI();
+        this.filterData();
+      },
+
+      clearLicenseFilter() {
+        this.selectedLicenses = [];
+        this.updateLicenseFilterUI();
+        this.filterData();
+      },
+
+      toggleLicensePanel(event) {
+        if (event) event.stopPropagation();
+        const panel = document.getElementById('licenseFilterPanel');
+        if (panel) panel.classList.toggle('hidden');
+      },
+
+      updateLicenseFilterUI() {
+        const selected = Array.isArray(this.selectedLicenses) ? this.selectedLicenses : [];
+        const label = document.getElementById('filterLicenseLabel');
+        if (label) label.textContent = selected.length === 0 ? 'Tất cả Hạng bằng' : ('Đang xem: ' + selected.join(' + '));
+        document.querySelectorAll('.lic-filter-cb').forEach(cb => { cb.checked = selected.includes(cb.value); });
+        document.querySelectorAll('.lic-card').forEach(card => {
+          const lic = card.getAttribute('data-license');
+          const active = selected.includes(lic);
+          card.style.borderColor = active ? '#d97706' : '';
+          card.style.boxShadow = active ? '0 0 0 2px #f59e0b inset, 0 4px 10px rgba(245,158,11,.25)' : '';
+          if (lic !== 'Bổ túc') card.style.background = active ? '#fffbeb' : '';
+        });
+        const hint = document.getElementById('licenseFilterHint');
+        if (hint) hint.textContent = selected.length === 0 ? 'Nhấp để lọc nhanh (tích được nhiều hạng)' : ('Đang lọc: ' + selected.join(' + ') + ' — nhấp lại thẻ để bỏ chọn');
       },
       resetFilters() { 
         const currentMonth = this.getCurrentMonthStr();
         this.selectedMonth = currentMonth;
         const m = document.getElementById('filterMonth'); if (m) m.value = currentMonth;
-        const l = document.getElementById('filterLicense'); if (l) l.value = 'all';
+        this.selectedLicenses = []; this.updateLicenseFilterUI();
         const s = document.getElementById('searchInput'); if (s) s.value = '';
         this.filterData(); 
       },
@@ -1947,10 +2036,28 @@
             scheduleGroup.classList.remove('hidden');
           }
         }
+
+        // Bổ túc tay lái KHÔNG có thi -> ẩn hẳn ô Khóa Thi, bỏ bắt buộc nhập và xóa giá trị
+        const examGroup = document.getElementById('examMonthGroup');
+        const examInput = document.getElementById('examMonth');
+        if (examGroup && examInput) {
+          if (type === 'Bổ túc') {
+            examGroup.classList.add('hidden');
+            examInput.required = false;
+            examInput.value = '';
+          } else {
+            examGroup.classList.remove('hidden');
+            examInput.required = true;
+          }
+        }
       },
 
       saveStudent(e) {
         e.preventDefault();
+        const dobISO = this.getDateInputISO('dob');
+        if (dobISO === null) { alert('Ngày sinh chưa đúng. Hãy nhập kiểu ngày/tháng/năm, ví dụ 15/08/2000.'); return; }
+        const regISO = this.getDateInputISO('registerDate');
+        if (regISO === null) { alert('Ngày đăng ký chưa đúng. Hãy nhập kiểu ngày/tháng/năm, ví dụ 15/08/2026.'); return; }
         const id = document.getElementById('studentId').value || ('STU_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6));
         const licenseType = document.getElementById('licenseType').value || 'B01';
         const isMoto = licenseType === 'A1' || licenseType === 'A';
@@ -1959,7 +2066,7 @@
           id: id,
           fullName: (document.getElementById('fullName').value || '').trim().toUpperCase(),
           phone: (document.getElementById('phone').value || '').trim(),
-          dob: document.getElementById('dob').value || '',
+          dob: dobISO || '',
           district: document.getElementById('district').value || 'Tân Bình',
           licenseType: licenseType,
           studySchedule: isMoto ? '' : (document.getElementById('studySchedule').value || 'Trong tuần (T2 - T6)'),
@@ -1968,8 +2075,8 @@
           discountAmount: this.parseCurrency(document.getElementById('discountAmount').value),
           discountReason: document.getElementById('discountReason').value || 'Không giảm',
           commission: this.parseCurrency(document.getElementById('commission').value),
-          registerDate: document.getElementById('registerDate').value || this.getTodayDateStr(),
-          examMonth: document.getElementById('examMonth').value || '',
+          registerDate: regISO || this.getTodayDateStr(),
+          examMonth: licenseType === 'Bổ túc' ? '' : (document.getElementById('examMonth').value || ''),
           note: (document.getElementById('note').value || '').trim(),
           updatedAt: new Date().toISOString()
         };
@@ -1988,7 +2095,7 @@
         document.getElementById('studentId').value = student.id;
         document.getElementById('fullName').value = student.fullName || '';
         document.getElementById('phone').value = student.phone || '';
-        document.getElementById('dob').value = student.dob || '';
+        document.getElementById('dob').value = student.dob ? this.formatDate(student.dob) : '';
         document.getElementById('district').value = student.district || 'Tân Bình';
         document.getElementById('licenseType').value = student.licenseType || 'B01';
         document.getElementById('studySchedule').value = student.studySchedule || 'Trong tuần (T2 - T6)';
@@ -1997,7 +2104,7 @@
         document.getElementById('discountAmount').value = this.formatNumberString(student.discountAmount);
         document.getElementById('discountReason').value = student.discountReason || 'Không giảm';
         document.getElementById('commission').value = this.formatNumberString(student.commission);
-        document.getElementById('registerDate').value = student.registerDate || '';
+        document.getElementById('registerDate').value = student.registerDate ? this.formatDate(student.registerDate) : '';
         document.getElementById('examMonth').value = student.examMonth || '';
         document.getElementById('note').value = student.note || '';
         
@@ -2691,6 +2798,7 @@
       normalizeLicenseStr(lic) {
         if (!lic || typeof lic !== 'string') return '';
         const l = lic.trim().toUpperCase();
+        if (l.includes('BTTL') || l.includes('BỔ TÚC')) return 'Bổ túc';
         if (/A1/.test(l)) return 'A1';
         if (/A2|\bA\b|MÔ TÔ|PKL/.test(l)) return 'A';
         if (/B01|B1\.1|B11|\bB1\b|TỰ ĐỘNG/.test(l)) return 'B01';
@@ -2707,6 +2815,15 @@
           digits = '0' + digits;
         }
         return digits;
+      },
+
+      // 'B' chung chung trong file KiotViet cũ khớp cả B01 lẫn B2 (khi không suy ra được từ ghi chú)
+      licenseMatches(webLic, fileLic) {
+        if (!webLic || !fileLic) return false;
+        if (webLic === fileLic) return true;
+        if (fileLic === 'B' && (webLic === 'B01' || webLic === 'B2')) return true;
+        if (webLic === 'B' && (fileLic === 'B01' || fileLic === 'B2')) return true;
+        return false;
       },
 
       async handleUniversalFileUpload(e) {
@@ -2798,12 +2915,16 @@
               });
 
               const sortedYKeys = Array.from(lineMap.keys()).sort((a, b) => b - a);
+              let salaryColX = null;
 
               for (let yKey of sortedYKeys) {
                 const lineItems = lineMap.get(yKey).sort((a, b) => a.x - b.x);
                 const lineFullText = lineItems.map(it => it.text).join(' ').toUpperCase();
 
                 if ((lineFullText.includes('HỌ VÀ TÊN') || lineFullText.includes('HỌ TÊN')) && (lineFullText.includes('LƯƠNG') || lineFullText.includes('ĐIỆN THOẠI'))) {
+                  // Ghi nhớ vị trí cột LƯƠNG để lấy đúng số tiền lương, không lấy nhầm cột khác
+                  const salItem = lineItems.find(it => it.text.trim().toUpperCase() === 'LƯƠNG');
+                  if (salItem) salaryColX = salItem.x;
                   continue;
                 }
 
@@ -2815,7 +2936,11 @@
                 const hasPhone = lineFullText.match(/\b0\d{9}\b/);
                 const hasLic = lineFullText.match(/\b(A1|A2|B01|B1|B2|C1)\b/);
 
-                if (!hasStudentCode && !hasPhone && !hasLic) continue;
+                // Dòng học viên thật BẮT BUỘC có mã KH hoặc SĐT. Các dòng tổng kết/tóm tắt
+                // (vd "Hồ sơ B, C1: 16 HS | Hồ sơ A, A1: 29 HS") chỉ có chữ hạng bằng -> bỏ qua,
+                // nếu không sẽ sinh ra hồ sơ "ma" làm tăng số đếm (lỗi cũ: 47 thay vì 46 hồ sơ).
+                if (!hasStudentCode && !hasPhone) continue;
+                if (lineFullText.includes('CẦN TÍNH LƯƠNG') || lineFullText.includes('ĐƠN VỊ TÍNH')) continue;
 
                 let nameTokens = [];
                 let phoneVal = hasPhone ? hasPhone[0] : '';
@@ -2823,24 +2948,39 @@
                 let codeVal = hasStudentCode ? hasStudentCode[0] : '';
                 let commVal = 0;
 
-                const numberTokens = lineItems.filter(it => /^\d{5,9}$/.test(it.text.replace(/\./g, '')));
-                if (numberTokens.length > 0) {
-                  const lastNum = numberTokens[numberTokens.length - 1];
-                  commVal = parseInt(lastNum.text.replace(/\D/g, ''), 10) || 0;
-                  if (lineFullText.includes('ĐÃ TÍNH LƯƠNG')) commVal = 0;
-                } else if (lineItems.some(it => it.text === '0' || it.text.includes('ĐÃ TÍNH'))) {
-                  commVal = 0;
+                // Lấy tiền ở cột LƯƠNG (token số nằm gần X của cột LƯƠNG nhất về phía phải).
+                // QUAN TRỌNG: KHÔNG gán 0 khi ghi chú có chữ "Đã tính lương..." nữa — ghi chú đó
+                // nói về hạng bằng CŨ của học viên (vd HV cũ A1 -> ĐK B2, lương A1 đã tính ở kỳ trước),
+                // lương của dòng hiện tại vẫn nằm ở cột LƯƠNG. Lỗi cũ dòng này đã làm 6 hồ sơ T10/2026
+                // bị đọc thành 0đ, lệch đúng 10.100.000đ như ảnh chụp.
+                const numberTokens = lineItems.filter(it => /^\d{1,3}(\.\d{3})+$/.test(it.text.trim()) || /^\d{5,9}$/.test(it.text.replace(/\./g, '')));
+                if (salaryColX !== null) {
+                  const inCol = numberTokens.filter(it => it.x >= salaryColX - 10 && it.x <= salaryColX + 50);
+                  if (inCol.length > 0) {
+                    commVal = parseInt(inCol[inCol.length - 1].text.replace(/\D/g, ''), 10) || 0;
+                  }
+                }
+                if (!commVal && numberTokens.length > 0) {
+                  commVal = parseInt(numberTokens[numberTokens.length - 1].text.replace(/\D/g, ''), 10) || 0;
+                }
+                // Ghi chú = phần chữ nằm ở cột GHI CHÚ (bên phải cột lương)
+                let noteVal = '';
+                if (salaryColX !== null) {
+                  noteVal = lineItems.filter(it => it.x > salaryColX + 35 && it.text.trim() !== '-').map(it => it.text.trim()).join(' ');
                 }
 
                 lineItems.forEach(it => {
                   const t = it.text.trim();
                   if (!t) return;
                   if (/^\d{1,3}$/.test(t)) return;
-                  if (['A1', 'A2', 'B1', 'B2', 'C1', 'B01', 'T08', 'DUY QR', 'T2,T6', 'T7,CN', 'DUY'].includes(t.toUpperCase())) return;
-                  if (/^KH\d+$/i.test(t)) return;
+                  if (salaryColX !== null && it.x > salaryColX + 35) return; // thuộc cột GHI CHÚ, không phải tên
+                  if (['A1', 'A2', 'B1', 'B2', 'C1', 'B01', 'T08', 'DUY QR', 'DUY QRĐ', 'QR', 'QRĐ', 'T2,T6', 'T7,CN', 'DUY', 'T2 - CN', 'T2 - T6', 'T7 - CN', '-'].includes(t.toUpperCase())) return;
+                  if (/^BTTL/.test(t.toUpperCase())) return;
+                  if (/^KH\d+/i.test(t)) return;
                   if (/^0\d{9}$/.test(t)) return;
                   if (/^\d{4,9}$/.test(t.replace(/\./g, ''))) return;
-                  if (t.toUpperCase().includes('ĐÃ TÍNH') || t.toUpperCase().includes('B1 +') || t.toUpperCase().includes('B2 +')) return;
+                  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(t)) return; // ngày đăng ký
+                  if (t.toUpperCase().includes('ĐÃ TÍNH') || t.toUpperCase().includes('HV CŨ') || t.toUpperCase().includes('B1 +') || t.toUpperCase().includes('B2 +')) return;
                   if (/[A-ZÀ-Ỹa-zà-ỹ]/.test(t)) {
                     nameTokens.push(t);
                   }
@@ -2858,7 +2998,7 @@
                     normLicense: app.normalizeLicenseStr(licVal),
                     code: codeVal,
                     commission: commVal,
-                    note: '',
+                    note: noteVal || '',
                     rowIdx: extractedRecords.length + 1
                   });
                 }
@@ -2890,20 +3030,20 @@
           const cellsUpper = cells.map(c => c.toUpperCase());
           const rowLineText = cellsUpper.join(' ');
 
-          const hasNameHeader = cellsUpper.some(c => c.includes('HỌ VÀ TÊN') || c.includes('HỌ TÊN') || c.includes('TÊN HỌC VIÊN') || (c.includes('HỌ') && c.includes('TÊN')));
+          const hasNameHeader = cellsUpper.some(c => c.includes('HỌ VÀ TÊN') || c.includes('HỌ TÊN') || c.includes('TÊN HỌC VIÊN') || c.includes('TÊN KHÁCH HÀNG') || (c.includes('HỌ') && c.includes('TÊN')));
           const hasSalaryHeader = cellsUpper.some(c => c === 'LƯƠNG' || c.includes('HOA HỒNG') || c.includes('THỰC NHẬN') || c.includes('MỨC CHI') || c.includes('THÙ LAO'));
           const hasPhoneHeader = cellsUpper.some(c => c.includes('ĐIỆN THOẠI') || c.includes('SĐT') || c.includes('SDT') || c.includes('PHONE'));
 
           if (hasNameHeader && (hasSalaryHeader || hasPhoneHeader)) {
             const colMap = {};
             cellsUpper.forEach((h, cIdx) => {
-              if (h.includes('HỌ VÀ TÊN') || h.includes('HỌ TÊN') || h.includes('TÊN HỌC VIÊN') || (h.includes('HỌ') && h.includes('TÊN'))) {
+              if (h.includes('HỌ VÀ TÊN') || h.includes('HỌ TÊN') || h.includes('TÊN HỌC VIÊN') || h.includes('TÊN KHÁCH HÀNG') || (h.includes('HỌ') && h.includes('TÊN'))) {
                 if (colMap.name === undefined) colMap.name = cIdx;
               } else if (h.includes('ĐIỆN THOẠI') || h.includes('SĐT') || h.includes('SDT') || h.includes('PHONE')) {
                 if (colMap.phone === undefined) colMap.phone = cIdx;
-              } else if (h === 'HẠNG' || h === 'HẠNG BẰNG' || h === 'LOẠI BẰNG') {
+              } else if (h === 'HẠNG' || h === 'HẠNG BẰNG' || h === 'LOẠI BẰNG' || h.includes('DỊCH VỤ')) {
                 if (colMap.license === undefined) colMap.license = cIdx;
-              } else if (h.includes('MÃ') && (h.includes('HỌC VIÊN') || h.includes('HV') || h === 'MÃ')) {
+              } else if (h.includes('MÃ') && (h.includes('HỌC VIÊN') || h.includes('HV') || h.includes('KHÁCH') || h === 'MÃ')) {
                 if (colMap.code === undefined) colMap.code = cIdx;
               } else if (h === 'LƯƠNG' || h === 'HOA HỒNG' || h === 'THỰC NHẬN' || h === 'MỨC CHI' || h.includes('LƯƠNG')) {
                 if (!h.includes('TỔNG') && !h.includes('LŨY TIẾN')) {
@@ -2940,6 +3080,17 @@
             commVal = this.parseCurrency(cells[currentColMap.comm]);
           }
 
+          // File KiotViet cũ chỉ ghi dịch vụ 'B' chung chung: suy ra B01/B2 từ đầu ghi chú
+          // (vd 'Q7.T2 - T6.B1 ĐỦ DAT...' = B01, '...CN.B2 ĐỦ DAT...' = B2; có '=>' thì lấy hạng sau dấu =>)
+          let inferredLicense = this.normalizeLicenseStr(licVal);
+          if (inferredLicense === 'B') {
+            const noteHead = (noteVal || '').toUpperCase().slice(0, 80);
+            const afterArrow = noteHead.match(/=>\s*(B1|B2)\b/);
+            const dotted = noteHead.match(/\.(B1|B2)\b/);
+            const found = afterArrow || dotted;
+            if (found) inferredLicense = found[1] === 'B1' ? 'B01' : 'B2';
+          }
+
           records.push({
             excelIdx: records.length + 1,
             name: nameVal,
@@ -2947,7 +3098,7 @@
             phone: this.normalizePhoneStr(phoneVal),
             rawPhone: phoneVal,
             license: licVal,
-            normLicense: this.normalizeLicenseStr(licVal),
+            normLicense: inferredLicense,
             code: codeVal,
             commission: commVal,
             note: noteVal,
@@ -2982,7 +3133,7 @@
 
           for (let er of excelRecords) {
             if (matchedExcelIndices.has(er.excelIdx)) continue;
-            if (sPhone && er.phone && sPhone === er.phone && sLic && er.normLicense && sLic === er.normLicense) {
+            if (sPhone && er.phone && sPhone === er.phone && sLic && er.normLicense && this.licenseMatches(sLic, er.normLicense)) {
               foundExcel = er;
               break;
             }
@@ -2991,7 +3142,7 @@
           if (!foundExcel) {
             for (let er of excelRecords) {
               if (matchedExcelIndices.has(er.excelIdx)) continue;
-              if (sName && er.normName && sName === er.normName && sLic && er.normLicense && sLic === er.normLicense) {
+              if (sName && er.normName && sName === er.normName && sLic && er.normLicense && this.licenseMatches(sLic, er.normLicense)) {
                 foundExcel = er;
                 break;
               }
